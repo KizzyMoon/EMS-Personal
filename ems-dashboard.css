@@ -303,6 +303,25 @@ label {
   margin: 0;
 }
 
+.quick-links-groups {
+  display: grid;
+  gap: 14px;
+}
+
+.quick-link-category {
+  display: grid;
+  gap: 8px;
+}
+
+.quick-link-category h3 {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .quick-links-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
