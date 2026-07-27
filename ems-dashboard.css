@@ -115,7 +115,8 @@ nav {
   gap: 6px;
 }
 
-nav button {
+nav button,
+.sidebar-settings-button {
   min-height: 36px;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -125,10 +126,15 @@ nav button {
   text-align: left;
 }
 
-nav button.active {
+nav button.active,
+.sidebar-settings-button.active {
   border-color: rgba(248, 162, 162, 0.34);
   background: linear-gradient(90deg, rgba(248, 162, 162, 0.32), rgba(248, 162, 162, 0.14));
   color: #fff;
+}
+
+.sidebar-settings-button {
+  margin-top: auto;
 }
 
 .toolbar {
@@ -294,6 +300,20 @@ label {
   padding: 12px;
 }
 
+.sidebar-quick-links {
+  display: grid;
+  gap: 9px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.sidebar-quick-links h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 0.82rem;
+}
+
 .quick-links-head-copy {
   display: grid;
   gap: 3px;
@@ -305,18 +325,18 @@ label {
 
 .quick-links-groups {
   display: grid;
-  gap: 9px;
+  gap: 8px;
 }
 
 .quick-link-category {
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
 .quick-link-category h3 {
   margin: 0;
   color: var(--accent);
-  font-size: 0.7rem;
+  font-size: 0.64rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -325,18 +345,17 @@ label {
 .quick-links-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 7px;
+  gap: 4px;
 }
 
 .quick-link {
   display: flex;
   align-items: center;
-  min-height: 34px;
-  border: 1px solid rgba(248, 162, 162, 0.18);
-  border-radius: 8px;
-  background: rgba(18, 24, 32, 0.92);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
-  padding: 7px 10px;
+  min-height: 28px;
+  border: 1px solid rgba(248, 162, 162, 0.16);
+  border-radius: 6px;
+  background: rgba(18, 24, 32, 0.66);
+  padding: 5px 8px;
   text-align: left;
   text-decoration: none;
   transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
@@ -344,7 +363,7 @@ label {
 
 .quick-link span {
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 900;
   line-height: 1.2;
 }
@@ -1232,9 +1251,19 @@ menu {
     overflow-x: auto;
   }
 
-  nav button {
+  nav button,
+  .sidebar-settings-button {
     flex: 0 0 auto;
     text-align: center;
+  }
+
+  .sidebar-quick-links {
+    display: none;
+  }
+
+  .sidebar-settings-button {
+    margin-top: 0;
+    align-self: flex-start;
   }
 
   .toolbar,
@@ -1280,7 +1309,8 @@ menu {
     padding-bottom: 0;
   }
 
-  nav button {
+  nav button,
+  .sidebar-settings-button {
     flex: 0 0 auto;
     min-height: 34px;
     padding: 6px 0 9px;

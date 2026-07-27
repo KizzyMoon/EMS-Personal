@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260727-6" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260727-7" />
   </head>
   <body>
     <main class="app">
@@ -26,8 +26,69 @@
           <button data-tab="cadets" type="button">Cadets</button>
           <button data-tab="directory" type="button">Roster</button>
           <button data-tab="cheat-sheet" type="button">Cheat Sheet</button>
-          <button data-tab="settings" type="button">Settings</button>
         </nav>
+        <section class="sidebar-quick-links" aria-label="Quick links">
+          <h2>Quick Links</h2>
+          <div class="quick-links-groups">
+            <section class="quick-link-category" aria-label="General links">
+              <h3>General</h3>
+              <div class="quick-links-grid">
+                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/10wmM-u_9DZTCWArD_eGuSkbXvdjTFJpiOlQ5siERWCM/edit?gid=0#gid=0" target="_blank" rel="noopener">
+                  <span>EMS Basic Treatment Guide</span>
+                </a>
+                <a class="quick-link sheets-link" href="https://tinyurl.com/HL-EMS-Feedback" target="_blank" rel="noopener">
+                  <span>Feedback Sheet</span>
+                </a>
+              </div>
+            </section>
+
+            <section class="quick-link-category" aria-label="FTO links">
+              <h3>FTO</h3>
+              <div class="quick-links-grid">
+                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=642049381#gid=642049381" target="_blank" rel="noopener">
+                  <span>Cadet RA's</span>
+                </a>
+                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1XqbCbo75uqUo2JrawDIAxai8Auwhjqzgd-r3Uc2jamA/edit?tab=t.0" target="_blank" rel="noopener">
+                  <span>FTO SOP's</span>
+                </a>
+              </div>
+            </section>
+
+            <section class="quick-link-category" aria-label="Training links">
+              <h3>Training</h3>
+              <div class="quick-links-grid">
+                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1vqTfoWqwhHayM07EmD5B1nwMgi5_qs_qy58ILpILp5U/edit?tab=t.0" target="_blank" rel="noopener">
+                  <span>Cadet's Trainings Guide</span>
+                </a>
+                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
+                  <span>Training Attendance Sheet</span>
+                </a>
+                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1cCbYAlOkZ0ZSn1kbN2U_4Ql-bUiunQJwxBfY1hMsF2w/edit?tab=t.0" target="_blank" rel="noopener">
+                  <span>Training Guide - Day 1</span>
+                </a>
+                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1pE2pAXrG3TDVf6JPaqYqKDCvTts2KecbG0X0aOLF9Ro/edit?tab=t.0" target="_blank" rel="noopener">
+                  <span>Training Guide - Day 2</span>
+                </a>
+                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1BI931cPqewp-xqRV7bqmtQXLU4A6Pujn9P3o7zHGkEg/edit?tab=t.0" target="_blank" rel="noopener">
+                  <span>Icon Guide</span>
+                </a>
+              </div>
+            </section>
+
+            <section class="quick-link-category" aria-label="Interview links">
+              <h3>Interviews</h3>
+              <div class="quick-links-grid">
+                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
+                  <span>Interviews Attendance</span>
+                </a>
+                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1eNASopPX0MXnh7CuQVy3fL7Y5WQdou2HqFn2vDztLqw/edit?gid=398040619#gid=398040619" target="_blank" rel="noopener">
+                  <span>EMS Interviews Form</span>
+                </a>
+              </div>
+            </section>
+          </div>
+        </section>
+        <button class="sidebar-settings-button" data-tab="settings" type="button">Settings</button>
       </header>
 
       <section class="toolbar">
@@ -56,72 +117,6 @@
             </article>
           </div>
           <aside class="dashboard-side">
-            <article class="panel quick-links-panel">
-              <div class="panel-head">
-                <div class="quick-links-head-copy">
-                  <h2>Quick Links</h2>
-                </div>
-                <span>11</span>
-              </div>
-              <div class="quick-links-groups">
-                <section class="quick-link-category" aria-label="General links">
-                  <h3>General</h3>
-                  <div class="quick-links-grid">
-                    <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/10wmM-u_9DZTCWArD_eGuSkbXvdjTFJpiOlQ5siERWCM/edit?gid=0#gid=0" target="_blank" rel="noopener">
-                      <span>EMS Basic Treatment Guide</span>
-                    </a>
-                    <a class="quick-link sheets-link" href="https://tinyurl.com/HL-EMS-Feedback" target="_blank" rel="noopener">
-                      <span>Feedback Sheet</span>
-                    </a>
-                  </div>
-                </section>
-
-                <section class="quick-link-category" aria-label="FTO links">
-                  <h3>FTO</h3>
-                  <div class="quick-links-grid">
-                    <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=642049381#gid=642049381" target="_blank" rel="noopener">
-                      <span>Cadet RA's</span>
-                    </a>
-                    <a class="quick-link docs-link" href="https://docs.google.com/document/d/1XqbCbo75uqUo2JrawDIAxai8Auwhjqzgd-r3Uc2jamA/edit?tab=t.0" target="_blank" rel="noopener">
-                      <span>FTO SOP's</span>
-                    </a>
-                  </div>
-                </section>
-
-                <section class="quick-link-category" aria-label="Training links">
-                  <h3>Training</h3>
-                  <div class="quick-links-grid">
-                    <a class="quick-link docs-link" href="https://docs.google.com/document/d/1vqTfoWqwhHayM07EmD5B1nwMgi5_qs_qy58ILpILp5U/edit?tab=t.0" target="_blank" rel="noopener">
-                      <span>Cadet's Trainings Guide</span>
-                    </a>
-                    <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
-                      <span>Training Attendance Sheet</span>
-                    </a>
-                    <a class="quick-link docs-link" href="https://docs.google.com/document/d/1cCbYAlOkZ0ZSn1kbN2U_4Ql-bUiunQJwxBfY1hMsF2w/edit?tab=t.0" target="_blank" rel="noopener">
-                      <span>Training Guide - Day 1</span>
-                    </a>
-                    <a class="quick-link docs-link" href="https://docs.google.com/document/d/1pE2pAXrG3TDVf6JPaqYqKDCvTts2KecbG0X0aOLF9Ro/edit?tab=t.0" target="_blank" rel="noopener">
-                      <span>Training Guide - Day 2</span>
-                    </a>
-                    <a class="quick-link docs-link" href="https://docs.google.com/document/d/1BI931cPqewp-xqRV7bqmtQXLU4A6Pujn9P3o7zHGkEg/edit?tab=t.0" target="_blank" rel="noopener">
-                      <span>Icon Guide</span>
-                    </a>
-                  </div>
-                </section>
-
-                <section class="quick-link-category" aria-label="Interview links">
-                  <h3>Interviews</h3>
-                  <div class="quick-links-grid">
-                    <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
-                      <span>Interviews Attendance</span>
-                    </a>
-                    <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1eNASopPX0MXnh7CuQVy3fL7Y5WQdou2HqFn2vDztLqw/edit?gid=398040619#gid=398040619" target="_blank" rel="noopener">
-                      <span>EMS Interviews Form</span>
-                    </a>
-                  </div>
-                </section>
-              </div>
-            </article>
             <article class="panel">
               <div class="panel-head">
                 <h2>14 / 28 Day Limits</h2>
