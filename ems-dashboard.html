@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260727-2" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260727-3" />
   </head>
   <body>
     <main class="app">
@@ -45,26 +45,6 @@
       <section class="stats" data-stats></section>
 
       <section class="view" data-view="overview">
-        <div class="dashboard-layout">
-          <div class="dashboard-main">
-            <article class="panel">
-              <div class="panel-head">
-                <h2>Needs RA From Me</h2>
-                <span data-count-needs-ra>0</span>
-              </div>
-              <div data-needs-ra-list class="cadet-grid"></div>
-            </article>
-          </div>
-          <aside class="dashboard-side">
-            <article class="panel">
-              <div class="panel-head">
-                <h2>14 / 28 Day Limits</h2>
-                <span data-count-limits>0</span>
-              </div>
-              <div data-limit-list class="stack"></div>
-            </article>
-          </aside>
-        </div>
         <article class="panel quick-links-panel">
           <div class="panel-head">
             <div class="quick-links-head-copy">
@@ -128,6 +108,26 @@
             </a>
           </div>
         </article>
+        <div class="dashboard-layout">
+          <div class="dashboard-main">
+            <article class="panel">
+              <div class="panel-head">
+                <h2>Needs RA From Me</h2>
+                <span data-count-needs-ra>0</span>
+              </div>
+              <div data-needs-ra-list class="cadet-grid"></div>
+            </article>
+          </div>
+          <aside class="dashboard-side">
+            <article class="panel">
+              <div class="panel-head">
+                <h2>14 / 28 Day Limits</h2>
+                <span data-count-limits>0</span>
+              </div>
+              <div data-limit-list class="stack"></div>
+            </article>
+          </aside>
+        </div>
       </section>
 
       <section class="view is-hidden" data-view="cadets">

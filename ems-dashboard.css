@@ -291,7 +291,7 @@ label {
 }
 
 .quick-links-panel {
-  margin-top: 14px;
+  margin-bottom: 14px;
 }
 
 .quick-links-head-copy {
@@ -313,12 +313,15 @@ label {
   position: relative;
   display: grid;
   gap: 3px;
-  min-height: 58px;
-  border-color: rgba(121, 144, 168, 0.2);
-  background: rgba(13, 18, 25, 0.72);
-  padding: 10px 12px 10px 42px;
+  min-height: 56px;
+  border: 1px solid rgba(248, 162, 162, 0.18);
+  border-radius: 8px;
+  background: rgba(18, 24, 32, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  padding: 10px 12px 10px 48px;
   text-align: left;
   text-decoration: none;
+  transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .quick-link::before {
@@ -327,9 +330,10 @@ label {
   left: 13px;
   display: grid;
   place-items: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
   color: #fff;
   font-size: 0.82rem;
   font-weight: 900;
@@ -338,9 +342,9 @@ label {
 
 .quick-link::after {
   position: absolute;
-  top: 20px;
-  left: 17px;
-  width: 10px;
+  top: 24px;
+  left: 20px;
+  width: 9px;
   height: 3px;
   border-radius: 99px;
   background: #fff;
@@ -370,9 +374,11 @@ label {
 
 .quick-link:hover,
 .quick-link:focus-visible {
-  border-color: rgba(248, 162, 162, 0.44);
-  background: rgba(18, 24, 32, 0.94);
+  border-color: rgba(248, 162, 162, 0.58);
+  background: rgba(23, 31, 42, 0.98);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), 0 8px 18px rgba(0, 0, 0, 0.18);
   outline: none;
+  transform: translateY(-1px);
 }
 
 .quick-link.is-placeholder {
