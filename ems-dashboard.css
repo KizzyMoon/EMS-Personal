@@ -292,6 +292,7 @@ label {
 
 .quick-links-panel {
   margin-bottom: 14px;
+  padding: 12px;
 }
 
 .quick-links-head-copy {
@@ -305,18 +306,18 @@ label {
 
 .quick-links-groups {
   display: grid;
-  gap: 14px;
+  gap: 9px;
 }
 
 .quick-link-category {
   display: grid;
-  gap: 8px;
+  gap: 5px;
 }
 
 .quick-link-category h3 {
   margin: 0;
   color: var(--accent);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -324,20 +325,20 @@ label {
 
 .quick-links-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 7px;
 }
 
 .quick-link {
   position: relative;
   display: grid;
-  gap: 3px;
-  min-height: 56px;
+  gap: 1px;
+  min-height: 42px;
   border: 1px solid rgba(248, 162, 162, 0.18);
   border-radius: 8px;
   background: rgba(18, 24, 32, 0.92);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
-  padding: 10px 12px 10px 48px;
+  padding: 7px 10px 7px 38px;
   text-align: left;
   text-decoration: none;
   transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
@@ -345,14 +346,14 @@ label {
 
 .quick-link::before {
   position: absolute;
-  top: 14px;
-  left: 13px;
+  top: 10px;
+  left: 10px;
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 7px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
   color: #fff;
   font-size: 0.82rem;
   font-weight: 900;
@@ -361,9 +362,9 @@ label {
 
 .quick-link::after {
   position: absolute;
-  top: 24px;
-  left: 20px;
-  width: 9px;
+  top: 18px;
+  left: 16px;
+  width: 8px;
   height: 3px;
   border-radius: 99px;
   background: #fff;
@@ -380,14 +381,14 @@ label {
 
 .quick-link span {
   color: #fff;
-  font-size: 0.86rem;
+  font-size: 0.78rem;
   font-weight: 900;
   line-height: 1.2;
 }
 
 .quick-link small {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 800;
 }
 
