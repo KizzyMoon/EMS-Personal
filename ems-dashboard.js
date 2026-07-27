@@ -40,6 +40,8 @@ let activeTab = localStorage.getItem(ACTIVE_TAB_KEY) || "overview";
 let googleTokenClient = null;
 let googleAccessToken = "";
 let cloudSaveTimer = null;
+let lastCloudSaveError = "";
+let lastCloudSaveErrorAt = 0;
 
 const els = {
   lastUpdated: document.querySelector("[data-last-updated]"),
@@ -686,11 +688,20 @@ async function savePersonalCloudData(options = {}) {
 }
 
 function schedulePersonalCloudSave() {
-  if (!googleAccessToken || !state.settings?.storageUrl) return;
+  if (!state.settings?.storageUrl) return;
   window.clearTimeout(cloudSaveTimer);
   cloudSaveTimer = window.setTimeout(() => {
-    savePersonalCloudData({ prompt: "" }).catch((error) => console.warn("Personal dashboard cloud save failed:", error));
+    savePersonalCloudData({ prompt: "" }).catch((error) => notifyCloudError(error, "Auto-save failed"));
   }, 900);
+}
+
+function notifyCloudError(error, title = "Google sync failed") {
+  const message = error?.message || String(error || "Something went wrong.");
+  const now = Date.now();
+  if (message === lastCloudSaveError && now - lastCloudSaveErrorAt < 30000) return;
+  lastCloudSaveError = message;
+  lastCloudSaveErrorAt = now;
+  alert(`${title}.\n\n${message}`);
 }
 
 async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) {
@@ -1112,9 +1123,8 @@ async function importGoogleSheet(options = {}) {
   if (silent) return { cadetCount, rosterCount, errors };
   if (errors.length) {
     alert(`Synced with issues.\n\nImported ${cadetCount} cadet row(s) and ${rosterCount} roster row(s).\n\n${errors.join("\n")}`);
-  } else {
-    alert(`Synced ${cadetCount} cadet row(s) and ${rosterCount} roster row(s).`);
   }
+  return { cadetCount, rosterCount, errors };
 }
 
 function filteredCadets() {
@@ -1702,7 +1712,6 @@ function saveSettings() {
   googleTokenClient = null;
   saveState();
   render();
-  alert(`Settings saved. Your RA callsign is ${state.settings.myCallsign}. Sync the sheet again to refresh Needs RA From Me.`);
 }
 
 function findCadetBySearch(value = "") {
@@ -1783,7 +1792,6 @@ document.addEventListener("click", async (event) => {
       await ensureGoogleAccessToken({ prompt: "consent", force: true });
       await loadPersonalCloudData({ prompt: "" });
       render();
-      alert("Google sign-in connected. Your personal dashboard data has been loaded.");
     } catch (error) {
       alert(error.message);
     }
@@ -1799,7 +1807,6 @@ document.addEventListener("click", async (event) => {
         await loadPersonalCloudData({ prompt: "consent", force: true });
       }
       render();
-      alert("Loaded your personal dashboard data from Google Sheets.");
     } catch (error) {
       alert(error.message);
     }
@@ -1812,7 +1819,6 @@ document.addEventListener("click", async (event) => {
         googleAccessToken = "";
         await savePersonalCloudData({ prompt: "consent", force: true });
       }
-      alert("Saved your personal dashboard data to Google Sheets.");
     } catch (error) {
       alert(error.message);
     }
@@ -1917,9 +1923,10 @@ document.addEventListener("keydown", (event) => {
 
 async function autoSyncGoogleSheets() {
   try {
-    await importGoogleSheet({ silent: true, prompt: "" });
-  } catch {
-    // Auto-sync is best-effort. Manual Google Sign In / Sync Sheet will show useful errors.
+    const result = await importGoogleSheet({ silent: true, prompt: "" });
+    if (result?.errors?.length) notifyCloudError(new Error(result.errors.join("\n")), "Auto-sync had issues");
+  } catch (error) {
+    notifyCloudError(error, "Auto-sync failed");
   }
 }
 
