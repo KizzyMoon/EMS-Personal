@@ -117,6 +117,9 @@ nav {
 
 nav button,
 .sidebar-settings-button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   min-height: 36px;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -126,6 +129,13 @@ nav button,
   text-align: left;
 }
 
+.nav-icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
 nav button.active,
 .sidebar-settings-button.active {
   border-color: rgba(248, 162, 162, 0.34);
@@ -133,7 +143,8 @@ nav button.active,
   color: #fff;
 }
 
-.mobile-quick-tab {
+.mobile-quick-tab,
+.mobile-settings-tab {
   display: none;
 }
 
@@ -1277,24 +1288,27 @@ menu {
     text-align: center;
   }
 
-  .mobile-quick-tab {
-    display: block;
+  nav button {
+    justify-content: center;
   }
 
-  .sidebar-quick-links {
+  nav button span {
     display: none;
   }
 
+  .nav-icon {
+    width: 23px;
+    height: 23px;
+  }
+
+  .mobile-quick-tab,
+  .mobile-settings-tab {
+    display: flex;
+  }
+
+  .sidebar-quick-links,
   .sidebar-settings-button {
-    position: fixed;
-    right: 17px;
-    bottom: calc(17px + env(safe-area-inset-bottom));
-    z-index: 31;
-    width: calc((100vw - 34px - 25px) / 6);
-    min-width: 0;
-    margin-top: 0;
-    padding-right: 2px;
-    padding-left: 2px;
+    display: none;
   }
 
   .toolbar,
@@ -1344,8 +1358,13 @@ menu {
   .sidebar-settings-button {
     min-height: 34px;
     border-radius: 8px;
-    padding: 5px 2px;
+    padding: 6px 2px;
     font-size: 0.68rem;
+  }
+
+  .nav-icon {
+    width: 24px;
+    height: 24px;
   }
 
   .toolbar {

@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260728-1" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260728-2" />
   </head>
   <body>
     <main class="app">
@@ -22,11 +22,30 @@
           </span>
         </a>
         <nav aria-label="Dashboard sections">
-          <button class="active" data-tab="overview" type="button">Overview</button>
-          <button data-tab="cadets" type="button">Cadets</button>
-          <button data-tab="directory" type="button">Roster</button>
-          <button data-tab="cheat-sheet" type="button">Cheat Sheet</button>
-          <button class="mobile-quick-tab" data-tab="quick-links" type="button">Links</button>
+          <button class="active" data-tab="overview" type="button" aria-label="Overview">
+            <img class="nav-icon" src="nav-overview.png?v=20260728-1" alt="" />
+            <span>Overview</span>
+          </button>
+          <button data-tab="cadets" type="button" aria-label="Cadets">
+            <img class="nav-icon" src="nav-cadets.png?v=20260728-1" alt="" />
+            <span>Cadets</span>
+          </button>
+          <button data-tab="directory" type="button" aria-label="Roster">
+            <img class="nav-icon" src="ems-favicon.png?v=20260722-2" alt="" />
+            <span>Roster</span>
+          </button>
+          <button data-tab="cheat-sheet" type="button" aria-label="Cheat Sheet">
+            <img class="nav-icon" src="nav-cheat-sheet.png?v=20260728-1" alt="" />
+            <span>Cheat Sheet</span>
+          </button>
+          <button class="mobile-quick-tab" data-tab="quick-links" type="button" aria-label="Quick Links">
+            <img class="nav-icon" src="nav-quick-links.png?v=20260728-1" alt="" />
+            <span>Links</span>
+          </button>
+          <button class="mobile-settings-tab" data-tab="settings" type="button" aria-label="Settings">
+            <img class="nav-icon" src="nav-settings.svg?v=20260728-1" alt="" />
+            <span>Settings</span>
+          </button>
         </nav>
         <section class="sidebar-quick-links" aria-label="Quick links">
           <h2>Quick Links</h2>
@@ -89,7 +108,10 @@
             </section>
           </div>
         </section>
-        <button class="sidebar-settings-button" data-tab="settings" type="button">Settings</button>
+        <button class="sidebar-settings-button" data-tab="settings" type="button" aria-label="Settings">
+          <img class="nav-icon" src="nav-settings.svg?v=20260728-1" alt="" />
+          <span>Settings</span>
+        </button>
       </header>
 
       <section class="toolbar">
