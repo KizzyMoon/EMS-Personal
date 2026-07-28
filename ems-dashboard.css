@@ -133,6 +133,10 @@ nav button.active,
   color: #fff;
 }
 
+.mobile-quick-tab {
+  display: none;
+}
+
 .sidebar-settings-button {
   margin-top: auto;
 }
@@ -1232,6 +1236,10 @@ menu {
 }
 
 @media (max-width: 1050px) {
+  body {
+    padding-bottom: calc(74px + env(safe-area-inset-bottom));
+  }
+
   .app {
     grid-template-columns: 1fr;
   }
@@ -1243,18 +1251,34 @@ menu {
     height: auto;
     border-right: 0;
     border-bottom: 1px solid var(--line);
-    padding: 10px 12px 0;
+    padding: 10px 12px;
   }
 
   nav {
-    flex-direction: row;
-    overflow-x: auto;
+    position: fixed;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    left: 10px;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 5px;
+    overflow: visible;
+    border: 1px solid rgba(248, 162, 162, 0.2);
+    border-radius: 12px;
+    background: rgba(7, 11, 16, 0.94);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    padding: 7px;
+    backdrop-filter: blur(18px);
   }
 
   nav button,
   .sidebar-settings-button {
-    flex: 0 0 auto;
     text-align: center;
+  }
+
+  .mobile-quick-tab {
+    display: block;
   }
 
   .sidebar-quick-links {
@@ -1262,8 +1286,15 @@ menu {
   }
 
   .sidebar-settings-button {
+    position: fixed;
+    right: 17px;
+    bottom: calc(17px + env(safe-area-inset-bottom));
+    z-index: 31;
+    width: calc((100vw - 34px - 25px) / 6);
+    min-width: 0;
     margin-top: 0;
-    align-self: flex-start;
+    padding-right: 2px;
+    padding-left: 2px;
   }
 
   .toolbar,
@@ -1274,7 +1305,7 @@ menu {
 
   .toolbar {
     grid-row: 2;
-    top: 73px;
+    top: 63px;
   }
 
   .stats {
@@ -1297,7 +1328,7 @@ menu {
 @media (max-width: 720px) {
   .topbar {
     gap: 8px;
-    padding: 8px 10px 0;
+    padding: 8px 10px;
   }
 
   .brand {
@@ -1305,22 +1336,23 @@ menu {
   }
 
   nav {
-    gap: 10px;
-    padding-bottom: 0;
+    gap: 4px;
+    padding: 6px;
   }
 
   nav button,
   .sidebar-settings-button {
-    flex: 0 0 auto;
     min-height: 34px;
-    padding: 6px 0 9px;
+    border-radius: 8px;
+    padding: 5px 2px;
+    font-size: 0.68rem;
   }
 
   .toolbar {
     align-items: stretch;
     flex-direction: column;
     padding: 10px 12px;
-    top: 86px;
+    top: 58px;
   }
 
   .toolbar input,
