@@ -2715,3 +2715,20 @@ body {
     flex-wrap: wrap;
   }
 }
+
+
+/* Full RA Focus notes for trained cadets */
+.ra-focus-note + .ra-focus-note {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+}
+
+.ra-focus-note strong {
+  color: #fff;
+  font-size: 0.74rem;
+}
+
+.ra-focus-note p {
+  margin: 4px 0 0;
+}

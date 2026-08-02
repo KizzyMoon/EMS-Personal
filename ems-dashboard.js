@@ -2296,15 +2296,15 @@ function raOfferHistory(cadet) {
 function openCadetSheetNotes(cadet) {
   if (!cadet) return;
 
-  const bottomNotes = cadet.sheetNotes?.length
+  const bottomNotes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
     ? cadet.sheetNotes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")
     : `<p class="muted">No personal sheet notes synced yet. Click Sync Sheet after signing in, or check that ${escapeHtml(cadet.callsign || cadet.name)} has notes at the bottom of their sheet.</p>`;
 
-  const needsDayOne = !cadet.day1;
-
   els.dialogTitle.textContent = `${cadet.name || "Cadet"} - RA Focus`;
 
-  if (needsDayOne) {
+  // Cadets who have not completed Day 1 are not ready for an RA yet.
+  // Keep this popup intentionally minimal.
+  if (!cadet.day1) {
     els.dialogBody.innerHTML = `
       <section class="dialog-section">
         <h3>Needs Training</h3>
@@ -2316,43 +2316,80 @@ function openCadetSheetNotes(cadet) {
         ${bottomNotes}
       </section>
     `;
-  } else {
-    const struggles = focusGroupsHtml(cadet.latestStruggles, "No red or orange items found on their most recent RA.");
-    const unassessed = focusGroupsHtml(cadet.unassessedItems, "All required checked items have at least one assessment.");
-    const offerNotes = (cadet.raOffers || []).length
-      ? [...cadet.raOffers]
-          .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
-          .map((offer) => `<p>${escapeHtml(new Date(offer.createdAt).toLocaleString("en-GB"))}</p>`)
-          .join("")
-      : `<p class="muted">No RA offers logged yet.</p>`;
 
-    els.dialogBody.innerHTML = `
-      <section class="dialog-section dialog-offer-summary">
-        <h3>RAs Offered</h3>
-        <span>${(cadet.raOffers || []).length}</span>
-      </section>
-
-      <section class="dialog-section">
-        <h3>Most Recent RA Struggles</h3>
-        ${struggles}
-      </section>
-
-      <section class="dialog-section">
-        <h3>Still Needs To Do</h3>
-        ${unassessed}
-      </section>
-
-      <section class="dialog-section">
-        <h3>Bottom Sheet Notes</h3>
-        ${bottomNotes}
-      </section>
-
-      <section class="dialog-section">
-        <h3>RA Offered Notes</h3>
-        ${offerNotes}
-      </section>
-    `;
+    els.dialogSave.hidden = true;
+    els.dialog.showModal();
+    return;
   }
+
+  // Day 1 trained cadets get the full RA Focus view.
+  const struggles = focusGroupsHtml(
+    cadet.latestStruggles,
+    "No red or orange items found on their most recent RA."
+  );
+
+  const unassessed = focusGroupsHtml(
+    cadet.unassessedItems,
+    "All required checked items have at least one assessment."
+  );
+
+  const raOfferNotes = Array.isArray(cadet.raOffers) && cadet.raOffers.length
+    ? [...cadet.raOffers]
+        .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
+        .map((offer) => {
+          const dateText = offer.createdAt
+            ? new Date(offer.createdAt).toLocaleString("en-GB")
+            : "Date not recorded";
+          const noteText = offer.note || offer.notes || offer.message || "";
+          return `
+            <div class="ra-focus-note">
+              <strong>${escapeHtml(dateText)}</strong>
+              ${noteText ? `<p>${escapeHtml(noteText)}</p>` : ""}
+            </div>
+          `;
+        })
+        .join("")
+    : `<p class="muted">No RA offers logged yet.</p>`;
+
+  const externalRaNotes = Array.isArray(cadet.raNotes) && cadet.raNotes.length
+    ? cadet.raNotes.map((note) => `
+        <div class="ra-focus-note">
+          ${note.ftoName || note.fto || note.author
+            ? `<strong>${escapeHtml(note.ftoName || note.fto || note.author)}</strong>`
+            : ""}
+          <p>${escapeHtml(note.note || note.notes || note.text || String(note))}</p>
+        </div>
+      `).join("")
+    : "";
+
+  const combinedRaNotes = externalRaNotes || raOfferNotes;
+
+  els.dialogBody.innerHTML = `
+    <section class="dialog-section dialog-offer-summary">
+      <h3>RAs Offered</h3>
+      <span>${Array.isArray(cadet.raOffers) ? cadet.raOffers.length : 0}</span>
+    </section>
+
+    <section class="dialog-section">
+      <h3>Most Recent RA Struggles</h3>
+      ${struggles}
+    </section>
+
+    <section class="dialog-section">
+      <h3>Still Needs To Do</h3>
+      ${unassessed}
+    </section>
+
+    <section class="dialog-section">
+      <h3>Bottom Sheet Notes</h3>
+      ${bottomNotes}
+    </section>
+
+    <section class="dialog-section">
+      <h3>RA Notes</h3>
+      ${combinedRaNotes}
+    </section>
+  `;
 
   els.dialogSave.hidden = true;
   els.dialog.showModal();
