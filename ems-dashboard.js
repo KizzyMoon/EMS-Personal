@@ -81,6 +81,9 @@ const els = {
   cadetLimitList: document.querySelector("[data-cadet-limit-list]"),
   directory: document.querySelector("[data-directory]"),
   qualificationsList: document.querySelector("[data-qualifications-list]"),
+  recentRosterChanges: document.querySelector("[data-recent-roster-changes]"),
+  upcomingBirthdays: document.querySelector("[data-upcoming-birthdays]"),
+  rosterUpdatePanel: document.querySelector("[data-roster-update-panel]"),
   notesList: document.querySelector("[data-notes-list]"),
   needsRaCount: document.querySelector("[data-count-needs-ra]"),
   needsTrainingCount: document.querySelector("[data-count-needs-training]"),
@@ -109,11 +112,13 @@ function loadState() {
       members: Array.isArray(saved.members) ? saved.members.map(normalizeMember) : [],
       notes: Array.isArray(saved.notes) ? saved.notes.map(normalizeNote) : [],
       pingOffers: Array.isArray(saved.pingOffers) ? saved.pingOffers.map(normalizePingOffer).filter((offer) => offer.createdAt) : [],
+      rosterChanges: Array.isArray(saved.rosterChanges) ? saved.rosterChanges.map(normalizeRosterChange) : [],
+      rosterUpdate: normalizeRosterUpdate(saved.rosterUpdate),
       settings: normalizeSettings(saved.settings),
       lastUpdated: saved.lastUpdated || ""
     };
   } catch {
-    return { cadets: [], members: [], notes: [], pingOffers: [], settings: normalizeSettings(), lastUpdated: "" };
+    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), settings: normalizeSettings(), lastUpdated: "" };
   }
 }
 
@@ -298,6 +303,42 @@ function normalizePingOffer(raw = {}) {
   };
 }
 
+
+function normalizeRosterChange(raw = {}) {
+  return {
+    id: raw.id || crypto.randomUUID(),
+    type: raw.type || "updated",
+    memberName: raw.memberName || "",
+    fromRank: raw.fromRank || "",
+    toRank: raw.toRank || "",
+    createdAt: raw.createdAt || new Date().toISOString()
+  };
+}
+
+function normalizeRosterUpdate(raw = {}) {
+  return {
+    lastUpdated: raw?.lastUpdated || "",
+    joined: Number(raw?.joined || 0),
+    promotions: Number(raw?.promotions || 0),
+    left: Number(raw?.left || 0)
+  };
+}
+
+function parseBirthday(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const date = parseDate(raw);
+  if (date) return date.slice(5);
+
+  const match = raw.match(/^(\d{1,2})[\/. -](\d{1,2})(?:[\/. -]\d{2,4})?$/);
+  if (!match) return "";
+
+  const day = String(Number(match[1])).padStart(2, "0");
+  const month = String(Number(match[2])).padStart(2, "0");
+  return `${month}-${day}`;
+}
+
 function normalizeMember(raw = {}) {
   return {
     id: raw.id || crypto.randomUUID(),
@@ -308,6 +349,8 @@ function normalizeMember(raw = {}) {
     steamName: raw.steamName || "",
     discordId: raw.discordId || "",
     timezone: raw.timezone || "",
+    birthday: parseBirthday(raw.birthday || raw.dateOfBirth || raw.dob),
+    joinDate: parseDate(raw.joinDate || raw.dateJoined || raw.hired || raw.hireDate),
     tags: Array.isArray(raw.tags) ? raw.tags.filter(Boolean) : [],
     role: raw.role || raw.department || "EMS",
     status: raw.status || "Active",
@@ -365,6 +408,8 @@ function memberFromRow(row) {
     steamName: pick(row, ["Steam Name", "Steam"]),
     discordId: pick(row, ["Discord ID", "Discord"]),
     timezone: pick(row, ["Timezone", "Time Zone", "TZ"]),
+    birthday: pick(row, ["Birthday", "Date of Birth", "DOB", "Birth Date"]),
+    joinDate: pick(row, ["Join Date", "Date Joined", "Hired", "Hire Date", "Start Date"]),
     role: pick(row, ["Role", "Department", "Division"]) || "EMS",
     tags: row.__roleTags || [],
     status: pick(row, ["Status", "Current Status"]) || "Active",
@@ -465,9 +510,72 @@ function importRows(rows) {
 }
 
 function importRosterRows(rows) {
-  const memberRows = rows.map(memberFromRow).filter((member) => member.name || member.callsign || member.employeeNumber);
-  state.members = replaceMembers(state.members, memberRows);
-  state.lastUpdated = new Date().toISOString();
+  const previousMembers = [...state.members];
+  const memberRows = rows
+    .map(memberFromRow)
+    .filter((member) => member.name || member.callsign || member.employeeNumber);
+
+  const nextMembers = replaceMembers(state.members, memberRows);
+  const previousByKey = new Map(previousMembers.map((member) => [memberKey(member), member]));
+  const nextByKey = new Map(nextMembers.map((member) => [memberKey(member), member]));
+
+  const changes = [];
+  let joined = 0;
+  let promotions = 0;
+  let left = 0;
+  const now = new Date().toISOString();
+
+  for (const [key, member] of nextByKey) {
+    const previous = previousByKey.get(key);
+
+    if (!previous) {
+      joined += 1;
+      changes.push(normalizeRosterChange({
+        type: "joined",
+        memberName: member.name,
+        toRank: member.rank,
+        createdAt: now
+      }));
+      continue;
+    }
+
+    if (String(previous.rank || "") !== String(member.rank || "")) {
+      promotions += 1;
+      changes.push(normalizeRosterChange({
+        type: "promotion",
+        memberName: member.name,
+        fromRank: previous.rank,
+        toRank: member.rank,
+        createdAt: now
+      }));
+    }
+  }
+
+  for (const [key, member] of previousByKey) {
+    if (!nextByKey.has(key)) {
+      left += 1;
+      changes.push(normalizeRosterChange({
+        type: "left",
+        memberName: member.name,
+        fromRank: member.rank,
+        createdAt: now
+      }));
+    }
+  }
+
+  state.members = nextMembers;
+  state.rosterChanges = [
+    ...changes,
+    ...(state.rosterChanges || [])
+  ].slice(0, 30);
+  state.rosterUpdate = {
+    lastUpdated: now,
+    joined,
+    promotions,
+    left
+  };
+  state.lastUpdated = now;
+
   saveState();
   render();
   return memberRows.length;
@@ -1737,7 +1845,7 @@ function roleTagRow(tags = []) {
     }
 
     if (role === "HART") {
-      return `<span class="pill hart qualification-pill" title="HART">🚁 HART</span>`;
+      return `<span class="pill hart qualification-pill" title="HART">HART</span>`;
     }
 
     return rolePill(role);
@@ -2182,6 +2290,39 @@ function renderCadets() {
   renderRaOffers();
 }
 
+
+function upcomingBirthday(member) {
+  if (!member.birthday) return null;
+
+  const [month, day] = member.birthday.split("-").map(Number);
+  if (!month || !day) return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let date = new Date(today.getFullYear(), month - 1, day);
+  if (date < today) date = new Date(today.getFullYear() + 1, month - 1, day);
+
+  return {
+    member,
+    date,
+    days: Math.ceil((date - today) / 86400000)
+  };
+}
+
+function relativeChangeTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.valueOf())) return "";
+
+  const days = Math.max(0, Math.floor((Date.now() - date.valueOf()) / 86400000));
+  if (days === 0) return "Today";
+  if (days === 1) return "1 day ago";
+  if (days < 7) return `${days} days ago`;
+
+  const weeks = Math.floor(days / 7);
+  return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;
+}
+
 function renderDirectory() {
   const query = els.search.value.trim().toLowerCase();
   const members = state.members.filter((member) =>
@@ -2216,7 +2357,7 @@ function renderDirectory() {
     const qualifications = [
       { role: "FTO", label: "FTO", icon: "", className: "fto" },
       { role: "Doctor", label: "Doctor", icon: "", className: "doctor" },
-      { role: "HART", label: "HART", icon: "🚁", className: "hart" },
+      { role: "HART", label: "HART", icon: "", className: "hart" },
       { role: "MET", label: "MET", icon: "", className: "met" }
     ];
 
@@ -2238,6 +2379,86 @@ function renderDirectory() {
       `;
     }).join("");
   }
+
+  if (els.recentRosterChanges) {
+    const changes = (state.rosterChanges || []).slice(0, 5);
+
+    els.recentRosterChanges.innerHTML = changes.length
+      ? changes.map((change) => {
+          const detail = change.type === "promotion"
+            ? `${change.fromRank || "Unknown"} → ${change.toRank || "Unknown"}`
+            : change.type === "joined"
+              ? `Joined EMS${change.toRank ? ` as ${change.toRank}` : ""}`
+              : `Left EMS${change.fromRank ? ` from ${change.fromRank}` : ""}`;
+
+          return `
+            <div class="roster-side-row roster-change-row">
+              <div>
+                <strong>${escapeHtml(change.memberName || "Unknown member")}</strong>
+                <span>${escapeHtml(detail)}</span>
+              </div>
+              <small>${escapeHtml(relativeChangeTime(change.createdAt))}</small>
+            </div>
+          `;
+        }).join("")
+      : `<p class="roster-side-empty">No roster changes have been recorded yet.</p>`;
+  }
+
+  if (els.upcomingBirthdays) {
+    const birthdays = state.members
+      .map(upcomingBirthday)
+      .filter(Boolean)
+      .sort((a, b) => a.date - b.date)
+      .slice(0, 5);
+
+    els.upcomingBirthdays.innerHTML = birthdays.length
+      ? birthdays.map((birthday) => `
+          <div class="roster-side-row birthday-row">
+            <strong>${escapeHtml(birthday.member.name || "Unknown member")}</strong>
+            <span>${escapeHtml(
+              birthday.date.toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short"
+              })
+            )}</span>
+            <small>${birthday.days === 0 ? "Today" : `In ${birthday.days} day${birthday.days === 1 ? "" : "s"}`}</small>
+          </div>
+        `).join("")
+      : `<p class="roster-side-empty">No birthdays were found in the roster sheet.</p>`;
+  }
+
+  if (els.rosterUpdatePanel) {
+    const update = state.rosterUpdate || normalizeRosterUpdate();
+    const lastUpdated = update.lastUpdated
+      ? new Date(update.lastUpdated)
+      : null;
+
+    els.rosterUpdatePanel.innerHTML = `
+      <div class="roster-update-time">
+        <span>Last updated</span>
+        <strong>${lastUpdated
+          ? escapeHtml(lastUpdated.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric"
+            }))
+          : "Not synced"}</strong>
+        <b>${lastUpdated
+          ? escapeHtml(lastUpdated.toLocaleTimeString("en-GB", {
+              hour: "2-digit",
+              minute: "2-digit"
+            }))
+          : "--:--"}</b>
+      </div>
+
+      <div class="roster-update-counts">
+        <div><strong class="joined">${update.joined}</strong><span>Joined</span></div>
+        <div><strong class="promoted">${update.promotions}</strong><span>Promotions</span></div>
+        <div><strong class="left">${update.left}</strong><span>Left</span></div>
+      </div>
+    `;
+  }
+
 }
 
 function renderNotes() {

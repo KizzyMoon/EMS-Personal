@@ -3502,3 +3502,140 @@ dialog menu {
     justify-content: start;
   }
 }
+
+
+/* Roster side information panels */
+.roster-page-side {
+  display: grid;
+  gap: 10px;
+}
+
+.roster-side-panel {
+  padding: 12px;
+}
+
+.roster-side-panel .panel-head {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0;
+  padding-bottom: 9px;
+}
+
+.roster-side-list {
+  display: grid;
+}
+
+.roster-side-row {
+  display: grid;
+  align-items: center;
+  gap: 4px 9px;
+  border-bottom: 1px solid var(--line);
+  padding: 9px 1px;
+}
+
+.roster-side-row:last-child {
+  border-bottom: 0;
+}
+
+.roster-change-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.roster-change-row > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.roster-side-row strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roster-side-row span {
+  color: var(--muted);
+  font-size: 0.64rem;
+}
+
+.roster-side-row small {
+  color: #aab5c4;
+  font-size: 0.6rem;
+  white-space: nowrap;
+}
+
+.birthday-row {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.roster-side-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.35;
+  padding: 12px 1px 4px;
+}
+
+.roster-update-card > [data-roster-update-panel] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  padding-top: 10px;
+}
+
+.roster-update-time {
+  display: grid;
+  gap: 2px;
+}
+
+.roster-update-time span {
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+
+.roster-update-time strong {
+  color: #fff;
+  font-size: 0.69rem;
+}
+
+.roster-update-time b {
+  color: #fff;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.roster-update-counts {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 12px;
+}
+
+.roster-update-counts div {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+
+.roster-update-counts strong {
+  font-size: 0.78rem;
+}
+
+.roster-update-counts .joined,
+.roster-update-counts .promoted {
+  color: var(--green);
+}
+
+.roster-update-counts .left {
+  color: #ff6b81;
+}
+
+.roster-update-counts span {
+  color: var(--muted);
+  font-size: 0.55rem;
+}
+
+.qualification-heli {
+  display: none;
+}
