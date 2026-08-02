@@ -1915,6 +1915,42 @@ function overviewTodoRow(cadet, type) {
   `;
 }
 
+function overviewLimitItem(cadet) {
+  const days = daysUntil(cadet.day28Due);
+  const safeDays = days === null ? 28 : Math.max(0, Math.min(28, days));
+  const elapsed = 28 - safeDays;
+  const progress = Math.max(0, Math.min(100, Math.round((elapsed / 28) * 100)));
+
+  let urgency = "limit-safe";
+  if (days !== null && days <= 2) urgency = "limit-critical";
+  else if (days !== null && days <= 7) urgency = "limit-warning";
+  else if (days !== null && days <= 14) urgency = "limit-watch";
+
+  const dayText = days === null
+    ? "NO DATE SET"
+    : days < 0
+      ? `${Math.abs(days)} DAY${Math.abs(days) === 1 ? "" : "S"} OVERDUE`
+      : `${days} DAY${days === 1 ? "" : "S"} LEFT`;
+
+  return `
+    <button class="overview-limit-item ${urgency}" type="button" data-view-sheet-notes="${cadet.id}">
+      <span class="overview-limit-countdown">${escapeHtml(dayText)}</span>
+      <strong class="overview-limit-name">${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+      <span class="overview-limit-details">${escapeHtml([
+        cadet.callsign,
+        cadet.employeeNumber ? `#${cadet.employeeNumber}` : "",
+        cadet.rank || "Cadet"
+      ].filter(Boolean).join(" • "))}</span>
+      <span class="overview-limit-progress">
+        <span class="overview-limit-track">
+          <span class="overview-limit-fill" style="width:${progress}%"></span>
+        </span>
+        <strong>${progress}%</strong>
+      </span>
+    </button>
+  `;
+}
+
 function renderOverview() {
   const cadets = filteredCadets();
   const needsRaItems = cadets.filter(needsRa);
@@ -1939,7 +1975,12 @@ function renderOverview() {
 
   if (els.limitList) {
     els.limitList.innerHTML = limitItems.length
-      ? limitItems.slice(0, 4).map((cadet) => overviewCadetCard(cadet, { showRaPill: true })).join("")
+      ? limitItems
+          .slice()
+          .sort((a, b) => (daysUntil(a.day28Due) ?? 999) - (daysUntil(b.day28Due) ?? 999))
+          .slice(0, 4)
+          .map(overviewLimitItem)
+          .join("")
       : empty("No cadets are close to their 14/28 day limits.");
   }
 }

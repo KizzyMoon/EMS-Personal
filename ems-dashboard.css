@@ -2359,3 +2359,215 @@ body {
   height: 18px;
   object-fit: contain;
 }
+
+
+/* Align Schedule panel width with the Roster stat card above */
+.overview-dashboard {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.overview-primary-grid {
+  width: 100%;
+}
+
+.overview-schedule-panel {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+}
+
+@media (min-width: 1181px) {
+  .overview-dashboard {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
+
+
+.view.overview-dashboard {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+
+/* Remove circular backgrounds behind overview stat icons */
+.stat-icon{
+  width:auto !important;
+  height:auto !important;
+  background:transparent !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+}
+
+.stat-icon-img{
+  width:34px !important;
+  height:34px !important;
+  display:block;
+}
+
+
+/* Cadets approaching limit: compact horizontal layout, no icons */
+.overview-limit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(7, 11, 16, 0.42);
+}
+
+.overview-limit-item {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  min-height: 118px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  padding: 13px 16px 12px;
+  text-align: left;
+}
+
+.overview-limit-item:last-child {
+  border-right: 0;
+}
+
+.overview-limit-item:hover,
+.overview-limit-item:focus-visible {
+  background: rgba(241, 154, 176, 0.055);
+  outline: none;
+}
+
+.overview-limit-countdown {
+  color: var(--overview-pink);
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+}
+
+.overview-limit-name {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.83rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-limit-details {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-limit-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.overview-limit-track {
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.overview-limit-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--overview-pink);
+}
+
+.overview-limit-progress > strong {
+  color: var(--overview-pink);
+  font-size: 0.68rem;
+}
+
+.overview-limit-item.limit-critical .overview-limit-countdown,
+.overview-limit-item.limit-critical .overview-limit-progress > strong {
+  color: #ff7fa5;
+}
+
+.overview-limit-item.limit-critical .overview-limit-fill {
+  background: #ff7fa5;
+}
+
+.overview-limit-item.limit-warning .overview-limit-countdown,
+.overview-limit-item.limit-warning .overview-limit-progress > strong {
+  color: #ff8a24;
+}
+
+.overview-limit-item.limit-warning .overview-limit-fill {
+  background: #ff8a24;
+}
+
+.overview-limit-item.limit-watch .overview-limit-countdown,
+.overview-limit-item.limit-watch .overview-limit-progress > strong {
+  color: #f5bd27;
+}
+
+.overview-limit-item.limit-watch .overview-limit-fill {
+  background: #f5bd27;
+}
+
+.overview-limit-item.limit-safe .overview-limit-countdown,
+.overview-limit-item.limit-safe .overview-limit-progress > strong {
+  color: #e6b91f;
+}
+
+.overview-limit-item.limit-safe .overview-limit-fill {
+  background: #e6b91f;
+}
+
+.overview-limit-grid .empty {
+  grid-column: 1 / -1;
+}
+
+/* Ensure no decorative icons appear in this section. */
+.overview-limit-item::before,
+.overview-limit-countdown::before {
+  content: none !important;
+  display: none !important;
+}
+
+@media (max-width: 1050px) {
+  .overview-limit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .overview-limit-item:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .overview-limit-item:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 620px) {
+  .overview-limit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-limit-item {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .overview-limit-item:last-child {
+    border-bottom: 0;
+  }
+}
