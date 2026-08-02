@@ -3,6 +3,7 @@ const ACTIVE_TAB_KEY = "highlife-ems-active-tab";
 const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=1321749468#gid=1321749468";
 const DEFAULT_ROSTER_URL = "https://docs.google.com/spreadsheets/d/1b9RV4HZh2Klex6jEq8YarlpzpDMt0F4ohV_GscHbSb8/edit?gid=647224122#gid=647224122";
 const DEFAULT_STORAGE_URL = "https://docs.google.com/spreadsheets/d/15bIY2191kS-cbt8F-qeltWOb0qkK4Anpko2pZaagAm8/edit?usp=sharing";
+const DEFAULT_TRAINING_URL = "https://docs.google.com/spreadsheets/d/1twcPjyyf3tuwq4L12OhmLz6QkF9_u8I5ai5qn9wAisg/edit?gid=0#gid=0";
 const DEFAULT_MY_CALLSIGN = "M3-18";
 const GOOGLE_CLIENT_ID = "210656397822-druudgp358pepcj342slktvmfj5f9ok2.apps.googleusercontent.com";
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
@@ -42,6 +43,9 @@ let googleAccessToken = "";
 let cloudSaveTimer = null;
 let lastCloudSaveError = "";
 let lastCloudSaveErrorAt = 0;
+let liveTrainingSessions = [];
+let trainingLoadState = "loading";
+let trainingLoadMessage = "Refreshing live training information…";
 
 const els = {
   lastUpdated: document.querySelector("[data-last-updated]"),
@@ -50,6 +54,10 @@ const els = {
   googleUrl: document.querySelector("[data-google-url]"),
   rosterUrl: document.querySelector("[data-roster-url]"),
   storageUrl: document.querySelector("[data-storage-url]"),
+  trainingUrl: document.querySelector("[data-training-url]"),
+  myEmployeeNumber: document.querySelector("[data-my-employee-number]"),
+  trainingList: document.querySelector("[data-training-list]"),
+  trainingStatus: document.querySelector("[data-training-status]"),
   csvFile: document.querySelector("[data-csv-file]"),
   search: document.querySelector("[data-search]"),
   statusFilter: document.querySelector("[data-status-filter]"),
@@ -120,11 +128,17 @@ function cellText(cell = {}) {
   return String(cell.formattedValue || "").trim();
 }
 
+function normalizeEmployeeNumber(value) {
+  return String(value || "").trim().replace(/[^0-9A-Za-z-]/g, "").toUpperCase();
+}
+
 function normalizeSettings(raw = {}) {
   return {
     myCallsign: normalizeCallsign(raw.myCallsign || DEFAULT_MY_CALLSIGN),
     googleEmail: String(raw.googleEmail || "").trim(),
-    storageUrl: String(raw.storageUrl || DEFAULT_STORAGE_URL).trim()
+    storageUrl: String(raw.storageUrl || DEFAULT_STORAGE_URL).trim(),
+    myEmployeeNumber: normalizeEmployeeNumber(raw.myEmployeeNumber || ""),
+    trainingUrl: String(raw.trainingUrl || DEFAULT_TRAINING_URL).trim()
   };
 }
 
@@ -613,7 +627,9 @@ function personalStorageRows() {
       ["Key", "Value"],
       ["myCallsign", state.settings?.myCallsign || DEFAULT_MY_CALLSIGN],
       ["googleEmail", state.settings?.googleEmail || ""],
-      ["storageUrl", state.settings?.storageUrl || DEFAULT_STORAGE_URL]
+      ["storageUrl", state.settings?.storageUrl || DEFAULT_STORAGE_URL],
+      ["myEmployeeNumber", state.settings?.myEmployeeNumber || ""],
+      ["trainingUrl", state.settings?.trainingUrl || DEFAULT_TRAINING_URL]
     ],
     raOffers: rowsFromObjects(["id", "cadetId", "cadetName", "callsign", "discordId", "createdAt"], individualOffers),
     pingOffers: rowsFromObjects(["id", "createdAt", "cadetId", "cadetName", "callsign", "discordId"], state.pingOffers || []),
@@ -627,7 +643,9 @@ function applyStorageSettings(values = []) {
     ...state.settings,
     myCallsign: settings.myCallsign || state.settings?.myCallsign,
     googleEmail: settings.googleEmail || state.settings?.googleEmail,
-    storageUrl: settings.storageUrl || state.settings?.storageUrl
+    storageUrl: settings.storageUrl || state.settings?.storageUrl,
+    myEmployeeNumber: settings.myEmployeeNumber || state.settings?.myEmployeeNumber,
+    trainingUrl: settings.trainingUrl || state.settings?.trainingUrl
   });
 }
 
@@ -1089,6 +1107,263 @@ async function importPrivateRosterSheet(options = {}) {
   return importRosterRows(rowsFromGridSheet(sheet || {}));
 }
 
+
+function trainingRawCell(rows, rowNumber, columnNumber) {
+  return String(rows?.[rowNumber - 1]?.[columnNumber - 1] ?? "").trim();
+}
+
+function parseTrainingDate(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const ukDate = raw.match(/^(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{2,4})$/);
+  if (ukDate) {
+    const day = Number(ukDate[1]);
+    const month = Number(ukDate[2]) - 1;
+    const year = Number(ukDate[3].length === 2 ? `20${ukDate[3]}` : ukDate[3]);
+    const date = new Date(year, month, day);
+    if (
+      !Number.isNaN(date.valueOf())
+      && date.getFullYear() === year
+      && date.getMonth() === month
+      && date.getDate() === day
+    ) return date.toISOString().slice(0, 10);
+    return "";
+  }
+
+  return parseDate(raw);
+}
+
+function isUpcomingTrainingDate(dateText) {
+  if (!dateText) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const trainingDate = new Date(`${dateText}T00:00:00`);
+  return !Number.isNaN(trainingDate.valueOf()) && trainingDate >= today;
+}
+
+function trainingDateLabel(dateText) {
+  const days = daysUntil(dateText);
+  if (days === 0) return "Today";
+  if (days === 1) return "Tomorrow";
+  if (days !== null && days > 1 && days <= 7) return `In ${days} days`;
+  return formatDate(dateText);
+}
+
+function findRosterPersonByEmployeeNumber(employeeNumber) {
+  const target = normalizeEmployeeNumber(employeeNumber);
+  if (!target) return null;
+  return state.members.find((member) => normalizeEmployeeNumber(member.employeeNumber) === target)
+    || state.cadets.find((cadet) => normalizeEmployeeNumber(cadet.employeeNumber) === target)
+    || null;
+}
+
+function trainingRoleForPerson(person, section) {
+  if (section === "cadet") return "CADET";
+  const tags = new Set((person?.tags || []).map(normalizeKey));
+  if (tags.has("fto")) return "FTO";
+  const rank = normalizeKey(person?.rank);
+  if (["chief", "deputychief", "captain", "lieutenant", "sergeant"].includes(rank)) return "SUPERVISOR";
+  return "HELPER";
+}
+
+function makeTrainingPerson(employeeNumber, fallbackName, section) {
+  const rosterPerson = findRosterPersonByEmployeeNumber(employeeNumber);
+  return {
+    employeeNumber: normalizeEmployeeNumber(employeeNumber),
+    name: rosterPerson?.name || String(fallbackName || "").trim() || `Employee ${employeeNumber}`,
+    callsign: rosterPerson?.callsign || "",
+    rank: rosterPerson?.rank || (section === "cadet" ? "Cadet" : ""),
+    roleTag: trainingRoleForPerson(rosterPerson, section)
+  };
+}
+
+function trainingSignups(rows, employeeColumn, nameColumn, startRow, endRow, section) {
+  const people = [];
+  for (let row = startRow; row <= endRow; row += 1) {
+    const employeeNumber = trainingRawCell(rows, row, employeeColumn);
+    if (!normalizeEmployeeNumber(employeeNumber)) continue;
+    people.push(makeTrainingPerson(
+      employeeNumber,
+      trainingRawCell(rows, row, nameColumn),
+      section
+    ));
+  }
+  return people;
+}
+
+function parseTrainingSession(rows, config) {
+  const date = parseTrainingDate(trainingRawCell(rows, 11, config.nameColumn));
+  const cadets = trainingSignups(rows, config.employeeColumn, config.nameColumn, 13, 26, "cadet");
+  const staff = trainingSignups(rows, config.employeeColumn, config.nameColumn, 29, 55, "staff");
+  const myEmployeeNumber = normalizeEmployeeNumber(state.settings?.myEmployeeNumber);
+
+  const eligibleCadets = state.cadets.filter((cadet) => {
+    const active = !cadet.status || String(cadet.status).toLowerCase().includes("active");
+    return active && (config.day === 1 ? !cadet.day1 : !cadet.day2);
+  });
+  const eligibleNumbers = new Set(
+    eligibleCadets
+      .map((cadet) => normalizeEmployeeNumber(cadet.employeeNumber))
+      .filter(Boolean)
+  );
+  const eligibleSignedUp = cadets.filter((person) => eligibleNumbers.has(person.employeeNumber)).length;
+
+  return {
+    day: config.day,
+    date,
+    time: trainingRawCell(rows, 11, config.timeColumn),
+    host: trainingRawCell(rows, 11, config.employeeColumn),
+    cadets,
+    staff,
+    signedUp: Boolean(myEmployeeNumber) && [...cadets, ...staff].some(
+      (person) => person.employeeNumber === myEmployeeNumber
+    ),
+    eligibleSignedUp,
+    eligibleTotal: eligibleCadets.length
+  };
+}
+
+function parseUpcomingEuTraining(rows) {
+  return [
+    parseTrainingSession(rows, { day: 1, employeeColumn: 2, nameColumn: 3, timeColumn: 4 }),
+    parseTrainingSession(rows, { day: 2, employeeColumn: 12, nameColumn: 13, timeColumn: 14 })
+  ].filter((session) => isUpcomingTrainingDate(session.date));
+}
+
+function trainingPersonMarkup(person) {
+  const identity = [person.callsign, person.name].filter(Boolean).join(" | ");
+  const roleClass = normalizeKey(person.roleTag);
+  return `
+    <li class="training-person-row">
+      <span class="training-person-tag training-person-tag-${escapeHtml(roleClass)}">${escapeHtml(person.roleTag)}</span>
+      <span title="${escapeHtml(identity)}">${escapeHtml(identity || person.employeeNumber)}</span>
+    </li>
+  `;
+}
+
+function trainingHostMarkup(hostValue) {
+  if (!hostValue) return `<span class="muted">Not entered yet</span>`;
+  const rosterPerson = findRosterPersonByEmployeeNumber(hostValue);
+  if (rosterPerson) {
+    return escapeHtml([rosterPerson.callsign, rosterPerson.name].filter(Boolean).join(" | "));
+  }
+  return escapeHtml(hostValue);
+}
+
+function trainingCardMarkup(session) {
+  const hasEmployeeNumber = Boolean(normalizeEmployeeNumber(state.settings?.myEmployeeNumber));
+  const signupClass = session.signedUp ? "is-signed-up" : "is-not-signed-up";
+  const signupText = hasEmployeeNumber
+    ? (session.signedUp ? "SIGNED UP" : "NOT SIGNED UP")
+    : "SET EMPLOYEE #";
+
+  return `
+    <article class="upcoming-training-card">
+      <span class="training-signup-badge ${signupClass}">${signupText}</span>
+      <div class="training-title-row">
+        <div>
+          <span class="training-day-label">EU DAY ${session.day}</span>
+          <h3>Training Day ${session.day}</h3>
+          <p class="training-date-line">
+            <strong>${escapeHtml(trainingDateLabel(session.date))}</strong>
+            <span>${escapeHtml(formatDate(session.date))}${session.time ? ` • ${escapeHtml(session.time)}` : ""}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="training-summary-grid">
+        <div>
+          <span>Hosted by</span>
+          <strong>${trainingHostMarkup(session.host)}</strong>
+        </div>
+        <div>
+          <span>Cadets</span>
+          <strong>${session.eligibleSignedUp} / ${session.eligibleTotal} signed up</strong>
+        </div>
+        <div>
+          <span>Staff</span>
+          <strong>${session.staff.length}</strong>
+        </div>
+      </div>
+
+      <div class="training-people-grid">
+        <section>
+          <h4>Cadets signed up</h4>
+          ${session.cadets.length
+            ? `<ul>${session.cadets.map(trainingPersonMarkup).join("")}</ul>`
+            : `<p class="muted">No cadets signed up yet.</p>`}
+        </section>
+        <section>
+          <h4>Supervisors, FTOs & Helpers</h4>
+          ${session.staff.length
+            ? `<ul>${session.staff.map(trainingPersonMarkup).join("")}</ul>`
+            : `<p class="muted">No staff signed up yet.</p>`}
+        </section>
+      </div>
+    </article>
+  `;
+}
+
+function renderTraining() {
+  if (!els.trainingList || !els.trainingStatus) return;
+  els.trainingStatus.textContent = trainingLoadMessage;
+
+  if (trainingLoadState === "loading") {
+    els.trainingList.innerHTML = empty("Refreshing the live Training Attendance Sheet…");
+    return;
+  }
+  if (trainingLoadState === "error") {
+    els.trainingList.innerHTML = empty(trainingLoadMessage);
+    return;
+  }
+
+  els.trainingList.innerHTML = liveTrainingSessions.length
+    ? liveTrainingSessions.map(trainingCardMarkup).join("")
+    : empty("There are no upcoming EU Day 1 or Day 2 training dates on the sheet.");
+}
+
+async function trainingSheetRows(options = {}) {
+  const { id } = sheetInfoFromUrl(state.settings?.trainingUrl || DEFAULT_TRAINING_URL);
+  const metadata = await sheetMetadata(id, options);
+  const sheets = metadata.sheets || [];
+  const trainingSheet = sheets.find((entry) =>
+    normalizeKey(entry.properties?.title).includes("trainingattendance")
+  ) || sheets.find((entry) =>
+    normalizeKey(entry.properties?.title).includes("training")
+  );
+  const title = trainingSheet?.properties?.title;
+  if (!title) throw new Error("Could not find the Training Attendance tab.");
+
+  const range = encodeURIComponent(sheetRange(title, "A1:T67"));
+  const response = await fetchSheetJson(
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE`,
+    options
+  );
+  return response.values || [];
+}
+
+async function refreshTraining(options = {}) {
+  trainingLoadState = "loading";
+  trainingLoadMessage = "Refreshing live training information…";
+  renderTraining();
+
+  try {
+    const rows = await trainingSheetRows(options);
+    liveTrainingSessions = parseUpcomingEuTraining(rows);
+    trainingLoadState = "ready";
+    trainingLoadMessage = `Live training refreshed ${new Date().toLocaleString("en-GB")}`;
+    renderTraining();
+    return { sessions: liveTrainingSessions, error: null };
+  } catch (error) {
+    liveTrainingSessions = [];
+    trainingLoadState = "error";
+    trainingLoadMessage = `Could not refresh training: ${error.message}`;
+    renderTraining();
+    return { sessions: [], error };
+  }
+}
+
 async function importGoogleSheet(options = {}) {
   const silent = Boolean(options.silent);
   const tokenOptions = { prompt: options.prompt ?? "" };
@@ -1119,6 +1394,8 @@ async function importGoogleSheet(options = {}) {
   } catch (storageError) {
     errors.push(`Personal storage sheet: ${storageError.message}`);
   }
+  const trainingResult = await refreshTraining(tokenOptions);
+  if (trainingResult.error) errors.push(`Training sheet: ${trainingResult.error.message}`);
   render();
   if (silent) return { cadetCount, rosterCount, errors };
   if (errors.length) {
@@ -1397,9 +1674,12 @@ function renderSettings() {
   if (els.myCallsign) els.myCallsign.value = state.settings?.myCallsign || DEFAULT_MY_CALLSIGN;
   if (els.googleEmail) els.googleEmail.value = state.settings?.googleEmail || "";
   if (els.storageUrl) els.storageUrl.value = state.settings?.storageUrl || DEFAULT_STORAGE_URL;
+  if (els.myEmployeeNumber) els.myEmployeeNumber.value = state.settings?.myEmployeeNumber || "";
+  if (els.trainingUrl) els.trainingUrl.value = state.settings?.trainingUrl || DEFAULT_TRAINING_URL;
   if (els.settingsSummary) {
     const email = state.settings?.googleEmail ? ` Google will prefer ${state.settings.googleEmail}.` : " Add your Gmail here so Google can choose the right account.";
-    els.settingsSummary.textContent = `Current RA callsign check: ${state.settings?.myCallsign || DEFAULT_MY_CALLSIGN}.${email} Personal data sync uses your storage sheet.`;
+    const employee = state.settings?.myEmployeeNumber ? ` Employee #${state.settings.myEmployeeNumber} is used for training signups.` : " Add your employee number for training signup checks.";
+    els.settingsSummary.textContent = `Current RA callsign check: ${state.settings?.myCallsign || DEFAULT_MY_CALLSIGN}.${email}${employee} Personal data sync uses your storage sheet.`;
   }
 }
 
@@ -1414,6 +1694,7 @@ function render() {
   renderDirectory();
   renderNotes();
   renderSettings();
+  renderTraining();
 }
 
 function setActiveTab(tabName) {
@@ -1706,7 +1987,9 @@ function saveSettings() {
   state.settings = normalizeSettings({
     myCallsign: els.myCallsign?.value || DEFAULT_MY_CALLSIGN,
     googleEmail: els.googleEmail?.value || "",
-    storageUrl: els.storageUrl?.value || DEFAULT_STORAGE_URL
+    storageUrl: els.storageUrl?.value || DEFAULT_STORAGE_URL,
+    myEmployeeNumber: els.myEmployeeNumber?.value || "",
+    trainingUrl: els.trainingUrl?.value || DEFAULT_TRAINING_URL
   });
   googleAccessToken = "";
   googleTokenClient = null;
@@ -1797,6 +2080,14 @@ document.addEventListener("click", async (event) => {
     }
   }
   if (action === "import-google") importGoogleSheet();
+  if (action === "refresh-training") {
+    const result = await refreshTraining({ prompt: "" });
+    if (result.error) {
+      googleAccessToken = "";
+      const retry = await refreshTraining({ prompt: "consent", force: true });
+      if (retry.error) alert(retry.error.message);
+    }
+  }
   if (action === "save-settings") saveSettings();
   if (action === "load-cloud") {
     try {

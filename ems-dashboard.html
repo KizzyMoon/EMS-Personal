@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260728-2" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-3" />
   </head>
   <body>
     <main class="app">
@@ -129,6 +129,17 @@
       <section class="stats" data-stats></section>
 
       <section class="view" data-view="overview">
+        <article class="panel upcoming-training-panel">
+          <div class="panel-head upcoming-training-head">
+            <div>
+              <h2>Upcoming EU Training</h2>
+              <p class="muted" data-training-status>Refreshing live training information…</p>
+            </div>
+            <button data-action="refresh-training" type="button">Refresh</button>
+          </div>
+          <div class="upcoming-training-grid" data-training-list></div>
+        </article>
+
         <div class="dashboard-layout">
           <div class="dashboard-main">
             <article class="panel">
@@ -387,6 +398,14 @@
               Google Gmail
               <input data-google-email type="email" placeholder="yourgmail@gmail.com" />
             </label>
+            <label>
+              My employee number
+              <input data-my-employee-number inputmode="numeric" placeholder="e.g. 1532" />
+            </label>
+            <label class="full">
+              Training Attendance Sheet
+              <input data-training-url value="https://docs.google.com/spreadsheets/d/1twcPjyyf3tuwq4L12OhmLz6QkF9_u8I5ai5qn9wAisg/edit?gid=0#gid=0" />
+            </label>
             <label class="full">
               Cadet Sheet
               <input data-google-url value="https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=1321749468#gid=1321749468" />
@@ -423,6 +442,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260728-1"></script>
+    <script src="ems-dashboard.js?v=20260802-3"></script>
   </body>
 </html>

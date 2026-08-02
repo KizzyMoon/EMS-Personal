@@ -1451,3 +1451,221 @@ menu {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Upcoming EU training: additive overview widget */
+.upcoming-training-panel {
+  margin-bottom: 14px;
+}
+
+.upcoming-training-head {
+  align-items: flex-start;
+}
+
+.upcoming-training-head > div {
+  display: grid;
+  gap: 4px;
+}
+
+.upcoming-training-head p {
+  margin: 0;
+}
+
+.upcoming-training-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.upcoming-training-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(121, 144, 168, 0.24);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(17, 24, 33, 0.98), rgba(10, 15, 22, 0.98));
+  padding: 16px;
+}
+
+.training-title-row {
+  min-width: 0;
+  padding-right: 118px;
+}
+
+.training-day-label {
+  display: inline-block;
+  margin-bottom: 4px;
+  color: var(--accent);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.upcoming-training-card h3,
+.upcoming-training-card h4,
+.upcoming-training-card p {
+  margin: 0;
+}
+
+.upcoming-training-card h3 {
+  color: #fff;
+  font-size: 1.04rem;
+}
+
+.training-date-line {
+  display: grid;
+  gap: 2px;
+  margin-top: 6px !important;
+}
+
+.training-date-line strong {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.training-date-line span {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.training-signup-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  padding: 5px 8px;
+}
+
+.training-signup-badge.is-signed-up {
+  background: rgba(130, 230, 179, 0.14);
+  color: var(--green);
+}
+
+.training-signup-badge.is-not-signed-up {
+  background: rgba(248, 162, 162, 0.14);
+  color: var(--accent);
+}
+
+.training-summary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) 72px;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.training-summary-grid > div {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 9px 10px;
+}
+
+.training-summary-grid span {
+  color: var(--muted);
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.training-summary-grid strong {
+  overflow-wrap: anywhere;
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.training-people-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.training-people-grid section {
+  min-width: 0;
+}
+
+.training-people-grid h4 {
+  margin-bottom: 7px;
+  color: #ffd0d0;
+  font-size: 0.72rem;
+}
+
+.training-people-grid ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.training-person-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 0.73rem;
+}
+
+.training-person-row > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.training-person-tag {
+  flex: 0 0 auto;
+  min-width: 47px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #dce3ed;
+  font-size: 0.55rem;
+  font-weight: 900;
+  text-align: center;
+  padding: 3px 5px;
+}
+
+.training-person-tag-cadet {
+  background: rgba(105, 160, 255, 0.15);
+  color: #9bbcff;
+}
+
+.training-person-tag-fto {
+  background: rgba(130, 230, 179, 0.15);
+  color: var(--green);
+}
+
+.training-person-tag-supervisor {
+  background: rgba(255, 209, 102, 0.15);
+  color: var(--warn);
+}
+
+.training-person-tag-helper {
+  background: rgba(248, 162, 162, 0.15);
+  color: var(--accent);
+}
+
+@media (max-width: 1050px) {
+  .upcoming-training-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .training-summary-grid,
+  .training-people-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .training-title-row {
+    padding-right: 0;
+    padding-top: 30px;
+  }
+}
