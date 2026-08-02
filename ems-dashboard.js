@@ -3008,7 +3008,7 @@ function raFocusCards(groups = []) {
       <span class="ra-focus-card-dot" aria-hidden="true"></span>
       <div>
         <strong>${escapeHtml(item.label)}</strong>
-        <small>${item.colour === "green" ? "Strength" : item.colour === "red" ? "Needs focused help" : "Needs improvement"}</small>
+        <small>${item.colour === "green" ? "All good" : item.colour === "red" ? "Bad — needs focused help" : "Struggling"}</small>
       </div>
     </article>
   `).join("");
@@ -3184,9 +3184,9 @@ async function openCadetSheetNotes(cadet) {
       <div class="ra-training-notes">${notes}</div>
 
       <footer class="ra-dossier-legend">
-        <span><i class="legend-green"></i>Strengths</span>
-        <span><i class="legend-orange"></i>Needs Improvement</span>
-        <span><i class="legend-red"></i>Needs Focused Help</span>
+        <span><i class="legend-green"></i>All good</span>
+        <span><i class="legend-orange"></i>Struggling</span>
+        <span><i class="legend-red"></i>Bad / needs focused help</span>
       </footer>
     </section>
   `;
