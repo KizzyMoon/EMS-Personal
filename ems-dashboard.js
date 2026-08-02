@@ -3087,9 +3087,16 @@ async function openCadetSheetNotes(cadet) {
         </div>
       </header>
 
-      <section class="ra-dossier-section ra-training-required">
-        <h3>Needs Training</h3>
-        <p>This cadet has not completed Day 1 training yet and is not ready for an RA.</p>
+      <section class="ra-dossier-section">
+        <h3>Current Focus Areas</h3>
+
+        <article class="ra-untrained-focus-card">
+          <span class="ra-untrained-focus-icon" aria-hidden="true">i</span>
+          <div>
+            <strong>Not Ready for RA</strong>
+            <p>Day 1 training has not been completed yet.</p>
+          </div>
+        </article>
       </section>
 
       <section class="ra-dossier-section">
