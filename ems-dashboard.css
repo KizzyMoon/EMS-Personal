@@ -2639,3 +2639,14 @@ body {
   outline: 2px solid var(--overview-pink);
   outline-offset: -2px;
 }
+
+
+/* Schedule refresh timestamp footer */
+.schedule-refresh-footer {
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 9px;
+  color: var(--muted);
+  font-size: 0.64rem;
+  text-align: right;
+}
