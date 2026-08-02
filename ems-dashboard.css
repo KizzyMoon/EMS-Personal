@@ -1820,3 +1820,49 @@ menu {
 .dashboard-side .training-date-line {
   display: none !important;
 }
+
+
+/* Overview section headings should not sit inside a panel */
+.overview-cadet-section {
+  display: grid;
+  gap: 10px;
+}
+
+.overview-section-head {
+  margin: 0;
+  padding: 0 2px;
+}
+
+.overview-section-head h2 {
+  font-size: 0.92rem;
+}
+
+.overview-section-head span {
+  min-width: 30px;
+  padding: 2px 7px;
+}
+
+
+/* Summary stat icons: match sidebar icon colour/style */
+.stat-icon .stat-icon-img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+}
+
+.stat-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+.stat-icon .icon-fill {
+  fill: var(--accent);
+}
+
+.stat-icon .icon-cut {
+  fill: none;
+  stroke: #fff7f7;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
