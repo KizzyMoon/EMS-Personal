@@ -3700,3 +3700,258 @@ dialog menu {
     text-align: left;
   }
 }
+
+
+/* =========================================================
+   Cheat Sheet page redesign
+   ========================================================= */
+
+.cheat-sheet-page {
+  display: grid;
+  gap: 12px;
+}
+
+.cheat-sheet-top-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.cheat-sheet-panel {
+  border: 1px solid rgba(248, 162, 162, 0.18);
+  border-radius: 9px;
+  background:
+    linear-gradient(145deg, rgba(25, 31, 47, 0.82), rgba(10, 15, 25, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 16px 40px rgba(0, 0, 0, 0.20);
+  padding: 14px;
+}
+
+.cheat-sheet-panel-head {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 10px;
+  padding-bottom: 9px;
+}
+
+.cheat-sheet-panel-head h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.cheat-sheet-table-wrap {
+  overflow-x: auto;
+}
+
+.cheat-sheet-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cheat-sheet-table th,
+.cheat-sheet-table td {
+  border-bottom: 1px solid rgba(119, 142, 166, 0.15);
+  padding: 9px 7px;
+  text-align: left;
+}
+
+.cheat-sheet-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.cheat-sheet-table th {
+  color: #ff9db3;
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.cheat-sheet-table td {
+  color: #f2f5fa;
+  font-size: 0.76rem;
+}
+
+.cheat-sheet-table td:first-child {
+  color: #fff;
+  font-weight: 800;
+}
+
+.cheat-sheet-table .med-yes {
+  color: #ff667d;
+  font-weight: 900;
+}
+
+.cheat-sheet-table .med-no {
+  color: #72dfa9;
+  font-weight: 800;
+}
+
+.cheat-days-list {
+  display: grid;
+}
+
+.cheat-days-list > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid rgba(119, 142, 166, 0.15);
+  padding: 10px 2px;
+}
+
+.cheat-days-list > div:last-child {
+  border-bottom: 0;
+}
+
+.cheat-days-list strong {
+  color: #fff;
+  font-size: 0.76rem;
+}
+
+.cheat-days-list span {
+  color: #ff7790;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.morgue-format-panel {
+  padding-bottom: 10px;
+}
+
+.morgue-format-grid {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+}
+
+.morgue-format-grid strong,
+.morgue-format-grid span {
+  border-bottom: 1px solid rgba(119, 142, 166, 0.15);
+  padding: 9px 5px;
+}
+
+.morgue-format-grid strong:nth-last-child(-n + 2),
+.morgue-format-grid span:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.morgue-format-grid strong {
+  color: #ff7790;
+  font-size: 0.76rem;
+}
+
+.morgue-format-grid span {
+  color: #f2f5fa;
+  font-size: 0.76rem;
+}
+
+.vehicle-ratio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.vehicle-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.vehicle-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 9px;
+}
+
+.vehicle-panel-head h2 {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.vehicle-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 28px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.seu-panel {
+  border-color: rgba(248, 162, 162, 0.26);
+}
+
+.seu-panel .vehicle-code {
+  border: 1px solid rgba(248, 162, 162, 0.28);
+  background: rgba(248, 162, 162, 0.12);
+  color: #ff9db3;
+}
+
+.seu-panel h2,
+.seu-panel .vehicle-list strong {
+  color: #ff8fa8;
+}
+
+.fr-panel {
+  border-color: rgba(143, 159, 255, 0.30);
+}
+
+.fr-panel .vehicle-code {
+  border: 1px solid rgba(143, 159, 255, 0.28);
+  background: rgba(143, 159, 255, 0.12);
+  color: #a3a7ff;
+}
+
+.fr-panel h2,
+.fr-panel .vehicle-list strong {
+  color: #9fa4ff;
+}
+
+.vehicle-list {
+  display: grid;
+  gap: 6px;
+}
+
+.vehicle-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 8px 10px;
+}
+
+.vehicle-list span {
+  color: #f2f5fa;
+  font-size: 0.74rem;
+}
+
+.vehicle-list strong {
+  font-size: 0.72rem;
+}
+
+.vehicle-note {
+  margin: 0;
+  color: #9ca8b8;
+  font-size: 0.67rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 980px) {
+  .cheat-sheet-top-grid,
+  .vehicle-ratio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .morgue-format-grid {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+}

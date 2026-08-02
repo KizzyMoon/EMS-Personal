@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-52" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-53" />
   </head>
   <body>
     <main class="app">
@@ -288,11 +288,14 @@
         </div>
       </section>
 
-      <section class="view is-hidden" data-view="cheat-sheet">
-        <div class="cheat-top-grid">
-          <article class="cheat-panel meds-card">
-            <div class="cheat-table-wrap">
-              <table class="cheat-table meds-table">
+      <section class="view is-hidden cheat-sheet-page" data-view="cheat-sheet">
+        <div class="cheat-sheet-top-grid">
+          <article class="cheat-sheet-panel medications-panel">
+            <div class="cheat-sheet-panel-head">
+              <h2>Medications</h2>
+            </div>
+            <div class="cheat-sheet-table-wrap">
+              <table class="cheat-sheet-table medications-table">
                 <thead>
                   <tr>
                     <th>Medication</th>
@@ -303,103 +306,78 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>Oxygen</td><td>0.5-15 L/min</td><td>No</td><td>No</td><td>N/A</td></tr>
-                  <tr><td>Epinephrine</td><td>0.5-1 mg</td><td>No</td><td>No</td><td>N/A</td></tr>
-                  <tr><td>Tylenol</td><td>500 mg</td><td>No</td><td>Yes</td><td>1 - 4</td></tr>
-                  <tr><td>Tramadol</td><td>50-100 mg</td><td>Yes</td><td>Yes</td><td>5 - 7</td></tr>
-                  <tr><td>Morphine</td><td>2 mg</td><td>Yes</td><td>Yes</td><td>8+</td></tr>
-                  <tr><td>TXA</td><td>500-1000 ml</td><td>No</td><td>No</td><td>N/A</td></tr>
+                  <tr><td>Oxygen</td><td>0.5-15 L/min</td><td class="med-no">No</td><td class="med-no">No</td><td>N/A</td></tr>
+                  <tr><td>Epinephrine</td><td>0.5-1 mg</td><td class="med-no">No</td><td class="med-no">No</td><td>N/A</td></tr>
+                  <tr><td>Tylenol</td><td>500 mg</td><td class="med-no">No</td><td class="med-yes">Yes</td><td>1 - 4</td></tr>
+                  <tr><td>Tramadol</td><td>50-100 mg</td><td class="med-yes">Yes</td><td class="med-yes">Yes</td><td>5 - 7</td></tr>
+                  <tr><td>Morphine</td><td>2 mg</td><td class="med-yes">Yes</td><td class="med-yes">Yes</td><td>8+</td></tr>
+                  <tr><td>TXA</td><td>500-1000 ml</td><td class="med-no">No</td><td class="med-no">No</td><td>N/A</td></tr>
                 </tbody>
               </table>
             </div>
           </article>
 
-          <article class="cheat-panel icu-card">
-            <table class="cheat-table icu-table">
-              <thead>
-                <tr>
-                  <th>ICU Days</th>
-                  <th>Days</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Blunt Force Trauma / High Fall</td><td>100 days</td></tr>
-                <tr><td>Drowning / MVA</td><td>100 days</td></tr>
-                <tr><td>Miscellaneous Injury</td><td>100 days</td></tr>
-                <tr><td>Explosion / Burns</td><td>150 days</td></tr>
-                <tr><td>GSW / Stabbing / Lacerations / Animal</td><td>150 days</td></tr>
-                <tr><td>Unresponsive</td><td>500 days</td></tr>
-              </tbody>
-            </table>
+          <article class="cheat-sheet-panel days-panel">
+            <div class="cheat-sheet-panel-head">
+              <h2>Days</h2>
+            </div>
+            <div class="cheat-days-list">
+              <div><strong>Blunt Force Trauma / High Fall</strong><span>100 days</span></div>
+              <div><strong>Drowning / MVA</strong><span>100 days</span></div>
+              <div><strong>Miscellaneous Injury</strong><span>100 days</span></div>
+              <div><strong>Explosion / Burns</strong><span>150 days</span></div>
+              <div><strong>GSW / Stabbing / Lacerations / Animal</strong><span>150 days</span></div>
+              <div><strong>Unresponsive</strong><span>500 days</span></div>
+            </div>
           </article>
         </div>
 
-        <div class="morgue-stack">
-          <article class="cheat-panel morgue-card">
-            <div class="cheat-title">
-              <h2>Morgue Format - Regular</h2>
-            </div>
-            <dl class="cheat-lines">
-              <div>
-                <dt>Days</dt>
-                <dd>300</dd>
-              </div>
-              <div>
-                <dt>Format</dt>
-                <dd>Reason to Death | TOD: XX:XX</dd>
-              </div>
-              <div>
-                <dt>Example</dt>
-                <dd>DOA for Fatal GSW | TOD 3:25 PM</dd>
-              </div>
-            </dl>
-          </article>
+        <article class="cheat-sheet-panel morgue-format-panel">
+          <div class="cheat-sheet-panel-head">
+            <h2>Morgue Format - Regular</h2>
+          </div>
+          <div class="morgue-format-grid">
+            <strong>Days</strong><span>300</span>
+            <strong>Format</strong><span>Reason to Death | TOD: XX:XX</span>
+            <strong>Example</strong><span>DOA for Fatal GSW | TOD: 3:25 PM</span>
+          </div>
+        </article>
 
-          <article class="cheat-panel morgue-card">
-            <div class="cheat-title">
-              <h2>Morgue Format - Criminal</h2>
-            </div>
-            <dl class="cheat-lines">
-              <div>
-                <dt>Days</dt>
-                <dd>1000</dd>
-              </div>
-              <div>
-                <dt>Format</dt>
-                <dd>Reason to Death | TOD: XX:XX | Charges</dd>
-              </div>
-              <div>
-                <dt>Example</dt>
-                <dd>DOS for Fatal GSW to the head | TOD: 5:42 AM | Bank Robbery | Attempted Mass Murder | Felony Evading Arrest | Reckless Driving</dd>
-              </div>
-            </dl>
-          </article>
-        </div>
+        <article class="cheat-sheet-panel morgue-format-panel">
+          <div class="cheat-sheet-panel-head">
+            <h2>Morgue Format - Criminal</h2>
+          </div>
+          <div class="morgue-format-grid">
+            <strong>Days</strong><span>1000</span>
+            <strong>Format</strong><span>Reason to Death | TOD: XX:XX | Charges</span>
+            <strong>Example</strong><span>DOS for Fatal GSW to the head | TOD: 5:42 AM | Bank Robbery | Attempted Mass Murder | Felony Evading Arrest | Reckless Driving</span>
+          </div>
+        </article>
 
-        <div class="cheat-grid">
-          <article class="cheat-panel vehicle-card seu-card">
-            <div class="cheat-title">
-              <span>SEU</span>
+        <div class="vehicle-ratio-grid">
+          <article class="cheat-sheet-panel vehicle-panel seu-panel">
+            <div class="vehicle-panel-head">
+              <span class="vehicle-code">SEU</span>
               <h2>1 SEU : 1 Ambulance</h2>
             </div>
-            <ul class="vehicle-list">
-              <li><span>CaraCara</span><strong>EMT I+</strong></li>
-              <li><span>Landstalker</span><strong>EMT III+</strong></li>
-              <li><span>Scout</span><strong>Supervisor+</strong></li>
-            </ul>
-            <p class="cheat-note">SEU requires a 1:1 ambulance ratio.</p>
+            <div class="vehicle-list">
+              <div><span>CaraCara</span><strong>EMT I+</strong></div>
+              <div><span>Landstalker</span><strong>EMT II+</strong></div>
+              <div><span>Scout</span><strong>Supervisor+</strong></div>
+            </div>
+            <p class="vehicle-note">SEU requires a 1:1 ambulance ratio.</p>
           </article>
 
-          <article class="cheat-panel vehicle-card fr-card">
-            <div class="cheat-title">
-              <span>FR</span>
+          <article class="cheat-sheet-panel vehicle-panel fr-panel">
+            <div class="vehicle-panel-head">
+              <span class="vehicle-code">FR</span>
               <h2>1 FR : 2 Ambulances</h2>
             </div>
-            <ul class="vehicle-list">
-              <li><span>Buffalo</span><strong>EMT II+</strong></li>
-              <li><span>Felon</span><strong>EMT IV+</strong></li>
-            </ul>
-            <p class="cheat-note">FR is not classed as an ambulance and does not count toward the SEU ratio.</p>
+            <div class="vehicle-list">
+              <div><span>Buffalo</span><strong>EMT II+</strong></div>
+              <div><span>Felon</span><strong>EMT IV+</strong></div>
+            </div>
+            <p class="vehicle-note">FR is not classed as an ambulance and does not count toward the SEU ratio.</p>
           </article>
         </div>
       </section>
