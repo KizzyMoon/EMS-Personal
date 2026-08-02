@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-40" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-46" />
   </head>
   <body>
     <main class="app">
@@ -192,8 +192,41 @@
         </article>
       </section>
 
-      <section class="view is-hidden" data-view="cadets">
-        <div class="cadet-grid" data-cadet-grid></div>
+      <section class="view is-hidden cadets-page" data-view="cadets">
+        <div class="cadets-page-layout">
+          <main class="cadets-page-main">
+            <header class="cadets-page-heading">
+              <div>
+                <h2>All Cadets</h2>
+                <p class="muted" data-cadet-page-summary>0 cadets across all statuses.</p>
+              </div>
+            </header>
+
+            <div class="cadet-grid cadet-profile-grid" data-cadet-grid></div>
+          </main>
+
+          <aside class="cadets-page-side">
+            <article class="panel cadet-overview-panel">
+              <div class="panel-head">
+                <h2>Cadet Overview</h2>
+              </div>
+              <div class="cadet-overview-stats" data-cadet-overview-stats></div>
+              <div class="cadet-performance-legend" aria-label="Cadet performance key">
+                <span><i class="cadet-performance-dot performance-good"></i>Doing well</span>
+                <span><i class="cadet-performance-dot performance-watch"></i>Some struggles</span>
+                <span><i class="cadet-performance-dot performance-focus"></i>Needs focused help</span>
+              </div>
+            </article>
+
+            <article class="panel cadet-limits-panel">
+              <div class="panel-head">
+                <h2>Cadet Limits</h2>
+              </div>
+              <div class="cadet-limit-list overview-limit-grid" data-cadet-limit-list></div>
+            </article>
+          </aside>
+        </div>
+
         <article class="panel ra-offers-panel">
           <div class="panel-head ra-offers-head">
             <div>
@@ -476,6 +509,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260802-45"></script>
+    <script src="ems-dashboard.js?v=20260802-46"></script>
   </body>
 </html>

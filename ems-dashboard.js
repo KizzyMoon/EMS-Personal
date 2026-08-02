@@ -74,6 +74,9 @@ const els = {
   needsTrainingList: document.querySelector("[data-needs-training-list]"),
   limitList: document.querySelector("[data-limit-list]"),
   cadetGrid: document.querySelector("[data-cadet-grid]"),
+  cadetPageSummary: document.querySelector("[data-cadet-page-summary]"),
+  cadetOverviewStats: document.querySelector("[data-cadet-overview-stats]"),
+  cadetLimitList: document.querySelector("[data-cadet-limit-list]"),
   directory: document.querySelector("[data-directory]"),
   notesList: document.querySelector("[data-notes-list]"),
   needsRaCount: document.querySelector("[data-count-needs-ra]"),
@@ -1764,41 +1767,101 @@ function uniqueFtoRaBadge(cadet) {
   return `<span class="unique-ra-badge pill ${stateName}">${escapeHtml(label)}</span>`;
 }
 
+
+function cadetPerformance(cadet) {
+  const score = Number(cadet.trainingAverage);
+
+  if (cadet.trainingAverage === null
+    || cadet.trainingAverage === undefined
+    || cadet.trainingAverage === ""
+    || Number.isNaN(score)) {
+    return {
+      className: "performance-watch",
+      label: "Awaiting recent RA data"
+    };
+  }
+
+  if (score >= 75) {
+    return {
+      className: "performance-good",
+      label: "Doing well"
+    };
+  }
+
+  if (score >= 45) {
+    return {
+      className: "performance-watch",
+      label: "Has some struggles"
+    };
+  }
+
+  return {
+    className: "performance-focus",
+    label: "Needs focused help"
+  };
+}
+
+function cadetTrainingStatusText(cadet) {
+  if (cadet.day1 && cadet.day2) return "Training complete";
+  if (cadet.day1 && !cadet.day2) return "Needs Day 2";
+  if (!cadet.day1 && cadet.day2) return "Needs Day 1";
+  return "Needs Day 1 & Day 2";
+}
+
 function cadetCard(cadet, options = {}) {
-  const dayPills = [
-    cadet.day1 ? options.onlyMissingTraining ? "" : pill("Day 1", "good") : pill("No Day 1", "warn"),
-    cadet.day2 ? options.onlyMissingTraining ? "" : pill("Day 2", "good") : pill("No Day 2", "warn")
-  ].join("");
-  const raPill = options.hideRaPill ? "" : raStatusPill(cadet);
+  const performance = cadetPerformance(cadet);
+  const days = daysUntil(cadet.day28Due);
+  const limitText = days === null
+    ? "No limit date"
+    : days < 0
+      ? `${Math.abs(days)} days overdue`
+      : `${days} day${days === 1 ? "" : "s"} left`;
+
+  const trainingText = cadetTrainingStatusText(cadet);
+  const latestTraining = cadet.lastRaDate
+    ? `Last RA: ${formatDate(cadet.lastRaDate)}`
+    : "No RA date recorded";
+
   return `
-    <article class="card training-${trainingLevel(cadet)}" data-view-sheet-notes="${cadet.id}" tabindex="0" role="button" aria-label="View sheet notes for ${escapeHtml(cadet.name || "cadet")}">
-      <div class="card-top-line">
-        ${raOfferButton(cadet)}
-        ${uniqueFtoRaBadge(cadet)}
-      </div>
-      <div class="card-head">
+    <article
+      class="cadet-profile-card training-${trainingLevel(cadet)}"
+      data-view-sheet-notes="${cadet.id}"
+      tabindex="0"
+      role="button"
+      aria-label="Open live cadet sheet information for ${escapeHtml(cadet.name || "cadet")}"
+    >
+      <div class="cadet-profile-card-head">
         <div>
           <h3>${escapeHtml(cadet.name || "Unnamed cadet")}</h3>
-          <p class="muted">${escapeHtml([cadet.callsign || "No callsign", cadet.employeeNumber ? `#${cadet.employeeNumber}` : "", cadet.rank].filter(Boolean).join(" - "))}</p>
-          ${cadet.discordId ? `<p class="muted discord-line">${escapeHtml(cadet.discordId)}</p>` : ""}
+          <p>${escapeHtml([
+            cadet.callsign || "No callsign",
+            cadet.employeeNumber ? `#${cadet.employeeNumber}` : "",
+            cadet.rank || "Cadet"
+          ].filter(Boolean).join(" • "))}</p>
         </div>
-        <div class="status-pills">
-          ${pill(cadet.status || "Active", String(cadet.status).toLowerCase().includes("active") ? "good" : "warn")}
-          ${cadet.timezone ? pill(cadet.timezone, "zone") : ""}
-        </div>
+        <span
+          class="cadet-performance-dot ${performance.className}"
+          title="${escapeHtml(performance.label)}"
+          aria-label="${escapeHtml(performance.label)}"
+        ></span>
       </div>
-      <div class="pill-row">
-        ${raPill}
-        ${dayPills}
-        ${trainingPill(cadet)}
-        ${limitPill("14 day", cadet.day14Due, 3)}
-        ${limitPill("28 day", cadet.day28Due, 7)}
+
+      <div class="cadet-profile-tags">
+        ${pill(cadet.status || "Active", String(cadet.status).toLowerCase().includes("active") ? "good" : "warn")}
+        ${cadet.timezone ? pill(cadet.timezone, "zone") : ""}
       </div>
-      <div class="card-actions">
-        <button data-edit-cadet="${cadet.id}" type="button">Edit</button>
-        <button data-note-cadet="${cadet.id}" type="button">Add note</button>
-        <button data-ra-done="${cadet.id}" type="button">RA done</button>
+
+      <div class="cadet-profile-status">
+        <strong>${escapeHtml(limitText)}</strong>
+        <span>${escapeHtml(trainingText)}</span>
       </div>
+
+      <div class="cadet-training-progress">
+        <span class="${cadet.day1 ? "is-complete" : ""}">Day 1</span>
+        <span class="${cadet.day2 ? "is-complete" : ""}">Day 2</span>
+      </div>
+
+      <p class="cadet-last-training">${escapeHtml(latestTraining)}</p>
     </article>
   `;
 }
@@ -2011,7 +2074,54 @@ function renderOverview() {
 
 function renderCadets() {
   const cadets = filteredCadets();
-  els.cadetGrid.innerHTML = cadets.length ? cadets.map(cadetCard).join("") : empty("No cadets found. Import a sheet or add one manually.");
+  const allCadets = state.cadets;
+  const activeCount = allCadets.filter(
+    (cadet) => String(cadet.status || "Active").toLowerCase().includes("active")
+  ).length;
+  const inTrainingCount = allCadets.filter(
+    (cadet) => Boolean(cadet.day1) !== Boolean(cadet.day2)
+  ).length;
+  const needsTrainingCount = allCadets.filter(
+    (cadet) => !cadet.day1 && !cadet.day2
+  ).length;
+
+  if (els.cadetPageSummary) {
+    els.cadetPageSummary.textContent =
+      `${allCadets.length} cadet${allCadets.length === 1 ? "" : "s"} across all statuses.`;
+  }
+
+  if (els.cadetOverviewStats) {
+    const stats = [
+      ["Total Cadets", allCadets.length, ""],
+      ["Active", activeCount, "stat-good"],
+      ["In Training", inTrainingCount, "stat-watch"],
+      ["Needs Training", needsTrainingCount, "stat-focus"]
+    ];
+
+    els.cadetOverviewStats.innerHTML = stats.map(([label, value, className]) => `
+      <div class="cadet-overview-stat">
+        <span>${escapeHtml(label)}</span>
+        <strong class="${className}">${value}</strong>
+      </div>
+    `).join("");
+  }
+
+  if (els.cadetGrid) {
+    els.cadetGrid.innerHTML = cadets.length
+      ? cadets.map(cadetCard).join("")
+      : empty("No cadets found. Import a sheet or add one manually.");
+  }
+
+  if (els.cadetLimitList) {
+    const limitItems = allCadets
+      .filter(isBetweenFourteenAndTwentyEightDays)
+      .sort((a, b) => (daysUntil(a.day28Due) ?? 999) - (daysUntil(b.day28Due) ?? 999));
+
+    els.cadetLimitList.innerHTML = limitItems.length
+      ? limitItems.map(overviewLimitItem).join("")
+      : empty("No cadets are currently between their 14-day and 28-day limits.");
+  }
+
   renderRaOffers();
 }
 
