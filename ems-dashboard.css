@@ -2628,3 +2628,14 @@ body {
     border: 1px solid var(--line) !important;
   }
 }
+
+
+/* To Do cadet rows are directly clickable */
+.overview-todo-row {
+  cursor: pointer;
+}
+
+.overview-todo-row:focus-visible {
+  outline: 2px solid var(--overview-pink);
+  outline-offset: -2px;
+}

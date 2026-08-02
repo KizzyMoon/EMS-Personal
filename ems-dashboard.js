@@ -1903,7 +1903,7 @@ function overviewTodoRow(cadet, type) {
         : "Training complete";
 
   return `
-    <button class="overview-todo-row" type="button" data-view-sheet-notes="${cadet.id}">
+    <button class="overview-todo-row" type="button" data-open-cadet-focus="${cadet.id}">
       <span class="overview-todo-main">
         <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
         <small>${escapeHtml([cadet.callsign, cadet.employeeNumber ? `#${cadet.employeeNumber}` : "", cadet.rank || "Cadet"].filter(Boolean).join(" • "))}</small>
@@ -2575,6 +2575,13 @@ document.addEventListener("click", async (event) => {
 
   const noteCadet = event.target.closest("[data-note-cadet]");
   if (noteCadet) openNoteForm(state.cadets.find((cadet) => cadet.id === noteCadet.dataset.noteCadet));
+
+  const focusCadetRow = event.target.closest("[data-open-cadet-focus]");
+  if (focusCadetRow) {
+    const cadet = state.cadets.find((entry) => entry.id === focusCadetRow.dataset.openCadetFocus);
+    openCadetSheetNotes(cadet);
+    return;
+  }
 
   const sheetNotesCard = event.target.closest("[data-view-sheet-notes]");
   const clickedControl = event.target.closest("button, a, input, select, textarea, label");
