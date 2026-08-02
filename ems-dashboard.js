@@ -1292,8 +1292,8 @@ function trainingCardMarkup(session) {
       </div>
 
       <div class="training-count-row">
-        <span>👥 <strong>${session.eligibleSignedUp} / ${session.eligibleTotal}</strong> Cadets</span>
-        <span>👷 <strong>${session.staff.length}</strong> Staff</span>
+        <span><strong>${session.eligibleSignedUp} / ${session.eligibleTotal}</strong> Cadets</span>
+        <span><strong>${session.staff.length}</strong> Staff</span>
       </div>
 
       <div class="training-people-grid">
