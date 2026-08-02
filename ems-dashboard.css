@@ -3955,3 +3955,54 @@ dialog menu {
     grid-template-columns: 64px minmax(0, 1fr);
   }
 }
+
+
+/* Roster page panel placement and aligned qualification columns */
+.roster-page-side {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.roster-member-row {
+  grid-template-columns: minmax(210px, 310px) minmax(0, 1fr);
+}
+
+.roster-member-actions {
+  display: grid;
+  grid-template-columns: 252px auto;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.roster-member-tags {
+  display: grid;
+  grid-template-columns: repeat(4, 58px);
+  justify-content: start;
+  gap: 5px;
+  min-width: 252px;
+}
+
+.roster-member-tags .pill {
+  width: 58px;
+}
+
+.roster-birthday-button {
+  justify-self: start;
+}
+
+@media (max-width: 900px) {
+  .roster-member-row {
+    grid-template-columns: 1fr;
+  }
+
+  .roster-member-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .roster-member-tags {
+    min-width: 0;
+  }
+}
