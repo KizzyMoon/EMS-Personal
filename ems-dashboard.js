@@ -2323,12 +2323,12 @@ function openCadetSheetNotes(cadet) {
   }
 
   // Day 1 trained cadets get the full RA Focus view.
-  const struggles = focusGroupsHtml(
+  const struggles = sheetList(
     cadet.latestStruggles,
     "No red or orange items found on their most recent RA."
   );
 
-  const unassessed = focusGroupsHtml(
+  const unassessed = sheetList(
     cadet.unassessedItems,
     "All required checked items have at least one assessment."
   );
