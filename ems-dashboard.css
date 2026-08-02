@@ -2739,3 +2739,89 @@ body {
 [data-open-cadet-focus] {
   cursor: pointer;
 }
+
+
+/* Compact RA Focus modal */
+dialog {
+  max-height: min(86vh, 820px);
+}
+
+dialog .dialog-body {
+  display: grid;
+  gap: 10px;
+}
+
+.dialog-section {
+  padding: 10px 12px !important;
+}
+
+.dialog-section h3 {
+  margin: 0 0 7px !important;
+  font-size: 0.82rem;
+}
+
+.ra-focus-group {
+  margin: 0 0 8px;
+}
+
+.ra-focus-group:last-child {
+  margin-bottom: 0;
+}
+
+.ra-focus-group h4 {
+  margin: 0 0 4px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+  color: #ffc2cf;
+  font-size: 0.7rem;
+}
+
+.ra-focus-group ul,
+.ra-focus-flat-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ra-focus-item {
+  margin: 1px 0;
+  line-height: 1.22;
+  color: var(--text);
+  font-size: 0.78rem;
+}
+
+.ra-focus-red {
+  color: #ff6b81 !important;
+  font-weight: 800;
+}
+
+.ra-focus-orange {
+  color: #ff9f43 !important;
+  font-weight: 800;
+}
+
+.ra-focus-yellow {
+  color: #ffd166 !important;
+  font-weight: 800;
+}
+
+.ra-focus-green {
+  color: #66d9a5 !important;
+  font-weight: 800;
+}
+
+.ra-focus-note {
+  margin: 0;
+}
+
+.ra-focus-note + .ra-focus-note {
+  margin-top: 6px;
+  padding-top: 6px;
+}
+
+dialog menu {
+  position: sticky;
+  bottom: 0;
+  margin-top: 8px;
+  background: var(--panel);
+  padding-top: 8px;
+}

@@ -2152,27 +2152,65 @@ function setDialogReadonly(readonly) {
   if (els.dialogSave) els.dialogSave.classList.toggle("is-hidden", readonly);
 }
 
-function sheetList(items = [], emptyText = "Nothing listed yet.") {
-  if (items.some((item) => item && typeof item === "object" && Array.isArray(item.items))) {
-    const groups = items
-      .map((group) => ({
-        group: group.group || "Other",
-        items: cleanFocusItems(group.items || [])
-      }))
-      .filter((group) => group.items.length);
-    return groups.length
-      ? `<div class="focus-groups">${groups.map((group) => `
-        <div class="focus-group">
-          <h4>${escapeHtml(group.group)}</h4>
-          <ul>${group.items.map((item) => `<li class="${focusItemClass(item)}">${escapeHtml(item)}</li>`).join("")}</ul>
-        </div>
-      `).join("")}</div>`
-      : `<p class="muted">${escapeHtml(emptyText)}</p>`;
+function sheetList(groups, emptyText) {
+  if (!groups || (Array.isArray(groups) && groups.length === 0)) {
+    return `<p class="muted">${escapeHtml(emptyText)}</p>`;
   }
-  const cleanItems = cleanFocusItems(items);
-  return cleanItems.length
-    ? `<ul>${cleanItems.map((item) => `<li class="${focusItemClass(item)}">${escapeHtml(item)}</li>`).join("")}</ul>`
-    : `<p class="muted">${escapeHtml(emptyText)}</p>`;
+
+  const normaliseColour = (value = "") => {
+    const text = String(value).toLowerCase();
+    if (text.includes("red")) return "red";
+    if (text.includes("orange")) return "orange";
+    if (text.includes("yellow")) return "yellow";
+    if (text.includes("green")) return "green";
+    return "";
+  };
+
+  const cleanLabel = (value = "") =>
+    String(value)
+      .replace(/\s*\((red|orange|yellow|green)\)\s*$/i, "")
+      .trim();
+
+  const renderItem = (item) => {
+    const rawText = typeof item === "string"
+      ? item
+      : (item.label || item.name || item.item || item.text || "");
+
+    const explicitColour = typeof item === "object"
+      ? (item.colour || item.color || item.status || item.rating || "")
+      : "";
+
+    const colour = normaliseColour(explicitColour || rawText);
+    const label = cleanLabel(rawText);
+
+    return `<li class="ra-focus-item${colour ? ` ra-focus-${colour}` : ""}">${escapeHtml(label)}</li>`;
+  };
+
+  const entries = Array.isArray(groups) ? groups : Object.entries(groups);
+
+  return entries.map((entry) => {
+    if (Array.isArray(entry) && entry.length === 2 && Array.isArray(entry[1])) {
+      const [section, items] = entry;
+      if (!items.length) return "";
+      return `
+        <section class="ra-focus-group">
+          <h4>${escapeHtml(section)}</h4>
+          <ul>${items.map(renderItem).join("")}</ul>
+        </section>
+      `;
+    }
+
+    if (entry && typeof entry === "object" && Array.isArray(entry.items)) {
+      return `
+        <section class="ra-focus-group">
+          <h4>${escapeHtml(entry.section || entry.title || entry.name || "General")}</h4>
+          <ul>${entry.items.map(renderItem).join("")}</ul>
+        </section>
+      `;
+    }
+
+    return `<ul class="ra-focus-flat-list">${renderItem(entry)}</ul>`;
+  }).join("");
 }
 
 function cleanFocusItems(items = []) {
@@ -2542,6 +2580,14 @@ function openCadetFocusFromElement(element) {
  * runs before the general dashboard click handler, so later button/action logic
  * cannot swallow card clicks.
  */
+
+/* Close modal when clicking the backdrop/outside the dialog content. */
+els.dialog.addEventListener("click", (event) => {
+  if (event.target === els.dialog) {
+    els.dialog.close();
+  }
+});
+
 document.addEventListener("click", (event) => {
   const focusElement = event.target.closest("[data-open-cadet-focus], [data-view-sheet-notes]");
   if (!focusElement) return;
