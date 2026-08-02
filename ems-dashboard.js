@@ -1133,7 +1133,9 @@ function parseTrainingDate(value) {
     || date.getDate() !== day
   ) return "";
 
-  return date.toISOString().slice(0, 10);
+  const monthText = String(month + 1).padStart(2, "0");
+  const dayText = String(day).padStart(2, "0");
+  return `${year}-${monthText}-${dayText}`;
 }
 
 function isUpcomingTrainingDate(dateText) {
