@@ -1878,3 +1878,32 @@ menu {
 .stat-icon .icon-cut {
   stroke-width: 1.6;
 }
+
+
+/* Flat clipboard and med-bag summary icons matching the requested reference */
+.stat-icon-ra,
+.stat-icon-training {
+  border-color: transparent;
+  background: transparent;
+}
+
+.stat-flat-icon {
+  width: 27px;
+  height: 27px;
+  overflow: visible;
+}
+
+.stat-flat-fill {
+  fill: var(--accent);
+}
+
+.stat-flat-cut {
+  fill: none;
+  stroke: #2a2025;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.stat-flat-cut-fill {
+  fill: #2a2025;
+}

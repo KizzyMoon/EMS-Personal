@@ -1634,17 +1634,18 @@ function statIconMarkup(type) {
   const icons = {
     cadets: `<img class="stat-icon-img" src="nav-cadets.png?v=20260728-1" alt="" />`,
     ra: `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect class="icon-fill" x="5.25" y="4.75" width="13.5" height="15.5" rx="2.2"></rect>
-        <rect class="icon-cut" x="8.4" y="2.6" width="7.2" height="4.1" rx="1.4"></rect>
-        <circle class="icon-cut" cx="12" cy="4.65" r="0.7"></circle>
-        <path class="icon-cut" d="M8.7 10h6.6M8.7 13.4h6.6M8.7 16.8h4.2"></path>
+      <svg class="stat-flat-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="stat-flat-fill" d="M7 4.8h2V4c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v.8h2c1.1 0 2 .9 2 2V20c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V6.8c0-1.1.9-2 2-2Zm4-1.1a.7.7 0 0 0-.7.7v.7h3.4v-.7a.7.7 0 0 0-.7-.7h-2Z"></path>
+        <circle class="stat-flat-cut-fill" cx="8.6" cy="10" r="1"></circle>
+        <circle class="stat-flat-cut-fill" cx="8.6" cy="14" r="1"></circle>
+        <circle class="stat-flat-cut-fill" cx="8.6" cy="18" r="1"></circle>
+        <path class="stat-flat-cut" d="M11 10h4.8M11 14h4.8M11 18h4.8"></path>
       </svg>
     `,
     training: `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path class="icon-fill" d="M8 5V3.9c0-1 .8-1.9 1.9-1.9h4.2c1 0 1.9.8 1.9 1.9V5h2.1c1.7 0 3 1.3 3 3v10.2c0 1.7-1.3 3-3 3H5.9c-1.7 0-3-1.3-3-3V8c0-1.7 1.3-3 3-3H8Zm2.1 0h3.8v-.8h-3.8V5Z"></path>
-        <path class="icon-cut" d="M12 9v7M8.5 12.5h7"></path>
+      <svg class="stat-flat-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="stat-flat-fill" d="M8 5V3.8C8 2.8 8.8 2 9.8 2h4.4c1 0 1.8.8 1.8 1.8V5h2.2A2.8 2.8 0 0 1 21 7.8v10.4a2.8 2.8 0 0 1-2.8 2.8H5.8A2.8 2.8 0 0 1 3 18.2V7.8A2.8 2.8 0 0 1 5.8 5H8Zm2-1v1h4V4h-4Z"></path>
+        <path class="stat-flat-cut-fill" d="M10.8 9h2.4v2.8H16v2.4h-2.8V17h-2.4v-2.8H8v-2.4h2.8V9Z"></path>
       </svg>
     `,
     roster: `<img class="stat-icon-img" src="ems-favicon.png?v=20260722-2" alt="" />`
@@ -1666,7 +1667,7 @@ function renderStats() {
 
   els.stats.innerHTML = stats.map((item) => `
     <article class="stat">
-      <span class="stat-icon">${statIconMarkup(item.icon)}</span>
+      <span class="stat-icon stat-icon-${item.icon}">${statIconMarkup(item.icon)}</span>
       <span class="stat-label">${escapeHtml(item.label)}</span>
       <strong>${item.value}</strong>
     </article>
@@ -1681,7 +1682,7 @@ function renderOverview() {
   const cadets = filteredCadets().filter((cadet) => cadet.day1);
   const needsRaItems = cadets.filter(needsRa);
   const limitItems = cadets.filter(limitRisk);
-  els.needsRaCount.textContent = needsRaItems.length;
+  if (els.needsRaCount) els.needsRaCount.textContent = needsRaItems.length;
   els.limitCount.textContent = limitItems.length;
   els.needsRaList.innerHTML = needsRaItems.length ? needsRaItems.map((cadet) => overviewCadetCard(cadet)).join("") : empty("No cadets currently need an RA.");
   els.limitList.innerHTML = limitItems.length ? limitItems.map((cadet) => overviewCadetCard(cadet, { showRaPill: true })).join("") : empty("No cadets are close to their 14/28 day limits.");
