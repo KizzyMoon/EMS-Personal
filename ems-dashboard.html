@@ -3,115 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#1f1a20" />
-    <meta name="apple-mobile-web-app-title" content="EMS" />
     <title>EMS Cadet Dashboard</title>
-    <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
-    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
-    <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260728-2" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-1" />
   </head>
   <body>
     <main class="app">
       <header class="topbar">
         <a class="brand" href="index.html">
-          <img src="ems-favicon.png?v=20260722-2" alt="" />
-          <span>
-            <strong>EMS Dashboard</strong>
-            <small>Highlife RP</small>
-          </span>
+          <strong>EMS Dashboard</strong>
+          <span>Highlife RP</span>
         </a>
         <nav aria-label="Dashboard sections">
-          <button class="active" data-tab="overview" type="button" aria-label="Overview">
-            <img class="nav-icon" src="nav-overview.png?v=20260728-1" alt="" />
-            <span>Overview</span>
-          </button>
-          <button data-tab="cadets" type="button" aria-label="Cadets">
-            <img class="nav-icon" src="nav-cadets.png?v=20260728-1" alt="" />
-            <span>Cadets</span>
-          </button>
-          <button data-tab="directory" type="button" aria-label="Roster">
-            <img class="nav-icon" src="ems-favicon.png?v=20260722-2" alt="" />
-            <span>Roster</span>
-          </button>
-          <button data-tab="cheat-sheet" type="button" aria-label="Cheat Sheet">
-            <img class="nav-icon" src="nav-cheat-sheet.png?v=20260728-1" alt="" />
-            <span>Cheat Sheet</span>
-          </button>
-          <button class="mobile-quick-tab" data-tab="quick-links" type="button" aria-label="Quick Links">
-            <img class="nav-icon" src="nav-quick-links.png?v=20260728-1" alt="" />
-            <span>Links</span>
-          </button>
-          <button class="mobile-settings-tab" data-tab="settings" type="button" aria-label="Settings">
-            <img class="nav-icon" src="nav-settings.svg?v=20260728-1" alt="" />
-            <span>Settings</span>
-          </button>
+          <button class="active" data-tab="overview" type="button">Overview</button>
+          <button data-tab="cadets" type="button">Cadets</button>
+          <button data-tab="directory" type="button">Directory</button>
+          <button data-tab="notes" type="button">Notes</button>
+          <button data-tab="settings" type="button">Settings</button>
         </nav>
-        <section class="sidebar-quick-links" aria-label="Quick links">
-          <h2>Quick Links</h2>
-          <div class="quick-links-groups">
-            <section class="quick-link-category" aria-label="General links">
-              <h3>General</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/10wmM-u_9DZTCWArD_eGuSkbXvdjTFJpiOlQ5siERWCM/edit?gid=0#gid=0" target="_blank" rel="noopener">
-                  <span>EMS Basic Treatment Guide</span>
-                </a>
-                <a class="quick-link sheets-link" href="https://tinyurl.com/HL-EMS-Feedback" target="_blank" rel="noopener">
-                  <span>Feedback Sheet</span>
-                </a>
-              </div>
-            </section>
-
-            <section class="quick-link-category" aria-label="FTO links">
-              <h3>FTO</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=642049381#gid=642049381" target="_blank" rel="noopener">
-                  <span>Cadet RA's</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1XqbCbo75uqUo2JrawDIAxai8Auwhjqzgd-r3Uc2jamA/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>FTO SOP's</span>
-                </a>
-              </div>
-            </section>
-
-            <section class="quick-link-category" aria-label="Training links">
-              <h3>Training</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1vqTfoWqwhHayM07EmD5B1nwMgi5_qs_qy58ILpILp5U/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Cadet's Trainings Guide</span>
-                </a>
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
-                  <span>Training Attendance Sheet</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1cCbYAlOkZ0ZSn1kbN2U_4Ql-bUiunQJwxBfY1hMsF2w/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Training Guide - Day 1</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1pE2pAXrG3TDVf6JPaqYqKDCvTts2KecbG0X0aOLF9Ro/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Training Guide - Day 2</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1BI931cPqewp-xqRV7bqmtQXLU4A6Pujn9P3o7zHGkEg/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Icon Guide</span>
-                </a>
-              </div>
-            </section>
-
-            <section class="quick-link-category" aria-label="Interview links">
-              <h3>Interviews</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
-                  <span>Interviews Attendance</span>
-                </a>
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1eNASopPX0MXnh7CuQVy3fL7Y5WQdou2HqFn2vDztLqw/edit?gid=398040619#gid=398040619" target="_blank" rel="noopener">
-                  <span>EMS Interviews Form</span>
-                </a>
-              </div>
-            </section>
-          </div>
-        </section>
-        <button class="sidebar-settings-button" data-tab="settings" type="button" aria-label="Settings">
-          <img class="nav-icon" src="nav-settings.svg?v=20260728-1" alt="" />
-          <span>Settings</span>
-        </button>
+        <a class="home-link" href="index.html">Vault</a>
       </header>
 
       <section class="toolbar">
@@ -124,11 +33,35 @@
           <option value="needs-training">Needs day training</option>
         </select>
         <button data-action="import-google" type="button">Sync Sheet</button>
+        <button data-action="google-sign-in" type="button">Google Sign In</button>
+      </section>
+
+      <section class="source-panel">
+        <label>
+          Cadet Sheet
+          <input data-google-url value="https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=1321749468#gid=1321749468" />
+        </label>
+        <label>
+          EMS Roster Sheet
+          <input data-roster-url value="https://docs.google.com/spreadsheets/d/1b9RV4HZh2Klex6jEq8YarlpzpDMt0F4ohV_GscHbSb8/edit?gid=647224122#gid=647224122" />
+        </label>
+        <span data-last-updated>No imports yet</span>
       </section>
 
       <section class="stats" data-stats></section>
 
       <section class="view" data-view="overview">
+        <article class="panel training-panel">
+          <div class="panel-head training-panel-head">
+            <div>
+              <h2>Upcoming EU Training</h2>
+              <p class="muted" data-training-status>Refreshing live training information…</p>
+            </div>
+            <button data-action="refresh-training" type="button">Refresh Training</button>
+          </div>
+          <div class="training-grid" data-training-list></div>
+        </article>
+
         <div class="dashboard-layout">
           <div class="dashboard-main">
             <article class="panel">
@@ -136,7 +69,14 @@
                 <h2>Needs RA From Me</h2>
                 <span data-count-needs-ra>0</span>
               </div>
-              <div data-needs-ra-list class="cadet-grid"></div>
+              <div data-needs-ra-list class="stack"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h2>Cadets To Work With</h2>
+                <span data-count-work>0</span>
+              </div>
+              <div data-work-list class="cadet-grid"></div>
             </article>
           </div>
           <aside class="dashboard-side">
@@ -153,212 +93,15 @@
 
       <section class="view is-hidden" data-view="cadets">
         <div class="cadet-grid" data-cadet-grid></div>
-        <article class="panel ra-offers-panel">
-          <div class="panel-head ra-offers-head">
-            <div>
-              <h2>RA Offers</h2>
-              <p class="muted">Individual offers and Discord ping offers.</p>
-            </div>
-            <div class="ra-offers-controls">
-              <div data-ra-offer-summary class="ra-offer-summary"></div>
-              <select data-ra-offer-month aria-label="Filter RA offers by month"></select>
-              <button data-action="ping-offer" type="button">Ping offer</button>
-            </div>
-          </div>
-          <div data-ra-offer-log class="ra-offer-log"></div>
-        </article>
       </section>
 
       <section class="view is-hidden" data-view="directory">
         <article class="panel">
           <div class="panel-head">
-            <h2>EMS Roster</h2>
+            <h2>All EMS Names & Callsigns</h2>
             <span data-directory-count>0</span>
           </div>
           <div class="directory" data-directory></div>
-        </article>
-      </section>
-
-      <section class="view is-hidden" data-view="cheat-sheet">
-        <div class="cheat-top-grid">
-          <article class="cheat-panel meds-card">
-            <div class="cheat-table-wrap">
-              <table class="cheat-table meds-table">
-                <thead>
-                  <tr>
-                    <th>Medication</th>
-                    <th>Dosage</th>
-                    <th>Drugs*</th>
-                    <th>Alcohol*</th>
-                    <th>Level</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Oxygen</td><td>0.5-15 L/min</td><td>No</td><td>No</td><td>N/A</td></tr>
-                  <tr><td>Epinephrine</td><td>0.5-1 mg</td><td>No</td><td>No</td><td>N/A</td></tr>
-                  <tr><td>Tylenol</td><td>500 mg</td><td>No</td><td>Yes</td><td>1 - 4</td></tr>
-                  <tr><td>Tramadol</td><td>50-100 mg</td><td>Yes</td><td>Yes</td><td>5 - 7</td></tr>
-                  <tr><td>Morphine</td><td>2 mg</td><td>Yes</td><td>Yes</td><td>8+</td></tr>
-                  <tr><td>TXA</td><td>500-1000 ml</td><td>No</td><td>No</td><td>N/A</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-
-          <article class="cheat-panel icu-card">
-            <table class="cheat-table icu-table">
-              <thead>
-                <tr>
-                  <th>ICU Days</th>
-                  <th>Days</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Blunt Force Trauma / High Fall</td><td>100 days</td></tr>
-                <tr><td>Drowning / MVA</td><td>100 days</td></tr>
-                <tr><td>Miscellaneous Injury</td><td>100 days</td></tr>
-                <tr><td>Explosion / Burns</td><td>150 days</td></tr>
-                <tr><td>GSW / Stabbing / Lacerations / Animal</td><td>150 days</td></tr>
-                <tr><td>Unresponsive</td><td>500 days</td></tr>
-              </tbody>
-            </table>
-          </article>
-        </div>
-
-        <div class="morgue-stack">
-          <article class="cheat-panel morgue-card">
-            <div class="cheat-title">
-              <h2>Morgue Format - Regular</h2>
-            </div>
-            <dl class="cheat-lines">
-              <div>
-                <dt>Days</dt>
-                <dd>300</dd>
-              </div>
-              <div>
-                <dt>Format</dt>
-                <dd>Reason to Death | TOD: XX:XX</dd>
-              </div>
-              <div>
-                <dt>Example</dt>
-                <dd>DOA for Fatal GSW | TOD 3:25 PM</dd>
-              </div>
-            </dl>
-          </article>
-
-          <article class="cheat-panel morgue-card">
-            <div class="cheat-title">
-              <h2>Morgue Format - Criminal</h2>
-            </div>
-            <dl class="cheat-lines">
-              <div>
-                <dt>Days</dt>
-                <dd>1000</dd>
-              </div>
-              <div>
-                <dt>Format</dt>
-                <dd>Reason to Death | TOD: XX:XX | Charges</dd>
-              </div>
-              <div>
-                <dt>Example</dt>
-                <dd>DOS for Fatal GSW to the head | TOD: 5:42 AM | Bank Robbery | Attempted Mass Murder | Felony Evading Arrest | Reckless Driving</dd>
-              </div>
-            </dl>
-          </article>
-        </div>
-
-        <div class="cheat-grid">
-          <article class="cheat-panel vehicle-card seu-card">
-            <div class="cheat-title">
-              <span>SEU</span>
-              <h2>1 SEU : 1 Ambulance</h2>
-            </div>
-            <ul class="vehicle-list">
-              <li><span>CaraCara</span><strong>EMT I+</strong></li>
-              <li><span>Landstalker</span><strong>EMT III+</strong></li>
-              <li><span>Scout</span><strong>Supervisor+</strong></li>
-            </ul>
-            <p class="cheat-note">SEU requires a 1:1 ambulance ratio.</p>
-          </article>
-
-          <article class="cheat-panel vehicle-card fr-card">
-            <div class="cheat-title">
-              <span>FR</span>
-              <h2>1 FR : 2 Ambulances</h2>
-            </div>
-            <ul class="vehicle-list">
-              <li><span>Buffalo</span><strong>EMT II+</strong></li>
-              <li><span>Felon</span><strong>EMT IV+</strong></li>
-            </ul>
-            <p class="cheat-note">FR is not classed as an ambulance and does not count toward the SEU ratio.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="view is-hidden" data-view="quick-links">
-        <article class="panel quick-links-mobile-panel">
-          <div class="panel-head">
-            <h2>Quick Links</h2>
-            <span>11</span>
-          </div>
-          <div class="quick-links-groups">
-            <section class="quick-link-category" aria-label="General links">
-              <h3>General</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/10wmM-u_9DZTCWArD_eGuSkbXvdjTFJpiOlQ5siERWCM/edit?gid=0#gid=0" target="_blank" rel="noopener">
-                  <span>EMS Basic Treatment Guide</span>
-                </a>
-                <a class="quick-link sheets-link" href="https://tinyurl.com/HL-EMS-Feedback" target="_blank" rel="noopener">
-                  <span>Feedback Sheet</span>
-                </a>
-              </div>
-            </section>
-
-            <section class="quick-link-category" aria-label="FTO links">
-              <h3>FTO</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=642049381#gid=642049381" target="_blank" rel="noopener">
-                  <span>Cadet RA's</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1XqbCbo75uqUo2JrawDIAxai8Auwhjqzgd-r3Uc2jamA/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>FTO SOP's</span>
-                </a>
-              </div>
-            </section>
-
-            <section class="quick-link-category" aria-label="Training links">
-              <h3>Training</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1vqTfoWqwhHayM07EmD5B1nwMgi5_qs_qy58ILpILp5U/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Cadet's Trainings Guide</span>
-                </a>
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
-                  <span>Training Attendance Sheet</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1cCbYAlOkZ0ZSn1kbN2U_4Ql-bUiunQJwxBfY1hMsF2w/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Training Guide - Day 1</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1pE2pAXrG3TDVf6JPaqYqKDCvTts2KecbG0X0aOLF9Ro/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Training Guide - Day 2</span>
-                </a>
-                <a class="quick-link docs-link" href="https://docs.google.com/document/d/1BI931cPqewp-xqRV7bqmtQXLU4A6Pujn9P3o7zHGkEg/edit?tab=t.0" target="_blank" rel="noopener">
-                  <span>Icon Guide</span>
-                </a>
-              </div>
-            </section>
-
-            <section class="quick-link-category" aria-label="Interview links">
-              <h3>Interviews</h3>
-              <div class="quick-links-grid">
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911" target="_blank" rel="noopener">
-                  <span>Interviews Attendance</span>
-                </a>
-                <a class="quick-link sheets-link" href="https://docs.google.com/spreadsheets/d/1eNASopPX0MXnh7CuQVy3fL7Y5WQdou2HqFn2vDztLqw/edit?gid=398040619#gid=398040619" target="_blank" rel="noopener">
-                  <span>EMS Interviews Form</span>
-                </a>
-              </div>
-            </section>
-          </div>
         </article>
       </section>
 
@@ -384,27 +127,16 @@
               <input data-my-callsign value="M3-18" />
             </label>
             <label>
-              Google Gmail
-              <input data-google-email type="email" placeholder="yourgmail@gmail.com" />
+              My employee number
+              <input data-my-employee-number inputmode="numeric" placeholder="e.g. 1532" />
             </label>
             <label class="full">
-              Cadet Sheet
-              <input data-google-url value="https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=1321749468#gid=1321749468" />
+              Training Attendance Sheet
+              <input data-training-url value="https://docs.google.com/spreadsheets/d/1twcPjyyf3tuwq4L12OhmLz6QkF9_u8I5ai5qn9wAisg/edit?gid=0#gid=0" />
             </label>
-            <label class="full">
-              EMS Roster Sheet
-              <input data-roster-url value="https://docs.google.com/spreadsheets/d/1b9RV4HZh2Klex6jEq8YarlpzpDMt0F4ohV_GscHbSb8/edit?gid=647224122#gid=647224122" />
-            </label>
-            <label class="full">
-              Personal Storage Sheet
-              <input data-storage-url value="https://docs.google.com/spreadsheets/d/15bIY2191kS-cbt8F-qeltWOb0qkK4Anpko2pZaagAm8/edit?usp=sharing" />
-            </label>
-            <button data-action="google-sign-in" type="button">Google Sign In</button>
-            <button data-action="load-cloud" type="button">Load Personal Data</button>
-            <button data-action="save-cloud" type="button">Save Personal Data</button>
             <button data-action="save-settings" type="button">Save Settings</button>
-            <p data-settings-summary class="muted">Used to check each cadet sheet for RAs you completed.</p>
-            <p data-last-updated class="muted">No imports yet</p>
+            <button data-action="refresh-training" type="button">Refresh Training</button>
+            <p data-settings-summary class="muted">Used to check your RAs and whether you are signed up for upcoming EU training.</p>
           </div>
         </article>
       </section>
@@ -417,12 +149,12 @@
         <div data-dialog-body></div>
         <menu>
           <button value="cancel" type="submit">Cancel</button>
-          <button class="primary" data-dialog-save value="save" type="submit">Save</button>
+          <button class="primary" value="save" type="submit">Save</button>
         </menu>
       </form>
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260728-1"></script>
+    <script src="ems-dashboard.js?v=20260802-1"></script>
   </body>
 </html>
