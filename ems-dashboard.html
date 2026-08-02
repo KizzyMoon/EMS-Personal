@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-31" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-32" />
   </head>
   <body>
     <main class="app">
@@ -29,10 +29,12 @@
           <button data-tab="cadets" type="button" aria-label="Cadets">
             <img class="nav-icon" src="Cadets.png?v=20260802-1" alt="" />
             <span>Cadets</span>
+            <strong class="sidebar-page-count" data-sidebar-cadet-count>0</strong>
           </button>
           <button data-tab="directory" type="button" aria-label="Roster">
             <img class="nav-icon" src="Roster.png?v=20260802-1" alt="" />
             <span>Roster</span>
+            <strong class="sidebar-page-count" data-sidebar-roster-count>0</strong>
           </button>
           <button data-tab="cheat-sheet" type="button" aria-label="Cheat Sheet">
             <img class="nav-icon" src="cheat sheet.png?v=20260802-1" alt="" />
@@ -126,8 +128,6 @@
         <span class="sync-status-chip" data-overview-sync-status>Not synced yet</span>
         <button data-action="import-google" type="button">Sync Sheet</button>
       </section>
-
-      <section class="stats" data-stats></section>
 
       <section class="view overview-dashboard" data-view="overview">
         <div class="overview-primary-grid">
@@ -477,6 +477,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260802-30"></script>
+    <script src="ems-dashboard.js?v=20260802-32"></script>
   </body>
 </html>

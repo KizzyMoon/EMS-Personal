@@ -1859,20 +1859,25 @@ function renderStats() {
   const needsRaCount = cadets.filter(needsRa).length;
   const trainingCount = cadets.filter((cadet) => !cadet.day1 || !cadet.day2).length;
 
-  const stats = [
-    { label: "Cadets", value: cadets.length, icon: "cadets" },
-    { label: "Need My RA", value: needsRaCount, icon: "ra" },
-    { label: "Need Training", value: trainingCount, icon: "training" },
-    { label: "Roster", value: state.members.length, icon: "roster" }
-  ];
+  if (els.sidebarCadetCount) els.sidebarCadetCount.textContent = cadets.length;
+  if (els.sidebarRosterCount) els.sidebarRosterCount.textContent = state.members.length;
 
-  els.stats.innerHTML = stats.map((item) => `
-    <article class="stat">
-      <span class="stat-icon stat-icon-${item.icon}">${statIconMarkup(item.icon)}</span>
-      <span class="stat-label">${escapeHtml(item.label)}</span>
-      <strong>${item.value}</strong>
-    </article>
-  `).join("");
+  if (els.stats) {
+    const stats = [
+      { label: "Cadets", value: cadets.length, icon: "cadets" },
+      { label: "Need My RA", value: needsRaCount, icon: "ra" },
+      { label: "Need Training", value: trainingCount, icon: "training" },
+      { label: "Roster", value: state.members.length, icon: "roster" }
+    ];
+
+    els.stats.innerHTML = stats.map((item) => `
+      <article class="stat">
+        <span class="stat-icon stat-icon-${item.icon}">${statIconMarkup(item.icon)}</span>
+        <span class="stat-label">${escapeHtml(item.label)}</span>
+        <strong>${item.value}</strong>
+      </article>
+    `).join("");
+  }
 
   const syncText = state.lastUpdated
     ? `Last sync ${new Date(state.lastUpdated).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`
