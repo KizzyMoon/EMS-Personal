@@ -5598,3 +5598,196 @@ dialog.ra-focus-dossier .close {
   border: 2px solid transparent;
   background-clip: padding-box;
 }
+
+
+/* =========================================================
+   Mobile / portrait monitor navigation HUD
+   Keeps all existing navigation icons
+   ========================================================= */
+
+@media (max-width: 1050px), (orientation: portrait) and (max-width: 1350px) {
+  body {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom)) !important;
+  }
+
+  /* Keep only the small brand header at the top */
+  .topbar {
+    position: sticky !important;
+    top: 0;
+    z-index: 40;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    height: auto !important;
+    min-height: 58px;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line);
+    background: rgba(7, 11, 16, 0.92);
+    padding: 8px 12px !important;
+  }
+
+  .topbar .brand {
+    width: fit-content;
+  }
+
+  .topbar .brand img {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* Bottom HUD */
+  .topbar > nav {
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    z-index: 1500;
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    width: 100% !important;
+    min-height: 76px;
+    border: 0 !important;
+    border-top: 1px solid rgba(234, 159, 184, 0.28) !important;
+    border-radius: 0 !important;
+    background:
+      linear-gradient(180deg, rgba(5, 9, 14, 0.97), rgba(2, 5, 9, 0.99)) !important;
+    box-shadow:
+      0 -14px 34px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+    padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left) !important;
+    backdrop-filter: blur(18px);
+  }
+
+  .topbar > nav button,
+  .topbar > nav .sidebar-settings-button {
+    position: relative;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    min-width: 0;
+    min-height: 76px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #d8dce4 !important;
+    padding: 9px 3px 7px !important;
+    box-shadow: none !important;
+    text-align: center !important;
+  }
+
+  .topbar > nav button:hover {
+    background: rgba(234, 159, 184, 0.055) !important;
+  }
+
+  .topbar > nav button.active {
+    color: #ea9fb8 !important;
+  }
+
+  .topbar > nav button.active::after {
+    content: "";
+    position: absolute;
+    inset: auto 12px 0;
+    height: 3px;
+    border-radius: 999px 999px 0 0;
+    background: #ea9fb8;
+    box-shadow: 0 0 11px rgba(234, 159, 184, 0.6);
+  }
+
+  /* Keep the current uploaded icons */
+  .topbar > nav .nav-icon {
+    display: block !important;
+    width: 26px !important;
+    height: 26px !important;
+    max-width: 26px !important;
+    margin: 0 !important;
+    object-fit: contain;
+  }
+
+  /* Icon over label, like the reference HUD */
+  .topbar > nav button > span {
+    display: block !important;
+    overflow: hidden;
+    width: 100%;
+    color: inherit;
+    font-size: 0.58rem !important;
+    font-weight: 900;
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .topbar > nav .mobile-quick-tab > span {
+    display: block !important;
+  }
+
+  .mobile-quick-tab,
+  .mobile-settings-tab {
+    display: flex !important;
+  }
+
+  /* Small count badge above Cadets / Roster */
+  .topbar > nav .sidebar-page-count {
+    position: absolute;
+    top: 5px;
+    right: calc(50% - 25px);
+    width: auto;
+    min-width: 17px;
+    height: 17px;
+    margin: 0 !important;
+    border: 1px solid rgba(234, 159, 184, 0.32);
+    border-radius: 999px;
+    background: rgba(234, 159, 184, 0.18);
+    color: #fff;
+    font-size: 0.48rem !important;
+    line-height: 15px;
+    padding: 0 4px;
+  }
+
+  /* Desktop-only side content remains hidden in HUD mode */
+  .sidebar-quick-links,
+  .sidebar-settings-button {
+    display: none !important;
+  }
+
+  .toolbar,
+  .stats,
+  .view {
+    grid-column: 1 !important;
+  }
+}
+
+/* Portrait monitors get slightly roomier labels */
+@media (orientation: portrait) and (min-width: 721px) and (max-width: 1350px) {
+  .topbar > nav {
+    min-height: 82px;
+  }
+
+  .topbar > nav button {
+    min-height: 82px !important;
+  }
+
+  .topbar > nav .nav-icon {
+    width: 29px !important;
+    height: 29px !important;
+    max-width: 29px !important;
+  }
+
+  .topbar > nav button > span {
+    font-size: 0.66rem !important;
+  }
+}
+
+/* Very narrow phones: keep all six tabs usable */
+@media (max-width: 460px) {
+  .topbar > nav button > span {
+    font-size: 0.49rem !important;
+  }
+
+  .topbar > nav .nav-icon {
+    width: 23px !important;
+    height: 23px !important;
+  }
+}
