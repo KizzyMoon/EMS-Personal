@@ -4073,3 +4073,21 @@ dialog menu {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Definitive cadet footer alignment */
+.cadet-profile-card {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 190px;
+}
+
+.cadet-profile-card .cadet-card-footer {
+  margin-top: auto !important;
+  width: 100%;
+}
+
+.cadet-profile-card .cadet-training-progress {
+  margin-bottom: 8px;
+}
+
