@@ -5328,3 +5328,87 @@ dialog.ra-focus-dossier .close::before {
   font-size: 0.69rem !important;
   line-height: 1.42 !important;
 }
+
+
+/* =========================================================
+   Narrower RA Focus modal + clearer Training Notes
+   ========================================================= */
+
+dialog.ra-focus-dossier {
+  width: min(720px, calc(100vw - 28px)) !important;
+  max-width: 720px !important;
+}
+
+dialog.ra-focus-dossier form {
+  padding: 16px !important;
+}
+
+dialog.ra-focus-dossier > form > h2 {
+  margin-left: 96px !important;
+  margin-right: 48px !important;
+}
+
+.ra-dossier-person {
+  gap: 12px !important;
+}
+
+.ra-dossier-person > img {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.ra-dossier-stats {
+  gap: 8px !important;
+}
+
+.ra-dossier-stats article {
+  padding: 9px !important;
+}
+
+.ra-dossier-section {
+  padding: 10px !important;
+}
+
+/* Move divider left: callsign needs only a compact column */
+.ra-training-note {
+  grid-template-columns: 92px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  padding: 10px 12px !important;
+}
+
+.ra-training-note-meta {
+  padding-right: 9px !important;
+}
+
+/* Callsign remains clear, but the note content gets priority */
+.ra-training-note-meta strong {
+  font-size: 0.9rem !important;
+}
+
+.ra-training-note-copy h4 {
+  font-size: 0.84rem !important;
+  line-height: 1.35 !important;
+}
+
+.ra-training-note-copy p {
+  font-size: 0.78rem !important;
+  line-height: 1.5 !important;
+}
+
+.ra-training-note-date {
+  font-size: 0.66rem !important;
+}
+
+.ra-training-notes {
+  max-height: 280px !important;
+}
+
+@media (max-width: 680px) {
+  dialog.ra-focus-dossier {
+    width: calc(100vw - 14px) !important;
+  }
+
+  .ra-training-note {
+    grid-template-columns: 82px minmax(0, 1fr) !important;
+  }
+}
