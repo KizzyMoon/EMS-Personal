@@ -5444,3 +5444,53 @@ dialog.ra-focus-dossier > form > h2 {
   opacity: 1 !important;
 }
 
+
+
+/* =====================================================
+   EMS brand colour
+   ===================================================== */
+:root{
+  --ems-pink:#ea9fb8;
+  --ems-pink-hover:#f0b2c7;
+}
+
+/* Global overrides */
+.ra-focus-dossier,
+.ra-focus-dossier *{
+  --accent-pink: var(--ems-pink);
+}
+
+.ra-dossier-person>img,
+.ra-stat-symbol,
+.ra-focus-card-icon,
+.ra-section-heading svg,
+dialog.ra-focus-dossier .close{
+  color:var(--ems-pink)!important;
+  border-color:var(--ems-pink)!important;
+}
+
+.ra-training-note-meta strong,
+.ra-dossier-stats strong,
+.ra-dossier-stats .value,
+.ra-section-heading,
+.ra-dossier h2{
+  color:var(--ems-pink)!important;
+}
+
+/* Custom scrollbar */
+.ra-training-notes{
+  scrollbar-color: var(--ems-pink) transparent;
+}
+.ra-training-notes::-webkit-scrollbar{
+  width:8px;
+}
+.ra-training-notes::-webkit-scrollbar-track{
+  background:transparent;
+}
+.ra-training-notes::-webkit-scrollbar-thumb{
+  background:var(--ems-pink);
+  border-radius:999px;
+}
+.ra-training-notes::-webkit-scrollbar-thumb:hover{
+  background:var(--ems-pink-hover);
+}
