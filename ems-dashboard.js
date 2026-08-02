@@ -1261,9 +1261,13 @@ function parseUpcomingEuTraining(rows) {
 function trainingPersonMarkup(person) {
   const identity = [person.callsign, person.name].filter(Boolean).join(" | ");
   const roleClass = normalizeKey(person.roleTag);
+  const roleTag = person.roleTag === "CADET"
+    ? ""
+    : `<span class="training-person-tag training-person-tag-${escapeHtml(roleClass)}">${escapeHtml(person.roleTag)}</span>`;
+
   return `
     <li class="training-person-row">
-      <span class="training-person-tag training-person-tag-${escapeHtml(roleClass)}">${escapeHtml(person.roleTag)}</span>
+      ${roleTag}
       <span title="${escapeHtml(identity)}">${escapeHtml(identity || person.employeeNumber)}</span>
     </li>
   `;
