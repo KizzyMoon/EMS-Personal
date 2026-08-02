@@ -2650,3 +2650,18 @@ body {
   font-size: 0.64rem;
   text-align: right;
 }
+
+/* Remove outer To Do panel styling but keep inner sections */
+.overview-todo-panel{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.overview-todo-panel > .panel-header,
+.overview-todo-panel > .overview-panel-title{
+  padding: 0 0 14px 0 !important;
+  margin: 0 0 12px 0 !important;
+  border-bottom: 1px solid var(--line);
+}
