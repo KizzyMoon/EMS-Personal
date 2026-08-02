@@ -2331,3 +2331,31 @@ body {
   word-break:break-word;
   line-height:1.25;
 }
+
+
+/* Uploaded custom EMS icon set */
+.brand img {
+  object-fit: contain;
+}
+
+.nav-icon {
+  object-fit: contain;
+}
+
+.stat-icon-img {
+  width: 28px !important;
+  height: 28px !important;
+  object-fit: contain;
+}
+
+.icon-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.icon-heading img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}

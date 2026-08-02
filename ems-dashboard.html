@@ -9,13 +9,13 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-19" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-20" />
   </head>
   <body>
     <main class="app">
       <header class="topbar">
         <a class="brand" href="index.html">
-          <img src="ems-favicon.png?v=20260722-2" alt="" />
+          <img src="Roster.png?v=20260802-1" alt="" />
           <span>
             <strong>EMS Dashboard</strong>
             <small>Highlife RP</small>
@@ -27,15 +27,15 @@
             <span>Overview</span>
           </button>
           <button data-tab="cadets" type="button" aria-label="Cadets">
-            <img class="nav-icon" src="nav-cadets.png?v=20260728-1" alt="" />
+            <img class="nav-icon" src="Cadets.png?v=20260802-1" alt="" />
             <span>Cadets</span>
           </button>
           <button data-tab="directory" type="button" aria-label="Roster">
-            <img class="nav-icon" src="ems-favicon.png?v=20260722-2" alt="" />
+            <img class="nav-icon" src="Roster.png?v=20260802-1" alt="" />
             <span>Roster</span>
           </button>
           <button data-tab="cheat-sheet" type="button" aria-label="Cheat Sheet">
-            <img class="nav-icon" src="nav-cheat-sheet.png?v=20260728-1" alt="" />
+            <img class="nav-icon" src="cheat sheet.png?v=20260802-1" alt="" />
             <span>Cheat Sheet</span>
           </button>
           <button class="mobile-quick-tab" data-tab="quick-links" type="button" aria-label="Quick Links">
@@ -143,7 +143,7 @@
             <div class="todo-columns">
               <section class="todo-group">
                 <div class="todo-group-head">
-                  <h3>Needs RA From Me</h3>
+                  <h3 class="icon-heading"><img src="Needs RA.png?v=20260802-1" alt="" />Needs RA From Me</h3>
                   <span data-count-needs-ra>0</span>
                 </div>
                 <div class="todo-list" data-needs-ra-list></div>
@@ -151,7 +151,7 @@
 
               <section class="todo-group">
                 <div class="todo-group-head">
-                  <h3>Needs Training</h3>
+                  <h3 class="icon-heading"><img src="Training.png?v=20260802-1" alt="" />Needs Training</h3>
                   <span data-count-needs-training>0</span>
                 </div>
                 <div class="todo-list" data-needs-training-list></div>
@@ -162,7 +162,7 @@
           <article class="panel upcoming-training-panel overview-schedule-panel">
             <div class="overview-panel-title">
               <div>
-                <h2>Schedule</h2>
+                <h2 class="icon-heading"><img src="Training.png?v=20260802-1" alt="" />Schedule</h2>
                 <p class="muted" data-training-status>Refreshing live training information…</p>
               </div>
               <button data-action="refresh-training" type="button">Refresh</button>
@@ -476,6 +476,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260802-18"></script>
+    <script src="ems-dashboard.js?v=20260802-20"></script>
   </body>
 </html>

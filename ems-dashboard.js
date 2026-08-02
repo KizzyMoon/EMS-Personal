@@ -1846,23 +1846,10 @@ function statIcon(label) {
 
 function statIconMarkup(type) {
   const icons = {
-    cadets: `<img class="stat-icon-img" src="nav-cadets.png?v=20260728-1" alt="" />`,
-    ra: `
-      <svg class="stat-flat-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path class="stat-flat-fill" d="M7 4.8h2V4c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v.8h2c1.1 0 2 .9 2 2V20c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V6.8c0-1.1.9-2 2-2Zm4-1.1a.7.7 0 0 0-.7.7v.7h3.4v-.7a.7.7 0 0 0-.7-.7h-2Z"></path>
-        <circle class="stat-flat-cut-fill" cx="8.6" cy="10" r="1"></circle>
-        <circle class="stat-flat-cut-fill" cx="8.6" cy="14" r="1"></circle>
-        <circle class="stat-flat-cut-fill" cx="8.6" cy="18" r="1"></circle>
-        <path class="stat-flat-cut" d="M11 10h4.8M11 14h4.8M11 18h4.8"></path>
-      </svg>
-    `,
-    training: `
-      <svg class="stat-flat-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path class="stat-flat-fill" d="M8 5V3.8C8 2.8 8.8 2 9.8 2h4.4c1 0 1.8.8 1.8 1.8V5h2.2A2.8 2.8 0 0 1 21 7.8v10.4a2.8 2.8 0 0 1-2.8 2.8H5.8A2.8 2.8 0 0 1 3 18.2V7.8A2.8 2.8 0 0 1 5.8 5H8Zm2-1v1h4V4h-4Z"></path>
-        <path class="stat-flat-cut-fill" d="M10.8 9h2.4v2.8H16v2.4h-2.8V17h-2.4v-2.8H8v-2.4h2.8V9Z"></path>
-      </svg>
-    `,
-    roster: `<img class="stat-icon-img" src="ems-favicon.png?v=20260722-2" alt="" />`
+    cadets: `<img class="stat-icon-img" src="Cadets.png?v=20260802-1" alt="" />`,
+    ra: `<img class="stat-icon-img" src="Needs RA.png?v=20260802-1" alt="" />`,
+    training: `<img class="stat-icon-img" src="Training.png?v=20260802-1" alt="" />`,
+    roster: `<img class="stat-icon-img" src="Roster.png?v=20260802-1" alt="" />`
   };
   return icons[type] || "";
 }
