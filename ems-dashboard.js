@@ -2007,7 +2007,6 @@ function cadetCard(cadet, options = {}) {
       ? `${Math.abs(days)} days overdue`
       : `${days} day${days === 1 ? "" : "s"} left`;
 
-  const trainingText = cadetTrainingStatusText(cadet);
   const latestTraining = cadet.lastRaDate
     ? `Last RA: ${formatDate(cadet.lastRaDate)}`
     : "No RA date recorded";
@@ -2047,7 +2046,6 @@ function cadetCard(cadet, options = {}) {
 
       <div class="cadet-profile-status">
         <strong>${escapeHtml(limitText)}</strong>
-        <span>${escapeHtml(trainingText)}</span>
       </div>
 
       ${(!cadet.day1 || !cadet.day2) ? `
