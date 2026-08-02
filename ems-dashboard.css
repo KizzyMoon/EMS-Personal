@@ -2309,3 +2309,25 @@ body {
     border-top: 1px solid var(--line);
   }
 }
+
+
+/* Prevent names in training schedule from being truncated */
+.training-person-row{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+}
+
+.training-person-row .training-person-tag{
+  flex:0 0 auto;
+}
+
+.training-person-row span:last-child{
+  flex:1 1 auto;
+  min-width:0;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  word-break:break-word;
+  line-height:1.25;
+}
