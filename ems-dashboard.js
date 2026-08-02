@@ -1527,20 +1527,24 @@ async function interviewSheetSessions(options = {}) {
   today.setHours(0, 0, 0, 0);
 
   const candidates = (metadata.sheets || [])
-    .map((sheet) => ({
+    .map((sheet, index) => ({
       title: sheet.properties?.title || "",
-      range: parseInterviewSheetRange(sheet.properties?.title || "")
+      range: parseInterviewSheetRange(sheet.properties?.title || ""),
+      index
     }))
     .filter((sheet) => sheet.range)
-    .filter((sheet) => {
-      const end = new Date(`${sheet.range.end}T00:00:00`);
-      return !Number.isNaN(end.valueOf()) && end >= today;
-    })
-    .sort((a, b) => a.range.end.localeCompare(b.range.end));
+    .sort((a, b) => {
+      const endCompare = b.range.end.localeCompare(a.range.end);
+      if (endCompare) return endCompare;
+      const startCompare = b.range.start.localeCompare(a.range.start);
+      if (startCompare) return startCompare;
+      return a.index - b.index;
+    });
 
   if (!candidates.length) return [];
 
-  // Only show the nearest upcoming interview week.
+  // Each interview round gets a new dated tab. Always read the newest dated set first.
+  // The individual session dates inside that tab are then checked below.
   const target = candidates[0];
   const range = encodeURIComponent(sheetRange(target.title, "A1:J22"));
   const response = await fetchSheetJson(
@@ -1549,10 +1553,15 @@ async function interviewSheetSessions(options = {}) {
   );
   const rows = response.values || [];
 
-  return [
+  const sessions = [
     parseInterviewSession(rows, { session: 1, employeeColumn: 2, nameColumn: 3 }, target.range),
     parseInterviewSession(rows, { session: 2, employeeColumn: 7, nameColumn: 8 }, target.range)
   ].filter((session) => isUpcomingTrainingDate(session.date));
+
+  sessions.forEach((session) => {
+    session.sheetTitle = target.title;
+  });
+  return sessions;
 }
 
 async function refreshInterviews(options = {}) {
@@ -1564,8 +1573,8 @@ async function refreshInterviews(options = {}) {
     liveInterviewSessions = await interviewSheetSessions(options);
     interviewLoadState = "ready";
     interviewLoadMessage = liveInterviewSessions.length
-      ? `Refreshed ${new Date().toLocaleString("en-GB")}`
-      : "No upcoming sessions";
+      ? `Newest set: ${liveInterviewSessions[0].sheetTitle}`
+      : "Newest interview set has no upcoming sessions";
     renderInterviews();
     return { sessions: liveInterviewSessions, error: null };
   } catch (error) {
