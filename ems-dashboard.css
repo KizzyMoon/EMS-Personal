@@ -2825,3 +2825,170 @@ dialog menu {
   background: var(--panel);
   padding-top: 8px;
 }
+
+
+/* =========================================================
+   Glassy overview styling
+   Keeps all existing overview content and behaviour intact.
+   ========================================================= */
+
+.view[data-view="overview"] {
+  position: relative;
+  isolation: isolate;
+}
+
+.view[data-view="overview"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(136, 92, 190, 0.16), transparent 30%),
+    radial-gradient(circle at 82% 18%, rgba(87, 114, 205, 0.14), transparent 32%),
+    radial-gradient(circle at 52% 88%, rgba(239, 134, 168, 0.10), transparent 34%);
+}
+
+.view[data-view="overview"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(9, 13, 22, 0.20), rgba(17, 21, 38, 0.10)),
+    rgba(6, 9, 15, 0.18);
+}
+
+.view[data-view="overview"] .panel,
+.view[data-view="overview"] .overview-schedule-panel,
+.view[data-view="overview"] .overview-limit-panel,
+.view[data-view="overview"] .overview-todo-section,
+.view[data-view="overview"] .training-card,
+.view[data-view="overview"] .upcoming-training-card,
+.view[data-view="overview"] .upcoming-interview-card,
+.view[data-view="overview"] .overview-limit-item,
+.view[data-view="overview"] .overview-todo-row {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(31, 35, 55, 0.66),
+      rgba(16, 21, 34, 0.58)
+    ) !important;
+  border-color: rgba(210, 163, 218, 0.22) !important;
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  -webkit-backdrop-filter: blur(14px) saturate(118%);
+  backdrop-filter: blur(14px) saturate(118%);
+}
+
+.view[data-view="overview"] .overview-todo-panel {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.view[data-view="overview"] .overview-todo-section {
+  border: 1px solid rgba(210, 163, 218, 0.17);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.view[data-view="overview"] .overview-todo-row,
+.view[data-view="overview"] .overview-limit-item,
+.view[data-view="overview"] .training-card,
+.view[data-view="overview"] .upcoming-training-card,
+.view[data-view="overview"] .upcoming-interview-card {
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.view[data-view="overview"] .overview-todo-row:hover,
+.view[data-view="overview"] .overview-limit-item:hover,
+.view[data-view="overview"] .training-card:hover,
+.view[data-view="overview"] .upcoming-interview-card:hover {
+  border-color: rgba(248, 162, 190, 0.38) !important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(46, 42, 67, 0.74),
+      rgba(20, 25, 42, 0.66)
+    ) !important;
+  transform: translateY(-1px);
+}
+
+.view[data-view="overview"] .overview-panel-title,
+.view[data-view="overview"] .panel-header,
+.view[data-view="overview"] .schedule-header,
+.view[data-view="overview"] .overview-limit-header {
+  border-bottom-color: rgba(214, 177, 220, 0.16) !important;
+}
+
+.view[data-view="overview"] .overview-panel-title h2,
+.view[data-view="overview"] .panel-header h2,
+.view[data-view="overview"] .schedule-header h2,
+.view[data-view="overview"] .overview-limit-header h2 {
+  text-shadow: 0 0 16px rgba(247, 162, 187, 0.12);
+}
+
+.view[data-view="overview"] button,
+.view[data-view="overview"] .button {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(62, 48, 70, 0.72),
+      rgba(34, 31, 46, 0.68)
+    );
+  border-color: rgba(244, 157, 182, 0.30);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 5px 14px rgba(0, 0, 0, 0.16);
+}
+
+.view[data-view="overview"] button:hover,
+.view[data-view="overview"] .button:hover {
+  border-color: rgba(255, 177, 200, 0.52);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(77, 56, 85, 0.82),
+      rgba(42, 35, 54, 0.78)
+    );
+}
+
+.view[data-view="overview"] .count-badge,
+.view[data-view="overview"] .sidebar-page-count,
+.view[data-view="overview"] .pill,
+.view[data-view="overview"] .tag {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.view[data-view="overview"] .schedule-refresh-footer {
+  border-top-color: rgba(214, 177, 220, 0.14);
+}
+
+.view[data-view="overview"] .overview-limit-track,
+.view[data-view="overview"] .progress-track {
+  background: rgba(255, 255, 255, 0.075);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .view[data-view="overview"] .panel,
+  .view[data-view="overview"] .overview-schedule-panel,
+  .view[data-view="overview"] .overview-limit-panel,
+  .view[data-view="overview"] .overview-todo-section,
+  .view[data-view="overview"] .training-card,
+  .view[data-view="overview"] .upcoming-training-card,
+  .view[data-view="overview"] .upcoming-interview-card,
+  .view[data-view="overview"] .overview-limit-item,
+  .view[data-view="overview"] .overview-todo-row {
+    background: rgba(18, 23, 37, 0.94) !important;
+  }
+}
