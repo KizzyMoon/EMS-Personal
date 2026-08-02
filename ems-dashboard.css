@@ -4091,3 +4091,393 @@ dialog menu {
   margin-bottom: 8px;
 }
 
+
+
+/* =========================================================
+   Premium Cadet RA Focus dossier
+   ========================================================= */
+
+dialog.ra-focus-dossier {
+  width: min(1080px, calc(100vw - 36px));
+  max-width: 1080px;
+  max-height: calc(100vh - 32px);
+  border: 1px solid rgba(255, 111, 151, 0.34);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 24% 0%, rgba(42, 92, 130, 0.12), transparent 32%),
+    linear-gradient(150deg, rgba(12, 25, 38, 0.98), rgba(7, 16, 27, 0.99));
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.64),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  padding: 0;
+}
+
+dialog.ra-focus-dossier::backdrop {
+  background: rgba(2, 6, 12, 0.82);
+  backdrop-filter: blur(5px);
+}
+
+dialog.ra-focus-dossier form {
+  padding: 24px;
+}
+
+dialog.ra-focus-dossier > form > h2 {
+  margin: 14px 82px 4px 142px;
+  color: #fff;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  line-height: 1.1;
+}
+
+dialog.ra-focus-dossier .close {
+  top: 24px;
+  right: 24px;
+  width: 52px;
+  height: 52px;
+  border: 1px solid #ff6792;
+  border-radius: 8px;
+  background: rgba(12, 23, 35, 0.92);
+  color: #fff;
+  font-size: 0;
+}
+
+dialog.ra-focus-dossier .close::before {
+  content: "×";
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.ra-dossier-person {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-height: 108px;
+  margin-top: -48px;
+  margin-bottom: 20px;
+}
+
+.ra-dossier-person > img {
+  flex: 0 0 auto;
+  width: 112px;
+  height: 112px;
+  border: 1px solid #ff6792;
+  border-radius: 999px;
+  background: rgba(255, 105, 145, 0.06);
+  object-fit: contain;
+  padding: 18px;
+}
+
+.ra-dossier-person-copy,
+.ra-dossier-person > div {
+  display: grid;
+  gap: 8px;
+  padding-top: 48px;
+}
+
+.ra-dossier-person p {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  color: #aebbd0;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.ra-dossier-person > div > span:not(.pill),
+.ra-dossier-person-copy > span {
+  color: #aebbd0;
+  font-size: 0.84rem;
+}
+
+.ra-dossier-loading,
+.ra-dossier-empty {
+  border: 1px dashed rgba(130, 157, 184, 0.22);
+  border-radius: 9px;
+  color: #9dacbf;
+  padding: 18px;
+  text-align: center;
+}
+
+.ra-dossier-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.ra-dossier-stats article {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 132px;
+  border: 1px solid rgba(120, 153, 181, 0.24);
+  border-radius: 10px;
+  background: rgba(15, 31, 46, 0.66);
+  padding: 18px;
+}
+
+.ra-stat-symbol {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(255, 103, 146, 0.4);
+  border-radius: 10px;
+  color: #ff769c;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.ra-dossier-stats strong {
+  display: block;
+  color: #ff769c;
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.ra-dossier-stats strong.is-empty {
+  font-size: 1rem;
+}
+
+.ra-dossier-stats h3 {
+  margin: 4px 0;
+  color: #fff;
+  font-size: 0.96rem;
+}
+
+.ra-dossier-stats p {
+  margin: 0;
+  color: #9baabd;
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.ra-dossier-section {
+  border: 1px solid rgba(120, 153, 181, 0.24);
+  border-radius: 10px;
+  background: rgba(12, 27, 41, 0.62);
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.ra-dossier-section > h3 {
+  margin: 0 0 16px;
+  color: #fff;
+  font-size: 1.15rem;
+}
+
+.ra-training-required {
+  border-color: rgba(255, 126, 87, 0.32);
+}
+
+.ra-training-required > h3 {
+  color: #ff9b69;
+}
+
+.ra-training-required > p {
+  margin: 0;
+  color: #b7c2d0;
+}
+
+.ra-focus-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  gap: 14px;
+}
+
+.ra-focus-card {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  min-height: 82px;
+  border: 1px solid rgba(255, 147, 71, 0.25);
+  border-radius: 9px;
+  background: rgba(11, 24, 37, 0.76);
+  padding: 15px;
+}
+
+.ra-focus-card-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  margin-top: 4px;
+}
+
+.ra-focus-card strong {
+  display: block;
+  color: #ff962f;
+  font-size: 0.86rem;
+  line-height: 1.3;
+}
+
+.ra-focus-card small {
+  display: block;
+  margin-top: 5px;
+  color: #a9b5c5;
+  font-size: 0.72rem;
+}
+
+.ra-focus-card.focus-orange .ra-focus-card-dot {
+  background: #ff8a2a;
+  box-shadow: 0 0 12px rgba(255, 138, 42, 0.7);
+}
+
+.ra-focus-card.focus-red {
+  border-color: rgba(255, 85, 112, 0.32);
+}
+
+.ra-focus-card.focus-red strong {
+  color: #ff617d;
+}
+
+.ra-focus-card.focus-red .ra-focus-card-dot {
+  background: #ff5570;
+  box-shadow: 0 0 12px rgba(255, 85, 112, 0.72);
+}
+
+.ra-focus-card.focus-green {
+  border-color: rgba(95, 214, 137, 0.3);
+}
+
+.ra-focus-card.focus-green strong {
+  color: #68d992;
+}
+
+.ra-focus-card.focus-green .ra-focus-card-dot {
+  background: #62d58a;
+  box-shadow: 0 0 12px rgba(98, 213, 138, 0.68);
+}
+
+.ra-training-notes {
+  display: grid;
+  gap: 12px;
+}
+
+.ra-training-note {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 22px;
+  border: 1px solid rgba(120, 153, 181, 0.22);
+  border-radius: 9px;
+  background: rgba(9, 22, 34, 0.72);
+  padding: 16px 20px;
+}
+
+.ra-training-note-meta {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  border-right: 1px solid rgba(120, 153, 181, 0.22);
+  padding-right: 20px;
+}
+
+.ra-training-note-meta strong {
+  color: #ff769c;
+  font-size: 1.02rem;
+}
+
+.ra-training-note-meta span {
+  color: #acb8c7;
+  font-size: 0.75rem;
+}
+
+.ra-training-note-copy {
+  align-self: center;
+}
+
+.ra-training-note-copy h4 {
+  margin: 0 0 7px;
+  color: #fff;
+  font-size: 0.86rem;
+}
+
+.ra-training-note-copy p {
+  margin: 0;
+  color: #b4c0cf;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.ra-dossier-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  margin-top: 18px;
+  color: #aeb9c8;
+  font-size: 0.72rem;
+}
+
+.ra-dossier-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ra-dossier-legend i {
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+}
+
+.legend-green { background: #62d58a; }
+.legend-orange { background: #ff8a2a; }
+.legend-red { background: #ff5570; }
+
+dialog.ra-focus-dossier menu {
+  position: sticky;
+  bottom: -24px;
+  justify-content: flex-end;
+  border-top: 0;
+  background: linear-gradient(180deg, transparent, rgba(7, 16, 27, 0.98) 35%);
+  margin: 12px -4px -24px;
+  padding: 28px 4px 20px;
+}
+
+dialog.ra-focus-dossier menu button[value="cancel"] {
+  min-width: 126px;
+  border-color: #ff6792;
+  background: rgba(12, 23, 35, 0.96);
+}
+
+@media (max-width: 780px) {
+  dialog.ra-focus-dossier form {
+    padding: 16px;
+  }
+
+  dialog.ra-focus-dossier > form > h2 {
+    margin: 90px 56px 6px 0;
+  }
+
+  .ra-dossier-person {
+    align-items: flex-start;
+    margin-top: -152px;
+  }
+
+  .ra-dossier-person > img {
+    width: 76px;
+    height: 76px;
+    padding: 12px;
+  }
+
+  .ra-dossier-person-copy,
+  .ra-dossier-person > div {
+    padding-top: 92px;
+  }
+
+  .ra-dossier-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .ra-training-note {
+    grid-template-columns: 1fr;
+  }
+
+  .ra-training-note-meta {
+    border-right: 0;
+    border-bottom: 1px solid rgba(120, 153, 181, 0.22);
+    padding: 0 0 10px;
+  }
+}

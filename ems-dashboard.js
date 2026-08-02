@@ -2642,6 +2642,7 @@ function checkbox(name, label, checked = false) {
 }
 
 function openCadetForm(cadet = null) {
+  els.dialog.classList.remove("ra-focus-dossier");
   const item = normalizeCadet(cadet || {});
   setDialogReadonly(false);
   els.dialogTitle.textContent = cadet ? "Edit Cadet" : "Add Cadet";
@@ -2670,6 +2671,7 @@ function openCadetForm(cadet = null) {
 }
 
 function openMemberForm(member = null) {
+  els.dialog.classList.remove("ra-focus-dossier");
   const item = normalizeMember(member || {});
   setDialogReadonly(false);
   els.dialogTitle.textContent = member ? "Edit EMS Member" : "Add EMS Member";
@@ -2689,6 +2691,7 @@ function openMemberForm(member = null) {
 }
 
 function openNoteForm(cadet) {
+  els.dialog.classList.remove("ra-focus-dossier");
   setDialogReadonly(false);
   els.dialogTitle.textContent = `Add Note - ${cadet.name || "Cadet"}`;
   els.dialogBody.innerHTML = `<label>Note<textarea name="note" required></textarea></label>`;
@@ -2948,35 +2951,160 @@ async function refreshCadetFocusFromOwnSheet(cadet) {
   return cadet;
 }
 
+
+function focusColour(value = "") {
+  const text = String(value).toLowerCase();
+  if (text.includes("red")) return "red";
+  if (text.includes("orange")) return "orange";
+  if (text.includes("yellow")) return "orange";
+  if (text.includes("green")) return "green";
+  return "orange";
+}
+
+function cleanFocusLabel(value = "") {
+  return String(value)
+    .replace(/\s*\((red|orange|yellow|green)\)\s*$/i, "")
+    .trim();
+}
+
+function raFocusCards(groups = []) {
+  const items = [];
+
+  for (const group of groups || []) {
+    if (group && typeof group === "object" && Array.isArray(group.items)) {
+      for (const item of group.items) {
+        const raw = typeof item === "string"
+          ? item
+          : (item.label || item.name || item.item || item.text || "");
+        const explicit = typeof item === "object"
+          ? (item.colour || item.color || item.status || item.rating || "")
+          : "";
+
+        items.push({
+          label: cleanFocusLabel(raw),
+          group: group.group || group.section || "Focus",
+          colour: focusColour(explicit || raw)
+        });
+      }
+    } else if (typeof group === "string") {
+      items.push({
+        label: cleanFocusLabel(group),
+        group: "Focus",
+        colour: focusColour(group)
+      });
+    }
+  }
+
+  if (!items.length) {
+    return `
+      <div class="ra-dossier-empty">
+        No red or orange focus areas were found on the most recent RA.
+      </div>
+    `;
+  }
+
+  return items.map((item) => `
+    <article class="ra-focus-card focus-${item.colour}">
+      <span class="ra-focus-card-dot" aria-hidden="true"></span>
+      <div>
+        <strong>${escapeHtml(item.label)}</strong>
+        <small>${item.colour === "green" ? "Strength" : item.colour === "red" ? "Needs focused help" : "Needs improvement"}</small>
+      </div>
+    </article>
+  `).join("");
+}
+
+function parseTrainingNote(note = "", index = 0) {
+  const text = String(note || "").replace(/\s+/g, " ").trim();
+  const callsign = text.match(/\bM\d{1,2}-\d{1,2}\b/i)?.[0]?.toUpperCase() || "";
+  const dateText = text.match(/\b\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}\b/)?.[0] || "";
+  const parsedDate = dateText ? parseDate(dateText) : "";
+  const cleaned = text
+    .replace(callsign, "")
+    .replace(dateText, "")
+    .replace(/^[\s|:–—-]+|[\s|:–—-]+$/g, "")
+    .trim();
+
+  const sentenceParts = cleaned.split(/\s+(?=[A-Z][^.!?]{2,}:)|\s*[|]\s*/).filter(Boolean);
+  const title = sentenceParts.length > 1
+    ? sentenceParts.shift().replace(/:$/, "").trim()
+    : "";
+
+  return {
+    callsign: callsign || `Note ${index + 1}`,
+    date: parsedDate,
+    title,
+    body: sentenceParts.join(" ").trim() || cleaned
+  };
+}
+
+function trainingNotesTimeline(notes = []) {
+  if (!Array.isArray(notes) || !notes.length) {
+    return `<div class="ra-dossier-empty">No training notes were found on this cadet's sheet.</div>`;
+  }
+
+  return notes.map((rawNote, index) => {
+    const note = parseTrainingNote(rawNote, index);
+    return `
+      <article class="ra-training-note">
+        <div class="ra-training-note-meta">
+          <strong>${escapeHtml(note.callsign)}</strong>
+          ${note.date ? `<span>${escapeHtml(formatDate(note.date))}</span>` : ""}
+        </div>
+        <div class="ra-training-note-copy">
+          ${note.title ? `<h4>${escapeHtml(note.title)}</h4>` : ""}
+          <p>${escapeHtml(note.body)}</p>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function prepareRaFocusDialog() {
+  els.dialog.classList.add("ra-focus-dossier");
+  const cancelButton = els.dialog.querySelector('menu button[value="cancel"]');
+  if (cancelButton) cancelButton.textContent = "Close";
+}
+
 async function openCadetSheetNotes(cadet) {
   if (!cadet) return;
 
-  els.dialogTitle.textContent = `${cadet.name || "Cadet"} - RA Focus`;
+  prepareRaFocusDialog();
   els.dialogSave.hidden = true;
+  els.dialogTitle.textContent = `${cadet.name || "Cadet"} — RA Focus`;
 
   if (!cadet.day1) {
-    const bottomNotes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
-      ? cadet.sheetNotes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")
-      : `<p class="muted">No personal sheet notes synced yet.</p>`;
+    const notes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
+      ? trainingNotesTimeline(cadet.sheetNotes)
+      : `<div class="ra-dossier-empty">No notes were found on this cadet's sheet.</div>`;
 
     els.dialogBody.innerHTML = `
-      <section class="dialog-section">
+      <header class="ra-dossier-person">
+        <img src="Roster.png?v=20260802-1" alt="" />
+        <div>
+          <p>${escapeHtml([cadet.callsign, cadet.rank || "Cadet"].filter(Boolean).join(" • "))}</p>
+          <span>${pill(cadet.status || "Active", "good")}</span>
+        </div>
+      </header>
+
+      <section class="ra-dossier-section ra-training-required">
         <h3>Needs Training</h3>
-        <p class="muted">This cadet has not completed Day 1 training yet and is not ready for an RA.</p>
+        <p>This cadet has not completed Day 1 training yet and is not ready for an RA.</p>
       </section>
 
-      <section class="dialog-section">
-        <h3>Notes</h3>
-        ${bottomNotes}
+      <section class="ra-dossier-section">
+        <h3>Training Notes</h3>
+        <div class="ra-training-notes">${notes}</div>
       </section>
     `;
-    els.dialog.showModal();
+
+    if (!els.dialog.open) els.dialog.showModal();
     return;
   }
 
   els.dialogBody.innerHTML = `
-    <section class="dialog-section">
-      <p class="muted">Loading ${escapeHtml(cadet.callsign || cadet.name)}'s live cadet sheet…</p>
+    <section class="ra-dossier-loading">
+      Loading ${escapeHtml(cadet.callsign || cadet.name)}'s live cadet sheet…
     </section>
   `;
   if (!els.dialog.open) els.dialog.showModal();
@@ -2985,32 +3113,74 @@ async function openCadetSheetNotes(cadet) {
     await refreshCadetFocusFromOwnSheet(cadet);
   } catch (error) {
     console.warn("Could not refresh cadet sheet live:", error);
-    // Fall back to the most recently synced values instead of leaving a blank popup.
+    // IMPORTANT: fall back to cached values only when the live own-sheet refresh fails.
   }
 
-  const bottomNotes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
-    ? cadet.sheetNotes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")
-    : `<p class="muted">No notes were found on this cadet's sheet.</p>`;
-
-  const struggles = sheetList(
-    cadet.latestStruggles,
-    "No red or orange items found on their most recent RA."
-  );
+  const raOffers = Array.isArray(cadet.raOffers) ? cadet.raOffers.length : 0;
+  const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
+  const lastRaLabel = cadet.lastRaDate ? formatDate(cadet.lastRaDate) : "No RA Date";
+  const notes = trainingNotesTimeline(cadet.sheetNotes || []);
+  const focusCards = raFocusCards(cadet.latestStruggles || []);
 
   els.dialogBody.innerHTML = `
-    <section class="dialog-section dialog-offer-summary">
-      <h3>RAs Offered</h3>
-      <span>${Array.isArray(cadet.raOffers) ? cadet.raOffers.length : 0}</span>
+    <header class="ra-dossier-person">
+      <img src="Roster.png?v=20260802-1" alt="" />
+      <div class="ra-dossier-person-copy">
+        <p>
+          ${escapeHtml([cadet.callsign, cadet.rank || "Cadet"].filter(Boolean).join(" • "))}
+          ${pill(cadet.status || "Active", "good")}
+        </p>
+        <span>
+          ${cadet.lastRaDate
+            ? `Last RA: ${escapeHtml(formatDate(cadet.lastRaDate))}`
+            : "No RA date recorded"}
+        </span>
+      </div>
+    </header>
+
+    <section class="ra-dossier-stats">
+      <article>
+        <span class="ra-stat-symbol">RA</span>
+        <div>
+          <strong>${raOffers}</strong>
+          <h3>RAs Offered</h3>
+          <p>Total RA offers logged</p>
+        </div>
+      </article>
+
+      <article>
+        <span class="ra-stat-symbol">FTO</span>
+        <div>
+          <strong>${uniqueFtos}</strong>
+          <h3>Unique FTO RAs</h3>
+          <p>Different FTOs they have had an RA with</p>
+        </div>
+      </article>
+
+      <article>
+        <span class="ra-stat-symbol">DATE</span>
+        <div>
+          <strong class="${cadet.lastRaDate ? "" : "is-empty"}">${escapeHtml(lastRaLabel)}</strong>
+          <h3>Last RA</h3>
+          <p>${cadet.lastRaDate ? "Most recent recorded RA" : "No RA date recorded"}</p>
+        </div>
+      </article>
     </section>
 
-    <section class="dialog-section">
-      <h3>Most Recent RA Struggles</h3>
-      ${struggles}
+    <section class="ra-dossier-section">
+      <h3>Current Focus Areas</h3>
+      <div class="ra-focus-card-grid">${focusCards}</div>
     </section>
 
-    <section class="dialog-section">
-      <h3>Notes</h3>
-      ${bottomNotes}
+    <section class="ra-dossier-section">
+      <h3>Training Notes</h3>
+      <div class="ra-training-notes">${notes}</div>
+
+      <footer class="ra-dossier-legend">
+        <span><i class="legend-green"></i>Strengths</span>
+        <span><i class="legend-orange"></i>Needs Improvement</span>
+        <span><i class="legend-red"></i>Needs Focused Help</span>
+      </footer>
     </section>
   `;
 }
