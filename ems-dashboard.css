@@ -5494,3 +5494,107 @@ dialog.ra-focus-dossier .close{
 .ra-training-notes::-webkit-scrollbar-thumb:hover{
   background:var(--ems-pink-hover);
 }
+
+
+/* =========================================================
+   Combined RA Focus corrections
+   ========================================================= */
+
+:root {
+  --ems-pink: #ea9fb8;
+  --ems-pink-hover: #f0b2c7;
+  --status-good: #56da8b;
+  --status-struggling: #ff8f2a;
+  --status-bad: #ff4f6f;
+}
+
+/* Text-only cadet header */
+.ra-dossier-person.ra-dossier-person-text-only {
+  display: block !important;
+  min-height: auto !important;
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+}
+
+.ra-dossier-person.ra-dossier-person-text-only > div,
+.ra-dossier-person.ra-dossier-person-text-only .ra-dossier-person-copy {
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 4px !important;
+}
+
+dialog.ra-focus-dossier > form > h2 {
+  margin: 0 48px 6px 0 !important;
+  text-align: left !important;
+}
+
+/* Branding icons use EMS pink */
+.ra-stat-symbol,
+.ra-stat-symbol svg,
+.ra-section-heading,
+.ra-section-heading svg,
+.ra-training-note-meta strong,
+dialog.ra-focus-dossier .close {
+  color: var(--ems-pink) !important;
+  stroke: var(--ems-pink) !important;
+}
+
+/* Status colours stay semantic */
+.legend-green {
+  background: var(--status-good) !important;
+}
+
+.legend-orange {
+  background: var(--status-struggling) !important;
+}
+
+.legend-red {
+  background: var(--status-bad) !important;
+}
+
+.ra-focus-card.focus-green,
+.ra-focus-card.focus-green strong,
+.ra-focus-card.focus-green .ra-focus-card-icon {
+  color: var(--status-good) !important;
+}
+
+.ra-focus-card.focus-orange,
+.ra-focus-card.focus-orange strong,
+.ra-focus-card.focus-orange .ra-focus-card-icon {
+  color: var(--status-struggling) !important;
+}
+
+.ra-focus-card.focus-red,
+.ra-focus-card.focus-red strong,
+.ra-focus-card.focus-red .ra-focus-card-icon {
+  color: var(--status-bad) !important;
+}
+
+/* Custom EMS-pink scrollbar for Training Notes */
+.ra-training-notes {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ems-pink) rgba(234, 159, 184, 0.08);
+  padding-right: 6px;
+}
+
+.ra-training-notes::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ra-training-notes::-webkit-scrollbar-track {
+  background: rgba(234, 159, 184, 0.08);
+  border-radius: 999px;
+}
+
+.ra-training-notes::-webkit-scrollbar-thumb {
+  background: var(--ems-pink);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.ra-training-notes::-webkit-scrollbar-thumb:hover {
+  background: var(--ems-pink-hover);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}

@@ -3143,8 +3143,7 @@ async function openCadetSheetNotes(cadet) {
       : `<div class="ra-dossier-empty">No notes were found on this cadet's sheet.</div>`;
 
     els.dialogBody.innerHTML = `
-      <header class="ra-dossier-person">
-        <img src="Roster.png?v=20260802-1" alt="" />
+      <header class="ra-dossier-person ra-dossier-person-text-only">
         <div>
           <p>${escapeHtml([cadet.callsign, cadet.rank || "Cadet"].filter(Boolean).join(" • "))}</p>
           <span>${pill(cadet.status || "Active", "good")}</span>
@@ -3194,8 +3193,7 @@ async function openCadetSheetNotes(cadet) {
   const focusCards = raFocusCards(cadet.latestStruggles || []);
 
   els.dialogBody.innerHTML = `
-    <header class="ra-dossier-person">
-      <img src="Roster.png?v=20260802-1" alt="" />
+    <header class="ra-dossier-person ra-dossier-person-text-only">
       <div class="ra-dossier-person-copy">
         <p>
           ${escapeHtml([cadet.callsign, cadet.rank || "Cadet"].filter(Boolean).join(" • "))}
