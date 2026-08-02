@@ -1581,7 +1581,7 @@ async function refreshInterviews(options = {}) {
     interviewLoadState = "ready";
     interviewLoadMessage = liveInterviewSessions.length
       ? `Newest set: ${liveInterviewSessions[0].sheetTitle}`
-      : "";
+      : "Newest interview set has no upcoming sessions";
     renderInterviews();
     return { sessions: liveInterviewSessions, error: null };
   } catch (error) {
@@ -2340,8 +2340,6 @@ function openCadetSheetNotes(cadet) {
 
   els.dialogTitle.textContent = `${cadet.name || "Cadet"} - RA Focus`;
 
-  // Cadets who have not completed Day 1 are not ready for an RA yet.
-  // Keep this popup intentionally minimal.
   if (!cadet.day1) {
     els.dialogBody.innerHTML = `
       <section class="dialog-section">
@@ -2360,12 +2358,10 @@ function openCadetSheetNotes(cadet) {
     return;
   }
 
-  // Day 1 trained cadets get the full RA Focus view.
   const struggles = sheetList(
     cadet.latestStruggles,
     "No red or orange items found on their most recent RA."
   );
-
 
   els.dialogBody.innerHTML = `
     <section class="dialog-section dialog-offer-summary">
@@ -2379,18 +2375,8 @@ function openCadetSheetNotes(cadet) {
     </section>
 
     <section class="dialog-section">
-      <h3>Still Needs To Do</h3>
-      ${unassessed}
-    </section>
-
-    <section class="dialog-section">
       <h3>Notes</h3>
       ${bottomNotes}
-    </section>
-
-    <section class="dialog-section">
-      <h3>RA Notes</h3>
-      ${combinedRaNotes}
     </section>
   `;
 

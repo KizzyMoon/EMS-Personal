@@ -3004,9 +3004,11 @@ dialog menu {
   margin-bottom: 6px;
 }
 
-/* Upcoming interviews header */
+
+/* Keep Upcoming Interviews heading on one line */
 .upcoming-interviews-header h3,
+.overview-interviews-header h3,
 .interview-header h3,
-.overview-interviews-header h3{
+[data-interview-heading] {
   white-space: nowrap;
 }
