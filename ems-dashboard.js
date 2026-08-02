@@ -1119,21 +1119,21 @@ function parseTrainingDate(value) {
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
 
   const ukDate = raw.match(/^(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{2,4})$/);
-  if (ukDate) {
-    const day = Number(ukDate[1]);
-    const month = Number(ukDate[2]) - 1;
-    const year = Number(ukDate[3].length === 2 ? `20${ukDate[3]}` : ukDate[3]);
-    const date = new Date(year, month, day);
-    if (
-      !Number.isNaN(date.valueOf())
-      && date.getFullYear() === year
-      && date.getMonth() === month
-      && date.getDate() === day
-    ) return date.toISOString().slice(0, 10);
-    return "";
-  }
+  if (!ukDate) return "";
 
-  return parseDate(raw);
+  const day = Number(ukDate[1]);
+  const month = Number(ukDate[2]) - 1;
+  const year = Number(ukDate[3].length === 2 ? `20${ukDate[3]}` : ukDate[3]);
+  const date = new Date(year, month, day);
+
+  if (
+    Number.isNaN(date.valueOf())
+    || date.getFullYear() !== year
+    || date.getMonth() !== month
+    || date.getDate() !== day
+  ) return "";
+
+  return date.toISOString().slice(0, 10);
 }
 
 function isUpcomingTrainingDate(dateText) {
@@ -1227,10 +1227,11 @@ function parseTrainingSession(rows, config) {
 }
 
 function parseUpcomingEuTraining(rows) {
-  return [
+  const sessions = [
     parseTrainingSession(rows, { day: 1, employeeColumn: 2, nameColumn: 3, timeColumn: 4 }),
     parseTrainingSession(rows, { day: 2, employeeColumn: 12, nameColumn: 13, timeColumn: 14 })
-  ].filter((session) => isUpcomingTrainingDate(session.date));
+  ];
+  return sessions.filter((session) => isUpcomingTrainingDate(session.date));
 }
 
 function trainingPersonMarkup(person) {
@@ -1325,14 +1326,6 @@ function renderTraining() {
     : empty("There are no upcoming EU Day 1 or Day 2 training dates on the sheet.");
 }
 
-function googleSheetSerialToIso(value) {
-  const serial = Number(value);
-  if (!Number.isFinite(serial)) return "";
-  const milliseconds = Date.UTC(1899, 11, 30) + Math.floor(serial) * 86400000;
-  const date = new Date(milliseconds);
-  return Number.isNaN(date.valueOf()) ? "" : date.toISOString().slice(0, 10);
-}
-
 async function trainingSheetRows(options = {}) {
   const { id, gid } = sheetInfoFromUrl(state.settings?.trainingUrl || DEFAULT_TRAINING_URL);
   const metadata = await sheetMetadata(id, options);
@@ -1350,38 +1343,12 @@ async function trainingSheetRows(options = {}) {
   if (!title) throw new Error("Could not find the Training Attendance tab.");
 
   const range = encodeURIComponent(sheetRange(title, "A1:T67"));
-  const fields = encodeURIComponent(
-    "sheets(data(rowData(values(formattedValue,effectiveValue))))"
-  );
-  const spreadsheet = await fetchSheetJson(
-    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}?includeGridData=true&ranges=${range}&fields=${fields}`,
+  const response = await fetchSheetJson(
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE`,
     options
   );
 
-  const rowData = spreadsheet.sheets?.[0]?.data?.[0]?.rowData || [];
-  const rows = rowData.map((row) =>
-    (row.values || []).map((cell) => String(
-      cell.formattedValue ?? cell.effectiveValue?.stringValue ?? cell.effectiveValue?.numberValue ?? ""
-    ).trim())
-  );
-
-  // C11 and M11 are the EU Day 1 and EU Day 2 date cells.
-  // Use the underlying serial number where available so 2/8/2026 is always 2 August.
-  const dayOneDateCell = rowData[10]?.values?.[2];
-  const dayTwoDateCell = rowData[10]?.values?.[12];
-  const dayOneSerial = dayOneDateCell?.effectiveValue?.numberValue;
-  const dayTwoSerial = dayTwoDateCell?.effectiveValue?.numberValue;
-
-  if (dayOneSerial !== undefined) {
-    rows[10] = rows[10] || [];
-    rows[10][2] = googleSheetSerialToIso(dayOneSerial);
-  }
-  if (dayTwoSerial !== undefined) {
-    rows[10] = rows[10] || [];
-    rows[10][12] = googleSheetSerialToIso(dayTwoSerial);
-  }
-
-  return rows;
+  return response.values || [];
 }
 
 async function refreshTraining(options = {}) {
