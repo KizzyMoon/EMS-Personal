@@ -1866,3 +1866,15 @@ menu {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+
+/* Refined summary icons */
+.stat-icon svg,
+.stat-icon .stat-icon-img {
+  width: 23px;
+  height: 23px;
+}
+
+.stat-icon .icon-cut {
+  stroke-width: 1.6;
+}

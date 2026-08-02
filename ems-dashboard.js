@@ -1635,14 +1635,15 @@ function statIconMarkup(type) {
     cadets: `<img class="stat-icon-img" src="nav-cadets.png?v=20260728-1" alt="" />`,
     ra: `
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect class="icon-fill" x="5" y="4.5" width="14" height="16" rx="2"></rect>
-        <rect class="icon-cut" x="8.5" y="2.5" width="7" height="4" rx="1.4"></rect>
-        <path class="icon-cut" d="M8.5 10h7M8.5 13.5h7M8.5 17h4.5"></path>
+        <rect class="icon-fill" x="5.25" y="4.75" width="13.5" height="15.5" rx="2.2"></rect>
+        <rect class="icon-cut" x="8.4" y="2.6" width="7.2" height="4.1" rx="1.4"></rect>
+        <circle class="icon-cut" cx="12" cy="4.65" r="0.7"></circle>
+        <path class="icon-cut" d="M8.7 10h6.6M8.7 13.4h6.6M8.7 16.8h4.2"></path>
       </svg>
     `,
     training: `
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path class="icon-fill" d="M8.2 5.2V3.8c0-.9.7-1.6 1.6-1.6h4.4c.9 0 1.6.7 1.6 1.6v1.4H18c1.7 0 3 1.3 3 3v10.3c0 1.7-1.3 3-3 3H6c-1.7 0-3-1.3-3-3V8.2c0-1.7 1.3-3 3-3h2.2Zm2.1 0h3.4V4.3h-3.4v.9Z"></path>
+        <path class="icon-fill" d="M8 5V3.9c0-1 .8-1.9 1.9-1.9h4.2c1 0 1.9.8 1.9 1.9V5h2.1c1.7 0 3 1.3 3 3v10.2c0 1.7-1.3 3-3 3H5.9c-1.7 0-3-1.3-3-3V8c0-1.7 1.3-3 3-3H8Zm2.1 0h3.8v-.8h-3.8V5Z"></path>
         <path class="icon-cut" d="M12 9v7M8.5 12.5h7"></path>
       </svg>
     `,
