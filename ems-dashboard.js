@@ -1804,7 +1804,7 @@ async function importGoogleSheet(options = {}) {
 
 function filteredCadets() {
   const query = els.search.value.trim().toLowerCase();
-  const filter = els.statusFilter.value;
+  const filter = els.statusFilter?.value || "all";
   return state.cadets.filter((cadet) => {
     const text = `${cadet.name} ${cadet.callsign} ${cadet.discordId} ${cadet.rank} ${cadet.timezone} ${cadet.status} ${cadet.needsWork} ${cadet.notes}`.toLowerCase();
     if (query && !text.includes(query)) return false;
