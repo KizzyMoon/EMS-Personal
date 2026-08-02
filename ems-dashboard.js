@@ -80,6 +80,7 @@ const els = {
   cadetOverviewStats: document.querySelector("[data-cadet-overview-stats]"),
   cadetLimitList: document.querySelector("[data-cadet-limit-list]"),
   directory: document.querySelector("[data-directory]"),
+  qualificationsList: document.querySelector("[data-qualifications-list]"),
   notesList: document.querySelector("[data-notes-list]"),
   needsRaCount: document.querySelector("[data-count-needs-ra]"),
   needsTrainingCount: document.querySelector("[data-count-needs-training]"),
@@ -1728,9 +1729,19 @@ function rolePill(label) {
 
 function roleTagRow(tags = []) {
   const current = new Set(tags);
-  return ["FTO", "HART", "MET", "Doctor"].map((role) => (
-    current.has(role) ? rolePill(role) : `<span class="pill role-placeholder" aria-hidden="true">${role}</span>`
-  )).join("");
+  const roles = ["FTO", "HART", "MET", "Doctor"];
+
+  return roles.map((role) => {
+    if (!current.has(role)) {
+      return `<span class="pill role-placeholder" aria-hidden="true">${escapeHtml(role)}</span>`;
+    }
+
+    if (role === "HART") {
+      return `<span class="pill hart qualification-pill" title="HART">🚁 HART</span>`;
+    }
+
+    return rolePill(role);
+  }).join("");
 }
 
 function directoryRank(member) {
@@ -1744,24 +1755,30 @@ function rankOrderIndex(rank) {
 
 function directoryRankGroup(rank, members) {
   return `
-    <section class="directory-group">
-      <div class="directory-rank">
+    <section class="roster-rank-group">
+      <div class="roster-rank-heading">
         <span>${escapeHtml(rank)}</span>
         <strong>${members.length}</strong>
       </div>
-      ${members.map(directoryRow).join("")}
+      <div class="roster-rank-members">
+        ${members.map(directoryRow).join("")}
+      </div>
     </section>
   `;
 }
 
 function directoryRow(member) {
   return `
-    <div class="directory-row">
-      <strong>${escapeHtml(member.name || "Unnamed")}</strong>
-      <span>${escapeHtml(member.callsign || "No callsign")}</span>
-      <span>${escapeHtml(member.employeeNumber || "No employee #")}</span>
-      <span class="muted">${escapeHtml(member.timezone || "No timezone")}</span>
-      <span class="tag-row">${roleTagRow(member.tags || [])}</span>
+    <div class="roster-member-row">
+      <div class="roster-member-identity">
+        <strong>${escapeHtml(member.name || "Unnamed")}</strong>
+        <span>${escapeHtml([
+          member.callsign || "No callsign",
+          member.employeeNumber || "No employee #",
+          member.timezone || "No timezone"
+        ].join(" • "))}</span>
+      </div>
+      <span class="roster-member-tags">${roleTagRow(member.tags || [])}</span>
     </div>
   `;
 }
@@ -2167,18 +2184,60 @@ function renderCadets() {
 
 function renderDirectory() {
   const query = els.search.value.trim().toLowerCase();
-  const members = state.members.filter((member) => !query || `${member.name} ${member.callsign} ${member.rank} ${member.employeeNumber} ${member.timezone} ${(member.tags || []).join(" ")}`.toLowerCase().includes(query));
-  els.directoryCount.textContent = members.length;
+  const members = state.members.filter((member) =>
+    !query
+    || `${member.name} ${member.callsign} ${member.rank} ${member.employeeNumber} ${member.timezone} ${(member.tags || []).join(" ")}`
+      .toLowerCase()
+      .includes(query)
+  );
+
+  if (els.directoryCount) {
+    els.directoryCount.textContent = members.length;
+  }
+
   const groups = new Map();
   for (const member of members) {
     const rank = directoryRank(member);
     groups.set(rank, [...(groups.get(rank) || []), member]);
   }
+
   const sortedGroups = [...groups.entries()].sort(([rankA], [rankB]) => {
     const orderCompare = rankOrderIndex(rankA) - rankOrderIndex(rankB);
     return orderCompare || String(rankA).localeCompare(String(rankB));
   });
-  els.directory.innerHTML = members.length ? sortedGroups.map(([rank, rankMembers]) => directoryRankGroup(rank, rankMembers)).join("") : empty("No EMS directory entries yet.");
+
+  els.directory.innerHTML = members.length
+    ? sortedGroups
+        .map(([rank, rankMembers]) => directoryRankGroup(rank, rankMembers))
+        .join("")
+    : empty("No EMS roster entries yet.");
+
+  if (els.qualificationsList) {
+    const qualifications = [
+      { role: "FTO", label: "FTO", icon: "", className: "fto" },
+      { role: "Doctor", label: "Doctor", icon: "", className: "doctor" },
+      { role: "HART", label: "HART", icon: "🚁", className: "hart" },
+      { role: "MET", label: "MET", icon: "", className: "met" }
+    ];
+
+    els.qualificationsList.innerHTML = qualifications.map((qualification) => {
+      const count = state.members.filter((member) =>
+        (member.tags || []).includes(qualification.role)
+      ).length;
+
+      return `
+        <div class="qualification-row">
+          <span class="qualification-name ${qualification.className}">
+            ${qualification.icon
+              ? `<span class="qualification-heli" aria-hidden="true">${qualification.icon}</span>`
+              : ""}
+            ${escapeHtml(qualification.label)}
+          </span>
+          <strong>${count}</strong>
+        </div>
+      `;
+    }).join("");
+  }
 }
 
 function renderNotes() {

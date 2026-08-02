@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-46" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-50" />
   </head>
   <body>
     <main class="app">
@@ -243,14 +243,28 @@
         </article>
       </section>
 
-      <section class="view is-hidden" data-view="directory">
-        <article class="panel">
-          <div class="panel-head">
-            <h2>EMS Roster</h2>
-            <span data-directory-count>0</span>
-          </div>
-          <div class="directory" data-directory></div>
-        </article>
+      <section class="view is-hidden roster-page" data-view="directory">
+        <div class="roster-page-layout">
+          <main class="roster-page-main">
+            <header class="roster-page-heading">
+              <div>
+                <h2>EMS Roster</h2>
+                <p class="muted"><span data-directory-count>0</span> members across all ranks.</p>
+              </div>
+            </header>
+
+            <div class="roster-directory" data-directory></div>
+          </main>
+
+          <aside class="roster-page-side">
+            <article class="panel qualifications-panel">
+              <div class="panel-head">
+                <h2>Qualifications</h2>
+              </div>
+              <div class="qualifications-list" data-qualifications-list></div>
+            </article>
+          </aside>
+        </div>
       </section>
 
       <section class="view is-hidden" data-view="cheat-sheet">
@@ -509,6 +523,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260802-49"></script>
+    <script src="ems-dashboard.js?v=20260802-50"></script>
   </body>
 </html>
