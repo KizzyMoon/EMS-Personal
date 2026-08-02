@@ -1231,7 +1231,16 @@ function parseUpcomingEuTraining(rows) {
     parseTrainingSession(rows, { day: 1, employeeColumn: 2, nameColumn: 3, timeColumn: 4 }),
     parseTrainingSession(rows, { day: 2, employeeColumn: 12, nameColumn: 13, timeColumn: 14 })
   ];
-  return sessions.filter((session) => isUpcomingTrainingDate(session.date));
+  const upcoming = sessions.filter((session) => isUpcomingTrainingDate(session.date));
+  if (!upcoming.length) {
+    const dates = sessions.filter((session) => session.date).map(
+      (session) => `Day ${session.day}: ${formatDate(session.date)}`
+    );
+    trainingLoadMessage = dates.length
+      ? `No upcoming EU training. Sheet dates: ${dates.join(" • ")}`
+      : "No EU Day 1 or Day 2 dates were found on the Training Attendance tab.";
+  }
+  return upcoming;
 }
 
 function trainingPersonMarkup(person) {
@@ -1331,12 +1340,14 @@ async function trainingSheetRows(options = {}) {
   const metadata = await sheetMetadata(id, options);
   const sheets = metadata.sheets || [];
 
-  const selectedSheet = sheets.find(
-    (entry) => String(entry.properties?.sheetId) === String(gid)
+  const selectedSheet = sheets.find((entry) =>
+    normalizeKey(entry.properties?.title) === "trainingattendance"
   ) || sheets.find((entry) =>
     normalizeKey(entry.properties?.title).includes("trainingattendance")
   ) || sheets.find((entry) =>
     normalizeKey(entry.properties?.title).includes("training")
+  ) || sheets.find(
+    (entry) => String(entry.properties?.sheetId) === String(gid)
   ) || sheets[0];
 
   const title = selectedSheet?.properties?.title;
@@ -1360,7 +1371,9 @@ async function refreshTraining(options = {}) {
     const rows = await trainingSheetRows(options);
     liveTrainingSessions = parseUpcomingEuTraining(rows);
     trainingLoadState = "ready";
-    trainingLoadMessage = `Live training refreshed ${new Date().toLocaleString("en-GB")}`;
+    if (liveTrainingSessions.length) {
+      trainingLoadMessage = `Live training refreshed ${new Date().toLocaleString("en-GB")}`;
+    }
     renderTraining();
     return { sessions: liveTrainingSessions, error: null };
   } catch (error) {
