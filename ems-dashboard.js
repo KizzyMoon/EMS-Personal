@@ -1915,6 +1915,16 @@ function overviewTodoRow(cadet, type) {
   `;
 }
 
+function isBetweenFourteenAndTwentyEightDays(cadet) {
+  const daysToFourteen = daysUntil(cadet.day14Due);
+  const daysToTwentyEight = daysUntil(cadet.day28Due);
+
+  return daysToFourteen !== null
+    && daysToTwentyEight !== null
+    && daysToFourteen <= 0
+    && daysToTwentyEight >= 0;
+}
+
 function overviewLimitItem(cadet) {
   const days = daysUntil(cadet.day28Due);
   const safeDays = days === null ? 28 : Math.max(0, Math.min(28, days));
@@ -1955,7 +1965,7 @@ function renderOverview() {
   const cadets = filteredCadets();
   const needsRaItems = cadets.filter(needsRa);
   const needsTrainingItems = cadets.filter((cadet) => !cadet.day1 || !cadet.day2);
-  const limitItems = cadets.filter(limitRisk);
+  const limitItems = cadets.filter(isBetweenFourteenAndTwentyEightDays);
 
   if (els.needsRaCount) els.needsRaCount.textContent = needsRaItems.length;
   if (els.needsTrainingCount) els.needsTrainingCount.textContent = needsTrainingItems.length;
@@ -1978,10 +1988,9 @@ function renderOverview() {
       ? limitItems
           .slice()
           .sort((a, b) => (daysUntil(a.day28Due) ?? 999) - (daysUntil(b.day28Due) ?? 999))
-          .slice(0, 4)
           .map(overviewLimitItem)
           .join("")
-      : empty("No cadets are close to their 14/28 day limits.");
+      : empty("No cadets have passed their 14-day limit and are currently working towards their 28-day limit.");
   }
 }
 
@@ -2271,38 +2280,67 @@ function raOfferHistory(cadet) {
 
 function openCadetSheetNotes(cadet) {
   if (!cadet) return;
-  setDialogReadonly(true);
-  const notes = Array.isArray(cadet.sheetNotes) ? cadet.sheetNotes : [];
-  const struggles = Array.isArray(cadet.latestStruggles) ? cadet.latestStruggles : [];
-  const unassessed = Array.isArray(cadet.unassessedItems) ? cadet.unassessedItems : [];
+
+  const bottomNotes = cadet.sheetNotes?.length
+    ? cadet.sheetNotes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")
+    : `<p class="muted">No personal sheet notes synced yet. Click Sync Sheet after signing in, or check that ${escapeHtml(cadet.callsign || cadet.name)} has notes at the bottom of their sheet.</p>`;
+
+  const needsDayOne = !cadet.day1;
+
   els.dialogTitle.textContent = `${cadet.name || "Cadet"} - RA Focus`;
-  els.dialogBody.innerHTML = `
-    <div class="cadet-focus">
-      <div class="ra-offer-total">
-        <span>RAs Offered</span>
-        <strong>${raOfferCount(cadet)}</strong>
-      </div>
-      <section>
-        <h3>Most Recent RA Struggles</h3>
-        ${sheetList(struggles, "No red or orange items found on their most recent RA.")}
+
+  if (needsDayOne) {
+    els.dialogBody.innerHTML = `
+      <section class="dialog-section">
+        <h3>Needs Training</h3>
+        <p class="muted">This cadet has not completed Day 1 training yet and is not ready for an RA.</p>
       </section>
-      <section>
-        <h3>Still Needs To Do</h3>
-        ${sheetList(unassessed, "All required checked items have at least one assessment.")}
-      </section>
-      <section>
+
+      <section class="dialog-section">
         <h3>Bottom Sheet Notes</h3>
-        ${notes.length ? `<div class="sheet-note-list">${notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}</div>` : `<p class="muted">No personal sheet notes synced yet. Click Sync Sheet after signing in, or check that ${escapeHtml(cadet.callsign || "this cadet")} has notes at the bottom of their sheet.</p>`}
+        ${bottomNotes}
       </section>
-      <section>
+    `;
+  } else {
+    const struggles = focusGroupsHtml(cadet.latestStruggles, "No red or orange items found on their most recent RA.");
+    const unassessed = focusGroupsHtml(cadet.unassessedItems, "All required checked items have at least one assessment.");
+    const offerNotes = (cadet.raOffers || []).length
+      ? [...cadet.raOffers]
+          .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+          .map((offer) => `<p>${escapeHtml(new Date(offer.createdAt).toLocaleString("en-GB"))}</p>`)
+          .join("")
+      : `<p class="muted">No RA offers logged yet.</p>`;
+
+    els.dialogBody.innerHTML = `
+      <section class="dialog-section dialog-offer-summary">
+        <h3>RAs Offered</h3>
+        <span>${(cadet.raOffers || []).length}</span>
+      </section>
+
+      <section class="dialog-section">
+        <h3>Most Recent RA Struggles</h3>
+        ${struggles}
+      </section>
+
+      <section class="dialog-section">
+        <h3>Still Needs To Do</h3>
+        ${unassessed}
+      </section>
+
+      <section class="dialog-section">
+        <h3>Bottom Sheet Notes</h3>
+        ${bottomNotes}
+      </section>
+
+      <section class="dialog-section">
         <h3>RA Offered Notes</h3>
-        ${raOfferHistory(cadet)}
+        ${offerNotes}
       </section>
-    </div>
-  `;
-  els.dialog.dataset.mode = "sheet-notes";
-  els.dialog.dataset.id = cadet.id;
-  if (!els.dialog.open) els.dialog.showModal();
+    `;
+  }
+
+  els.dialogSave.hidden = true;
+  els.dialog.showModal();
 }
 
 function saveDialog() {
