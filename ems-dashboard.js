@@ -3105,7 +3105,9 @@ function trainingNotesTimeline(notes = []) {
     return `<div class="ra-dossier-empty">No training notes were found on this cadet's sheet.</div>`;
   }
 
-  return notes.map((rawNote, index) => {
+  const newestFirst = [...notes].reverse();
+
+  return newestFirst.map((rawNote, index) => {
     const note = parseTrainingNote(rawNote, index);
     return `
       <article class="ra-training-note">

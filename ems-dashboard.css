@@ -5297,3 +5297,34 @@ dialog.ra-focus-dossier .close::before {
     grid-template-columns: 100px minmax(0, 1fr) !important;
   }
 }
+
+
+/* Training Notes readability and newest-first layout */
+.ra-training-notes {
+  max-height: 255px !important;
+  overflow-y: auto !important;
+}
+
+.ra-training-note {
+  grid-template-columns: 135px minmax(0, 1fr) !important;
+  gap: 12px !important;
+  padding: 10px 12px !important;
+}
+
+.ra-training-note-meta strong {
+  font-size: 0.86rem !important;
+}
+
+.ra-training-note-date {
+  font-size: 0.64rem !important;
+}
+
+.ra-training-note-copy h4 {
+  font-size: 0.74rem !important;
+  line-height: 1.3 !important;
+}
+
+.ra-training-note-copy p {
+  font-size: 0.69rem !important;
+  line-height: 1.42 !important;
+}
