@@ -1669,3 +1669,70 @@ menu {
     padding-top: 30px;
   }
 }
+
+
+/* Compact sidebar placement for Upcoming EU Training */
+.dashboard-side .upcoming-training-panel {
+  margin-bottom: 0;
+  padding: 12px;
+}
+
+.dashboard-side .upcoming-training-head {
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.dashboard-side .upcoming-training-head button {
+  min-height: 29px;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+}
+
+.dashboard-side .upcoming-training-grid {
+  grid-template-columns: 1fr;
+}
+
+.dashboard-side .upcoming-training-card {
+  padding: 12px;
+}
+
+.dashboard-side .training-title-row {
+  padding-right: 0;
+  padding-top: 30px;
+}
+
+.dashboard-side .training-signup-badge {
+  top: 10px;
+  right: 10px;
+}
+
+.dashboard-side .training-summary-grid {
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.dashboard-side .training-summary-grid > div {
+  padding: 7px 8px;
+}
+
+.dashboard-side .training-people-grid {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.dashboard-side .training-person-row {
+  font-size: 0.69rem;
+}
+
+.dashboard-side .training-person-row > span:last-child {
+  white-space: normal;
+}
+
+.dashboard-side .training-date-line strong {
+  font-size: 0.84rem;
+}
+
+.dashboard-side .training-date-line span {
+  font-size: 0.7rem;
+}

@@ -1116,6 +1116,8 @@ function parseTrainingDate(value) {
   const raw = String(value || "").trim();
   if (!raw) return "";
 
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+
   const ukDate = raw.match(/^(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{2,4})$/);
   if (ukDate) {
     const day = Number(ukDate[1]);
@@ -1323,24 +1325,63 @@ function renderTraining() {
     : empty("There are no upcoming EU Day 1 or Day 2 training dates on the sheet.");
 }
 
+function googleSheetSerialToIso(value) {
+  const serial = Number(value);
+  if (!Number.isFinite(serial)) return "";
+  const milliseconds = Date.UTC(1899, 11, 30) + Math.floor(serial) * 86400000;
+  const date = new Date(milliseconds);
+  return Number.isNaN(date.valueOf()) ? "" : date.toISOString().slice(0, 10);
+}
+
 async function trainingSheetRows(options = {}) {
-  const { id } = sheetInfoFromUrl(state.settings?.trainingUrl || DEFAULT_TRAINING_URL);
+  const { id, gid } = sheetInfoFromUrl(state.settings?.trainingUrl || DEFAULT_TRAINING_URL);
   const metadata = await sheetMetadata(id, options);
   const sheets = metadata.sheets || [];
-  const trainingSheet = sheets.find((entry) =>
+
+  const selectedSheet = sheets.find(
+    (entry) => String(entry.properties?.sheetId) === String(gid)
+  ) || sheets.find((entry) =>
     normalizeKey(entry.properties?.title).includes("trainingattendance")
   ) || sheets.find((entry) =>
     normalizeKey(entry.properties?.title).includes("training")
-  );
-  const title = trainingSheet?.properties?.title;
+  ) || sheets[0];
+
+  const title = selectedSheet?.properties?.title;
   if (!title) throw new Error("Could not find the Training Attendance tab.");
 
   const range = encodeURIComponent(sheetRange(title, "A1:T67"));
-  const response = await fetchSheetJson(
-    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE`,
+  const fields = encodeURIComponent(
+    "sheets(data(rowData(values(formattedValue,effectiveValue))))"
+  );
+  const spreadsheet = await fetchSheetJson(
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}?includeGridData=true&ranges=${range}&fields=${fields}`,
     options
   );
-  return response.values || [];
+
+  const rowData = spreadsheet.sheets?.[0]?.data?.[0]?.rowData || [];
+  const rows = rowData.map((row) =>
+    (row.values || []).map((cell) => String(
+      cell.formattedValue ?? cell.effectiveValue?.stringValue ?? cell.effectiveValue?.numberValue ?? ""
+    ).trim())
+  );
+
+  // C11 and M11 are the EU Day 1 and EU Day 2 date cells.
+  // Use the underlying serial number where available so 2/8/2026 is always 2 August.
+  const dayOneDateCell = rowData[10]?.values?.[2];
+  const dayTwoDateCell = rowData[10]?.values?.[12];
+  const dayOneSerial = dayOneDateCell?.effectiveValue?.numberValue;
+  const dayTwoSerial = dayTwoDateCell?.effectiveValue?.numberValue;
+
+  if (dayOneSerial !== undefined) {
+    rows[10] = rows[10] || [];
+    rows[10][2] = googleSheetSerialToIso(dayOneSerial);
+  }
+  if (dayTwoSerial !== undefined) {
+    rows[10] = rows[10] || [];
+    rows[10][12] = googleSheetSerialToIso(dayTwoSerial);
+  }
+
+  return rows;
 }
 
 async function refreshTraining(options = {}) {
