@@ -2992,3 +2992,14 @@ dialog menu {
     background: rgba(18, 23, 37, 0.94) !important;
   }
 }
+
+
+/* Cleaner RA Focus quick-glance layout */
+.dialog-section h3 {
+  margin-bottom: 6px !important;
+}
+
+.dialog-section p {
+  margin-top: 4px;
+  margin-bottom: 6px;
+}

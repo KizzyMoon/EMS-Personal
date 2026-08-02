@@ -2350,7 +2350,7 @@ function openCadetSheetNotes(cadet) {
       </section>
 
       <section class="dialog-section">
-        <h3>Bottom Sheet Notes</h3>
+        <h3>Notes</h3>
         ${bottomNotes}
       </section>
     `;
@@ -2366,41 +2366,6 @@ function openCadetSheetNotes(cadet) {
     "No red or orange items found on their most recent RA."
   );
 
-  const unassessed = sheetList(
-    cadet.unassessedItems,
-    "All required checked items have at least one assessment."
-  );
-
-  const raOfferNotes = Array.isArray(cadet.raOffers) && cadet.raOffers.length
-    ? [...cadet.raOffers]
-        .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
-        .map((offer) => {
-          const dateText = offer.createdAt
-            ? new Date(offer.createdAt).toLocaleString("en-GB")
-            : "Date not recorded";
-          const noteText = offer.note || offer.notes || offer.message || "";
-          return `
-            <div class="ra-focus-note">
-              <strong>${escapeHtml(dateText)}</strong>
-              ${noteText ? `<p>${escapeHtml(noteText)}</p>` : ""}
-            </div>
-          `;
-        })
-        .join("")
-    : `<p class="muted">No RA offers logged yet.</p>`;
-
-  const externalRaNotes = Array.isArray(cadet.raNotes) && cadet.raNotes.length
-    ? cadet.raNotes.map((note) => `
-        <div class="ra-focus-note">
-          ${note.ftoName || note.fto || note.author
-            ? `<strong>${escapeHtml(note.ftoName || note.fto || note.author)}</strong>`
-            : ""}
-          <p>${escapeHtml(note.note || note.notes || note.text || String(note))}</p>
-        </div>
-      `).join("")
-    : "";
-
-  const combinedRaNotes = externalRaNotes || raOfferNotes;
 
   els.dialogBody.innerHTML = `
     <section class="dialog-section dialog-offer-summary">
@@ -2419,7 +2384,7 @@ function openCadetSheetNotes(cadet) {
     </section>
 
     <section class="dialog-section">
-      <h3>Bottom Sheet Notes</h3>
+      <h3>Notes</h3>
       ${bottomNotes}
     </section>
 
