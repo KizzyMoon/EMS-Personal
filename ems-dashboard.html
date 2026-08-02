@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-14" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-15" />
   </head>
   <body>
     <main class="app">
@@ -123,48 +123,72 @@
           <option value="limit-risk">14/28 day risk</option>
           <option value="needs-training">Needs day training</option>
         </select>
+        <span class="sync-status-chip" data-overview-sync-status>Not synced yet</span>
         <button data-action="import-google" type="button">Sync Sheet</button>
       </section>
 
       <section class="stats" data-stats></section>
 
-      <section class="view" data-view="overview">
-        <div class="dashboard-layout">
-          <div class="dashboard-main">
-            <section class="overview-cadet-section needs-ra-section">
-              <div class="panel-head overview-section-head">
-                <h2>Needs RA From Me</h2>
+      <section class="view overview-dashboard" data-view="overview">
+        <div class="overview-primary-grid">
+          <article class="panel overview-todo-panel">
+            <div class="overview-panel-title">
+              <div>
+                <span class="overview-title-kicker">Overview</span>
+                <h2>To Do List</h2>
               </div>
-              <div data-needs-ra-list class="cadet-grid"></div>
+              <button data-tab="cadets" type="button">View all</button>
+            </div>
+
+            <section class="todo-group">
+              <div class="todo-group-head">
+                <h3>Needs RA From Me</h3>
+                <span data-count-needs-ra>0</span>
+              </div>
+              <div class="todo-list" data-needs-ra-list></div>
             </section>
-          </div>
-          <aside class="dashboard-side">
-            <article class="panel upcoming-training-panel">
-              <div class="panel-head upcoming-training-head">
-                <div>
-                  <h2>Upcoming EU Training</h2>
-                  <p class="muted" data-training-status>Refreshing live training information…</p>
-                </div>
-                <button data-action="refresh-training" type="button">Refresh</button>
+
+            <section class="todo-group">
+              <div class="todo-group-head">
+                <h3>Needs Training</h3>
+                <span data-count-needs-training>0</span>
               </div>
-              <div class="upcoming-training-grid" data-training-list></div>
-              <section class="upcoming-interviews-section">
-                <div class="upcoming-interviews-heading">
-                  <h3>Upcoming Interviews</h3>
-                  <span class="muted" data-interview-status>Refreshing…</span>
-                </div>
-                <div class="upcoming-interviews-list" data-interview-list></div>
-              </section>
-            </article>
-            <article class="panel">
-              <div class="panel-head">
-                <h2>14 / 28 Day Limits</h2>
-                <span data-count-limits>0</span>
+              <div class="todo-list" data-needs-training-list></div>
+            </section>
+          </article>
+
+          <article class="panel upcoming-training-panel overview-schedule-panel">
+            <div class="overview-panel-title">
+              <div>
+                <span class="overview-title-kicker">Schedule</span>
+                <h2>Upcoming Training & Interviews</h2>
+                <p class="muted" data-training-status>Refreshing live training information…</p>
               </div>
-              <div data-limit-list class="stack"></div>
-            </article>
-          </aside>
+              <button data-action="refresh-training" type="button">Refresh</button>
+            </div>
+
+            <div class="upcoming-training-grid" data-training-list></div>
+
+            <section class="upcoming-interviews-section">
+              <div class="upcoming-interviews-heading">
+                <h3>Upcoming Interviews</h3>
+                <span class="muted" data-interview-status>Refreshing…</span>
+              </div>
+              <div class="upcoming-interviews-list" data-interview-list></div>
+            </section>
+          </article>
         </div>
+
+        <article class="panel overview-limits-panel">
+          <div class="overview-panel-title">
+            <div>
+              <span class="overview-title-kicker">Deadlines</span>
+              <h2>Cadets Approaching Limit</h2>
+            </div>
+            <button data-tab="cadets" type="button">View all</button>
+          </div>
+          <div class="overview-limit-grid" data-limit-list></div>
+        </article>
       </section>
 
       <section class="view is-hidden" data-view="cadets">
@@ -451,6 +475,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260802-14"></script>
+    <script src="ems-dashboard.js?v=20260802-15"></script>
   </body>
 </html>

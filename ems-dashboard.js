@@ -71,12 +71,15 @@ const els = {
   views: document.querySelectorAll("[data-view]"),
   tabs: document.querySelectorAll("[data-tab]"),
   needsRaList: document.querySelector("[data-needs-ra-list]"),
+  needsTrainingList: document.querySelector("[data-needs-training-list]"),
   limitList: document.querySelector("[data-limit-list]"),
   cadetGrid: document.querySelector("[data-cadet-grid]"),
   directory: document.querySelector("[data-directory]"),
   notesList: document.querySelector("[data-notes-list]"),
   needsRaCount: document.querySelector("[data-count-needs-ra]"),
+  needsTrainingCount: document.querySelector("[data-count-needs-training]"),
   limitCount: document.querySelector("[data-count-limits]"),
+  overviewSyncStatus: document.querySelector("[data-overview-sync-status]"),
   directoryCount: document.querySelector("[data-directory-count]"),
   notesCount: document.querySelector("[data-notes-count]"),
   raOfferMonth: document.querySelector("[data-ra-offer-month]"),
@@ -1880,19 +1883,74 @@ function renderStats() {
     </article>
   `).join("");
 
-  els.lastUpdated.textContent = state.lastUpdated
-    ? `Last import ${new Date(state.lastUpdated).toLocaleString("en-GB")}`
-    : "No imports yet";
+  const syncText = state.lastUpdated
+    ? `Last sync ${new Date(state.lastUpdated).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`
+    : "Not synced yet";
+
+  if (els.lastUpdated) {
+    els.lastUpdated.textContent = state.lastUpdated
+      ? `Last import ${new Date(state.lastUpdated).toLocaleString("en-GB")}`
+      : "No imports yet";
+  }
+  if (els.overviewSyncStatus) els.overviewSyncStatus.textContent = syncText;
+}
+
+function overviewTodoRow(cadet, type) {
+  const days = daysUntil(cadet.day28Due);
+  const deadline = days === null
+    ? "No limit date"
+    : days < 0
+      ? `${Math.abs(days)} days overdue`
+      : `${days} day${days === 1 ? "" : "s"} left`;
+
+  const trainingText = !cadet.day1 && !cadet.day2
+    ? "Needs Day 1 & Day 2"
+    : !cadet.day1
+      ? "Needs Day 1"
+      : !cadet.day2
+        ? "Needs Day 2"
+        : "Training complete";
+
+  return `
+    <button class="overview-todo-row" type="button" data-view-sheet-notes="${cadet.id}">
+      <span class="overview-todo-main">
+        <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+        <small>${escapeHtml([cadet.callsign, cadet.employeeNumber ? `#${cadet.employeeNumber}` : "", cadet.rank || "Cadet"].filter(Boolean).join(" • "))}</small>
+      </span>
+      <span class="overview-todo-meta ${type === "limit" ? limitClass(cadet) : ""}">
+        ${escapeHtml(type === "training" ? trainingText : deadline)}
+      </span>
+    </button>
+  `;
 }
 
 function renderOverview() {
-  const cadets = filteredCadets().filter((cadet) => cadet.day1);
+  const cadets = filteredCadets();
   const needsRaItems = cadets.filter(needsRa);
+  const needsTrainingItems = cadets.filter((cadet) => !cadet.day1 || !cadet.day2);
   const limitItems = cadets.filter(limitRisk);
+
   if (els.needsRaCount) els.needsRaCount.textContent = needsRaItems.length;
-  els.limitCount.textContent = limitItems.length;
-  els.needsRaList.innerHTML = needsRaItems.length ? needsRaItems.map((cadet) => overviewCadetCard(cadet)).join("") : empty("No cadets currently need an RA.");
-  els.limitList.innerHTML = limitItems.length ? limitItems.map((cadet) => overviewCadetCard(cadet, { showRaPill: true })).join("") : empty("No cadets are close to their 14/28 day limits.");
+  if (els.needsTrainingCount) els.needsTrainingCount.textContent = needsTrainingItems.length;
+  if (els.limitCount) els.limitCount.textContent = limitItems.length;
+
+  if (els.needsRaList) {
+    els.needsRaList.innerHTML = needsRaItems.length
+      ? needsRaItems.slice(0, 5).map((cadet) => overviewTodoRow(cadet, "ra")).join("")
+      : empty("No cadets currently need an RA.");
+  }
+
+  if (els.needsTrainingList) {
+    els.needsTrainingList.innerHTML = needsTrainingItems.length
+      ? needsTrainingItems.slice(0, 5).map((cadet) => overviewTodoRow(cadet, "training")).join("")
+      : empty("All active cadets have completed Day 1 and Day 2.");
+  }
+
+  if (els.limitList) {
+    els.limitList.innerHTML = limitItems.length
+      ? limitItems.slice(0, 4).map((cadet) => overviewCadetCard(cadet, { showRaPill: true })).join("")
+      : empty("No cadets are close to their 14/28 day limits.");
+  }
 }
 
 function renderCadets() {
