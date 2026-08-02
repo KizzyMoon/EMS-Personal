@@ -2509,6 +2509,67 @@ function exportAll() {
   ]);
 }
 
+
+function findCadetForFocus(reference) {
+  const value = String(reference || "").trim();
+  if (!value) return null;
+
+  return state.cadets.find((cadet) => String(cadet.id) === value)
+    || state.cadets.find((cadet) => normalizeEmployeeNumber(cadet.employeeNumber) === normalizeEmployeeNumber(value))
+    || state.cadets.find((cadet) => normalizeCallsign(cadet.callsign) === normalizeCallsign(value))
+    || null;
+}
+
+function openCadetFocusFromElement(element) {
+  if (!element) return false;
+
+  const reference = element.dataset.openCadetFocus
+    || element.dataset.viewSheetNotes
+    || "";
+
+  const cadet = findCadetForFocus(reference);
+  if (!cadet) {
+    console.warn("Could not find cadet for focus popup:", reference);
+    return false;
+  }
+
+  openCadetSheetNotes(cadet);
+  return true;
+}
+
+/*
+ * Capture-phase handler:
+ * runs before the general dashboard click handler, so later button/action logic
+ * cannot swallow card clicks.
+ */
+document.addEventListener("click", (event) => {
+  const focusElement = event.target.closest("[data-open-cadet-focus], [data-view-sheet-notes]");
+  if (!focusElement) return;
+
+  // Keep Edit, Add note and RA done buttons working normally.
+  const nestedAction = event.target.closest(
+    "[data-edit-cadet], [data-note-cadet], [data-ra-done], [data-ra-offer], a, input, select, textarea, label"
+  );
+  if (nestedAction && nestedAction !== focusElement) return;
+
+  if (openCadetFocusFromElement(focusElement)) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+}, true);
+
+document.addEventListener("keydown", (event) => {
+  if (!["Enter", " "].includes(event.key)) return;
+
+  const focusElement = event.target.closest("[data-open-cadet-focus], [data-view-sheet-notes]");
+  if (!focusElement) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  openCadetFocusFromElement(focusElement);
+}, true);
+
+
 document.addEventListener("click", async (event) => {
   const action = event.target.closest("[data-action]")?.dataset.action;
   if (action === "google-sign-in") {
@@ -2657,13 +2718,6 @@ document.addEventListener("click", async (event) => {
   }
 });
 
-document.addEventListener("keydown", (event) => {
-  if (!["Enter", " "].includes(event.key)) return;
-  const sheetNotesCard = event.target.closest("[data-view-sheet-notes]");
-  if (!sheetNotesCard) return;
-  event.preventDefault();
-  openCadetSheetNotes(state.cadets.find((cadet) => String(cadet.id) === String(sheetNotesCard.dataset.viewSheetNotes)));
-});
 
 async function autoSyncGoogleSheets() {
   try {

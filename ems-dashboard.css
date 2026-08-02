@@ -2732,3 +2732,10 @@ body {
 .ra-focus-note p {
   margin: 4px 0 0;
 }
+
+
+/* Restored direct cadet-focus interaction */
+[data-view-sheet-notes],
+[data-open-cadet-focus] {
+  cursor: pointer;
+}
