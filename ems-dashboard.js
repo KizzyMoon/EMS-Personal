@@ -1647,7 +1647,7 @@ function filteredCadets() {
 }
 
 function needsRa(cadet) {
-  return !hasVerifiedRa(cadet);
+  return Boolean(cadet.day1) && !hasVerifiedRa(cadet);
 }
 
 function hasVerifiedRa(cadet) {
@@ -2508,7 +2508,8 @@ document.addEventListener("click", async (event) => {
 
   const sheetNotesCard = event.target.closest("[data-view-sheet-notes]");
   const clickedControl = event.target.closest("button, a, input, select, textarea, label");
-  if (sheetNotesCard && !clickedControl) {
+  const rowItselfWasClicked = clickedControl === sheetNotesCard;
+  if (sheetNotesCard && (!clickedControl || rowItselfWasClicked)) {
     openCadetSheetNotes(state.cadets.find((cadet) => cadet.id === sheetNotesCard.dataset.viewSheetNotes));
   }
 

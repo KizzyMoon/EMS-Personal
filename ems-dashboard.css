@@ -2274,3 +2274,38 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* To Do List: Needs RA and Needs Training in separate columns */
+.todo-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.todo-columns .todo-group + .todo-group {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.todo-columns .todo-list {
+  height: 100%;
+}
+
+.overview-todo-row {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .todo-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-columns .todo-group + .todo-group {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--line);
+  }
+}
