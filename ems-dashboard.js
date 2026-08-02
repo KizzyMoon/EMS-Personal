@@ -2331,16 +2331,61 @@ function raOfferHistory(cadet) {
   ` : `<p class="muted">No RA offers logged yet.</p>`;
 }
 
-function openCadetSheetNotes(cadet) {
+
+async function refreshCadetFocusFromOwnSheet(cadet) {
+  if (!cadet?.day1 || !cadet.callsign) return cadet;
+
+  const { id } = sheetInfoFromUrl(els.googleUrl?.value || DEFAULT_SHEET_URL);
+  const title = cadet.callsign;
+  const range = sheetRange(title, "A1:Z260");
+  const fields = encodeURIComponent(
+    "sheets(properties(title),data(rowData(values(formattedValue,effectiveValue,effectiveFormat(backgroundColor,backgroundColorStyle(rgbColor))))))"
+  );
+
+  const spreadsheet = await fetchSheetJson(
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}?includeGridData=true&ranges=${encodeURIComponent(range)}&fields=${fields}`,
+    { prompt: "" }
+  );
+
+  const sheet = (spreadsheet.sheets || []).find(
+    (entry) => normalizeCallsign(entry.properties?.title) === normalizeCallsign(title)
+  ) || spreadsheet.sheets?.[0];
+
+  if (!sheet) {
+    throw new Error(`Could not find the ${title} cadet sheet tab.`);
+  }
+
+  const score = cadetTrainingScore(sheet);
+  cadet.trainingAverage = score.average;
+  cadet.trainingOverallAverage = score.overallAverage;
+  cadet.trainingScoreType = score.scoreType;
+  cadet.trainingTrend = score.trend;
+  cadet.trainingRaCount = score.raCount;
+  cadet.trainingAssessments = score.count;
+  cadet.latestStruggles = score.latestStruggles;
+  cadet.unassessedItems = score.unassessedItems;
+  cadet.sheetNotes = cadetSheetNotes(sheet);
+
+  const rows = sheet.data?.[0]?.rowData || [];
+  if (cadet.uniqueFtoRaSource !== "roster") {
+    cadet.uniqueFtoRaCount = uniqueFtoRaCount(rows);
+  }
+
+  saveState({ cloud: false });
+  return cadet;
+}
+
+async function openCadetSheetNotes(cadet) {
   if (!cadet) return;
 
-  const bottomNotes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
-    ? cadet.sheetNotes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")
-    : `<p class="muted">No personal sheet notes synced yet. Click Sync Sheet after signing in, or check that ${escapeHtml(cadet.callsign || cadet.name)} has notes at the bottom of their sheet.</p>`;
-
   els.dialogTitle.textContent = `${cadet.name || "Cadet"} - RA Focus`;
+  els.dialogSave.hidden = true;
 
   if (!cadet.day1) {
+    const bottomNotes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
+      ? cadet.sheetNotes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")
+      : `<p class="muted">No personal sheet notes synced yet.</p>`;
+
     els.dialogBody.innerHTML = `
       <section class="dialog-section">
         <h3>Needs Training</h3>
@@ -2352,11 +2397,27 @@ function openCadetSheetNotes(cadet) {
         ${bottomNotes}
       </section>
     `;
-
-    els.dialogSave.hidden = true;
     els.dialog.showModal();
     return;
   }
+
+  els.dialogBody.innerHTML = `
+    <section class="dialog-section">
+      <p class="muted">Loading ${escapeHtml(cadet.callsign || cadet.name)}'s live cadet sheet…</p>
+    </section>
+  `;
+  if (!els.dialog.open) els.dialog.showModal();
+
+  try {
+    await refreshCadetFocusFromOwnSheet(cadet);
+  } catch (error) {
+    console.warn("Could not refresh cadet sheet live:", error);
+    // Fall back to the most recently synced values instead of leaving a blank popup.
+  }
+
+  const bottomNotes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
+    ? cadet.sheetNotes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")
+    : `<p class="muted">No notes were found on this cadet's sheet.</p>`;
 
   const struggles = sheetList(
     cadet.latestStruggles,
@@ -2379,9 +2440,6 @@ function openCadetSheetNotes(cadet) {
       ${bottomNotes}
     </section>
   `;
-
-  els.dialogSave.hidden = true;
-  els.dialog.showModal();
 }
 
 function saveDialog() {
@@ -2509,7 +2567,7 @@ function findCadetForFocus(reference) {
     || null;
 }
 
-function openCadetFocusFromElement(element) {
+async function openCadetFocusFromElement(element) {
   if (!element) return false;
 
   const reference = element.dataset.openCadetFocus
@@ -2522,7 +2580,7 @@ function openCadetFocusFromElement(element) {
     return false;
   }
 
-  openCadetSheetNotes(cadet);
+  await openCadetSheetNotes(cadet);
   return true;
 }
 
@@ -2539,7 +2597,7 @@ els.dialog.addEventListener("click", (event) => {
   }
 });
 
-document.addEventListener("click", (event) => {
+document.addEventListener("click", async (event) => {
   const focusElement = event.target.closest("[data-open-cadet-focus], [data-view-sheet-notes]");
   if (!focusElement) return;
 
@@ -2549,13 +2607,12 @@ document.addEventListener("click", (event) => {
   );
   if (nestedAction && nestedAction !== focusElement) return;
 
-  if (openCadetFocusFromElement(focusElement)) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
+  event.preventDefault();
+  event.stopPropagation();
+  await openCadetFocusFromElement(focusElement);
 }, true);
 
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", async (event) => {
   if (!["Enter", " "].includes(event.key)) return;
 
   const focusElement = event.target.closest("[data-open-cadet-focus], [data-view-sheet-notes]");
@@ -2563,7 +2620,7 @@ document.addEventListener("keydown", (event) => {
 
   event.preventDefault();
   event.stopPropagation();
-  openCadetFocusFromElement(focusElement);
+  await openCadetFocusFromElement(focusElement);
 }, true);
 
 
