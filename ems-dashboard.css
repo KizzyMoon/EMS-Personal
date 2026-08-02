@@ -2689,3 +2689,29 @@ body {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
+
+
+/* Unique FTO RA count on overview cadet rows */
+.overview-todo-side {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.overview-unique-ra {
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .overview-todo-side {
+    justify-items: start;
+  }
+
+  .overview-todo-row {
+    flex-wrap: wrap;
+  }
+}

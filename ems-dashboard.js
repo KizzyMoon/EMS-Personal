@@ -1859,8 +1859,11 @@ function renderStats() {
   const needsRaCount = cadets.filter(needsRa).length;
   const trainingCount = cadets.filter((cadet) => !cadet.day1 || !cadet.day2).length;
 
-  if (els.sidebarCadetCount) els.sidebarCadetCount.textContent = cadets.length;
-  if (els.sidebarRosterCount) els.sidebarRosterCount.textContent = state.members.length;
+  const cadetTotal = state.cadets.length;
+  const rosterTotal = state.members.length;
+
+  if (els.sidebarCadetCount) els.sidebarCadetCount.textContent = cadetTotal;
+  if (els.sidebarRosterCount) els.sidebarRosterCount.textContent = rosterTotal;
 
   if (els.stats) {
     const stats = [
@@ -1913,8 +1916,15 @@ function overviewTodoRow(cadet, type) {
         <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
         <small>${escapeHtml([cadet.callsign, cadet.employeeNumber ? `#${cadet.employeeNumber}` : "", cadet.rank || "Cadet"].filter(Boolean).join(" • "))}</small>
       </span>
-      <span class="overview-todo-meta ${type === "limit" ? limitClass(cadet) : ""}">
-        ${escapeHtml(type === "training" ? trainingText : deadline)}
+      <span class="overview-todo-side">
+        <span class="overview-todo-meta ${type === "limit" ? limitClass(cadet) : ""}">
+          ${escapeHtml(type === "training" ? trainingText : deadline)}
+        </span>
+        <span class="overview-unique-ra">${escapeHtml(
+          Number(cadet.uniqueFtoRaCount || 0) === 1
+            ? "1 unique FTO RA"
+            : `${Number(cadet.uniqueFtoRaCount || 0)} unique FTO RAs`
+        )}</span>
       </span>
     </button>
   `;
@@ -2071,7 +2081,7 @@ function setActiveTab(tabName) {
   const hidePageChrome = ["cheat-sheet", "quick-links"].includes(activeTab);
   const hideStats = ["cheat-sheet", "quick-links", "directory", "settings"].includes(activeTab);
   els.toolbar.classList.toggle("is-hidden", hidePageChrome);
-  els.stats.classList.toggle("is-hidden", hideStats);
+  if (els.stats) els.stats.classList.toggle("is-hidden", hideStats);
 }
 
 function field(name, label, value = "", type = "text", extra = "") {
@@ -2583,7 +2593,7 @@ document.addEventListener("click", async (event) => {
 
   const focusCadetRow = event.target.closest("[data-open-cadet-focus]");
   if (focusCadetRow) {
-    const cadet = state.cadets.find((entry) => entry.id === focusCadetRow.dataset.openCadetFocus);
+    const cadet = state.cadets.find((entry) => String(entry.id) === String(focusCadetRow.dataset.openCadetFocus));
     openCadetSheetNotes(cadet);
     return;
   }
@@ -2592,7 +2602,7 @@ document.addEventListener("click", async (event) => {
   const clickedControl = event.target.closest("button, a, input, select, textarea, label");
   const rowItselfWasClicked = clickedControl === sheetNotesCard;
   if (sheetNotesCard && (!clickedControl || rowItselfWasClicked)) {
-    openCadetSheetNotes(state.cadets.find((cadet) => cadet.id === sheetNotesCard.dataset.viewSheetNotes));
+    openCadetSheetNotes(state.cadets.find((cadet) => String(cadet.id) === String(sheetNotesCard.dataset.viewSheetNotes)));
   }
 
   const raDone = event.target.closest("[data-ra-done]");
@@ -2615,7 +2625,7 @@ document.addEventListener("keydown", (event) => {
   const sheetNotesCard = event.target.closest("[data-view-sheet-notes]");
   if (!sheetNotesCard) return;
   event.preventDefault();
-  openCadetSheetNotes(state.cadets.find((cadet) => cadet.id === sheetNotesCard.dataset.viewSheetNotes));
+  openCadetSheetNotes(state.cadets.find((cadet) => String(cadet.id) === String(sheetNotesCard.dataset.viewSheetNotes)));
 });
 
 async function autoSyncGoogleSheets() {
