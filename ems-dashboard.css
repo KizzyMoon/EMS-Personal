@@ -4006,3 +4006,26 @@ dialog menu {
     min-width: 0;
   }
 }
+
+
+/* Keep cadet RA information aligned at the bottom of every card */
+.cadet-profile-card {
+  grid-template-rows: auto auto auto auto 1fr auto;
+  min-height: 190px;
+}
+
+.cadet-profile-card .cadet-training-progress {
+  align-self: start;
+}
+
+.cadet-card-footer {
+  align-self: end;
+  width: 100%;
+  margin-top: auto;
+}
+
+.cadet-card-footer .cadet-last-training,
+.cadet-card-footer .cadet-unique-ra-count {
+  line-height: 1.2;
+}
+
