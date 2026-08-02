@@ -4,6 +4,7 @@ const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XM
 const DEFAULT_ROSTER_URL = "https://docs.google.com/spreadsheets/d/1b9RV4HZh2Klex6jEq8YarlpzpDMt0F4ohV_GscHbSb8/edit?gid=647224122#gid=647224122";
 const DEFAULT_STORAGE_URL = "https://docs.google.com/spreadsheets/d/15bIY2191kS-cbt8F-qeltWOb0qkK4Anpko2pZaagAm8/edit?usp=sharing";
 const DEFAULT_TRAINING_URL = "https://docs.google.com/spreadsheets/d/1twcPjyyf3tuwq4L12OhmLz6QkF9_u8I5ai5qn9wAisg/edit?gid=0#gid=0";
+const DEFAULT_INTERVIEW_URL = "https://docs.google.com/spreadsheets/d/1ZxxFzXMv2BS9bDO3fJUpNWEYe-0767W-fslO1bbsv78/edit?gid=401572911#gid=401572911";
 const DEFAULT_MY_CALLSIGN = "M3-18";
 const GOOGLE_CLIENT_ID = "210656397822-druudgp358pepcj342slktvmfj5f9ok2.apps.googleusercontent.com";
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
@@ -46,6 +47,9 @@ let lastCloudSaveErrorAt = 0;
 let liveTrainingSessions = [];
 let trainingLoadState = "loading";
 let trainingLoadMessage = "Refreshing live training information…";
+let liveInterviewSessions = [];
+let interviewLoadState = "loading";
+let interviewLoadMessage = "Refreshing…";
 
 const els = {
   lastUpdated: document.querySelector("[data-last-updated]"),
@@ -58,6 +62,9 @@ const els = {
   myEmployeeNumber: document.querySelector("[data-my-employee-number]"),
   trainingList: document.querySelector("[data-training-list]"),
   trainingStatus: document.querySelector("[data-training-status]"),
+  interviewUrl: document.querySelector("[data-interview-url]"),
+  interviewList: document.querySelector("[data-interview-list]"),
+  interviewStatus: document.querySelector("[data-interview-status]"),
   csvFile: document.querySelector("[data-csv-file]"),
   search: document.querySelector("[data-search]"),
   statusFilter: document.querySelector("[data-status-filter]"),
@@ -138,7 +145,8 @@ function normalizeSettings(raw = {}) {
     googleEmail: String(raw.googleEmail || "").trim(),
     storageUrl: String(raw.storageUrl || DEFAULT_STORAGE_URL).trim(),
     myEmployeeNumber: normalizeEmployeeNumber(raw.myEmployeeNumber || ""),
-    trainingUrl: String(raw.trainingUrl || DEFAULT_TRAINING_URL).trim()
+    trainingUrl: String(raw.trainingUrl || DEFAULT_TRAINING_URL).trim(),
+    interviewUrl: String(raw.interviewUrl || DEFAULT_INTERVIEW_URL).trim()
   };
 }
 
@@ -629,7 +637,8 @@ function personalStorageRows() {
       ["googleEmail", state.settings?.googleEmail || ""],
       ["storageUrl", state.settings?.storageUrl || DEFAULT_STORAGE_URL],
       ["myEmployeeNumber", state.settings?.myEmployeeNumber || ""],
-      ["trainingUrl", state.settings?.trainingUrl || DEFAULT_TRAINING_URL]
+      ["trainingUrl", state.settings?.trainingUrl || DEFAULT_TRAINING_URL],
+      ["interviewUrl", state.settings?.interviewUrl || DEFAULT_INTERVIEW_URL]
     ],
     raOffers: rowsFromObjects(["id", "cadetId", "cadetName", "callsign", "discordId", "createdAt"], individualOffers),
     pingOffers: rowsFromObjects(["id", "createdAt", "cadetId", "cadetName", "callsign", "discordId"], state.pingOffers || []),
@@ -645,7 +654,8 @@ function applyStorageSettings(values = []) {
     googleEmail: settings.googleEmail || state.settings?.googleEmail,
     storageUrl: settings.storageUrl || state.settings?.storageUrl,
     myEmployeeNumber: settings.myEmployeeNumber || state.settings?.myEmployeeNumber,
-    trainingUrl: settings.trainingUrl || state.settings?.trainingUrl
+    trainingUrl: settings.trainingUrl || state.settings?.trainingUrl,
+    interviewUrl: settings.interviewUrl || state.settings?.interviewUrl
   });
 }
 
@@ -1382,6 +1392,192 @@ async function refreshTraining(options = {}) {
   }
 }
 
+function parseInterviewSheetRange(title) {
+  const raw = String(title || "").trim();
+  const match = raw.match(/(\d{2})(\d{2})(\d{4})\s*>>\s*(\d{2})(\d{2})(\d{4})/);
+  if (!match) return null;
+  const start = `${match[3]}-${match[2]}-${match[1]}`;
+  const end = `${match[6]}-${match[5]}-${match[4]}`;
+  return { start, end };
+}
+
+function interviewTitleDetails(title, fallbackDate) {
+  const raw = String(title || "").trim();
+  const dateMatch = raw.match(/(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{4})/);
+  const date = dateMatch
+    ? parseTrainingDate(`${dateMatch[1]}/${dateMatch[2]}/${dateMatch[3]}`)
+    : fallbackDate;
+
+  let time = raw.replace(/^Interview Session \d+\s*-\s*/i, "").trim();
+  if (dateMatch) {
+    time = time.replace(dateMatch[0], "").replace(/^[\s|:-]+/, "").trim();
+  }
+  if (/^DATE TIME TIMEZONE$/i.test(time)) time = "";
+  return { date, time };
+}
+
+function interviewLead(value) {
+  return String(value || "").replace(/^Lead by\s*/i, "").trim();
+}
+
+function myRosterName() {
+  const employeeNumber = normalizeEmployeeNumber(state.settings?.myEmployeeNumber);
+  const person = employeeNumber ? findRosterPersonByEmployeeNumber(employeeNumber) : null;
+  return normalizeKey(person?.name || "");
+}
+
+function interviewPeople(rows, employeeColumn, nameColumn) {
+  const people = [];
+  for (let row = 9; row <= 22; row += 1) {
+    const employeeNumber = normalizeEmployeeNumber(trainingRawCell(rows, row, employeeColumn));
+    const fallbackName = trainingRawCell(rows, row, nameColumn);
+    if (!employeeNumber && !fallbackName) continue;
+    people.push(makeTrainingPerson(employeeNumber, fallbackName, "staff"));
+  }
+  return people;
+}
+
+function parseInterviewSession(rows, config, sheetRange) {
+  const title = trainingRawCell(rows, 5, config.employeeColumn);
+  const details = interviewTitleDetails(title, sheetRange?.end || "");
+  const attendees = interviewPeople(rows, config.employeeColumn, config.nameColumn);
+  const myEmployee = normalizeEmployeeNumber(state.settings?.myEmployeeNumber);
+  const myName = myRosterName();
+  const signedUp = attendees.some((person) =>
+    (myEmployee && person.employeeNumber === myEmployee)
+    || (myName && normalizeKey(person.name) === myName)
+  );
+
+  return {
+    session: config.session,
+    region: config.session === 1 ? "GMT / BST" : "NA",
+    date: details.date,
+    time: details.time,
+    lead: interviewLead(trainingRawCell(rows, 6, config.employeeColumn)),
+    attendees,
+    signedUp
+  };
+}
+
+function interviewCardMarkup(session) {
+  const hasReference = Boolean(
+    normalizeEmployeeNumber(state.settings?.myEmployeeNumber) || myRosterName()
+  );
+  const signupClass = session.signedUp ? "is-signed-up" : "is-not-signed-up";
+  const signupText = hasReference
+    ? (session.signedUp ? "SIGNED UP" : "NOT SIGNED UP")
+    : "SET EMPLOYEE #";
+
+  const relative = trainingDateLabel(session.date);
+  const dateText = ["Today", "Tomorrow"].includes(relative)
+    ? `${relative}${session.time ? ` • ${session.time}` : ""}`
+    : `${formatDate(session.date)}${session.time ? ` • ${session.time}` : ""}`;
+
+  return `
+    <article class="upcoming-interview-card">
+      <div class="training-compact-head">
+        <div>
+          <h3>Interview Session ${session.session}</h3>
+          <span class="interview-region">${escapeHtml(session.region)}</span>
+        </div>
+        <span class="training-signup-badge ${signupClass}">${signupText}</span>
+      </div>
+      <p class="training-compact-date">${escapeHtml(dateText)}</p>
+      <div class="training-host-row">
+        <span>Led by</span>
+        <strong>${escapeHtml(session.lead || "Not entered yet")}</strong>
+      </div>
+      <div class="training-count-row">
+        <span><strong>${session.attendees.length}</strong> Staff signed up</span>
+      </div>
+      <div class="training-people-grid interview-people-grid">
+        <section>
+          <h4>Staff</h4>
+          ${session.attendees.length
+            ? `<ul>${session.attendees.map(trainingPersonMarkup).join("")}</ul>`
+            : `<p class="muted">No staff signed up yet.</p>`}
+        </section>
+      </div>
+    </article>
+  `;
+}
+
+function renderInterviews() {
+  if (!els.interviewList || !els.interviewStatus) return;
+  els.interviewStatus.textContent = interviewLoadMessage;
+
+  if (interviewLoadState === "loading") {
+    els.interviewList.innerHTML = empty("Refreshing upcoming interview sessions…");
+    return;
+  }
+  if (interviewLoadState === "error") {
+    els.interviewList.innerHTML = empty(interviewLoadMessage);
+    return;
+  }
+
+  els.interviewList.innerHTML = liveInterviewSessions.length
+    ? liveInterviewSessions.map(interviewCardMarkup).join("")
+    : empty("There are no upcoming interview sessions on the sheet.");
+}
+
+async function interviewSheetSessions(options = {}) {
+  const { id } = sheetInfoFromUrl(state.settings?.interviewUrl || DEFAULT_INTERVIEW_URL);
+  const metadata = await sheetMetadata(id, options);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const candidates = (metadata.sheets || [])
+    .map((sheet) => ({
+      title: sheet.properties?.title || "",
+      range: parseInterviewSheetRange(sheet.properties?.title || "")
+    }))
+    .filter((sheet) => sheet.range)
+    .filter((sheet) => {
+      const end = new Date(`${sheet.range.end}T00:00:00`);
+      return !Number.isNaN(end.valueOf()) && end >= today;
+    })
+    .sort((a, b) => a.range.end.localeCompare(b.range.end));
+
+  if (!candidates.length) return [];
+
+  // Only show the nearest upcoming interview week.
+  const target = candidates[0];
+  const range = encodeURIComponent(sheetRange(target.title, "A1:J22"));
+  const response = await fetchSheetJson(
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE`,
+    options
+  );
+  const rows = response.values || [];
+
+  return [
+    parseInterviewSession(rows, { session: 1, employeeColumn: 2, nameColumn: 3 }, target.range),
+    parseInterviewSession(rows, { session: 2, employeeColumn: 7, nameColumn: 8 }, target.range)
+  ].filter((session) => isUpcomingTrainingDate(session.date));
+}
+
+async function refreshInterviews(options = {}) {
+  interviewLoadState = "loading";
+  interviewLoadMessage = "Refreshing…";
+  renderInterviews();
+
+  try {
+    liveInterviewSessions = await interviewSheetSessions(options);
+    interviewLoadState = "ready";
+    interviewLoadMessage = liveInterviewSessions.length
+      ? `Refreshed ${new Date().toLocaleString("en-GB")}`
+      : "No upcoming sessions";
+    renderInterviews();
+    return { sessions: liveInterviewSessions, error: null };
+  } catch (error) {
+    liveInterviewSessions = [];
+    interviewLoadState = "error";
+    interviewLoadMessage = `Could not refresh interviews: ${error.message}`;
+    renderInterviews();
+    return { sessions: [], error };
+  }
+}
+
+
 async function importGoogleSheet(options = {}) {
   const silent = Boolean(options.silent);
   const tokenOptions = { prompt: options.prompt ?? "" };
@@ -1414,6 +1610,8 @@ async function importGoogleSheet(options = {}) {
   }
   const trainingResult = await refreshTraining(tokenOptions);
   if (trainingResult.error) errors.push(`Training sheet: ${trainingResult.error.message}`);
+  const interviewResult = await refreshInterviews(tokenOptions);
+  if (interviewResult.error) errors.push(`Interviews sheet: ${interviewResult.error.message}`);
   render();
   if (silent) return { cadetCount, rosterCount, errors };
   if (errors.length) {
@@ -1728,6 +1926,7 @@ function renderSettings() {
   if (els.storageUrl) els.storageUrl.value = state.settings?.storageUrl || DEFAULT_STORAGE_URL;
   if (els.myEmployeeNumber) els.myEmployeeNumber.value = state.settings?.myEmployeeNumber || "";
   if (els.trainingUrl) els.trainingUrl.value = state.settings?.trainingUrl || DEFAULT_TRAINING_URL;
+  if (els.interviewUrl) els.interviewUrl.value = state.settings?.interviewUrl || DEFAULT_INTERVIEW_URL;
   if (els.settingsSummary) {
     const email = state.settings?.googleEmail ? ` Google will prefer ${state.settings.googleEmail}.` : " Add your Gmail here so Google can choose the right account.";
     const employee = state.settings?.myEmployeeNumber ? ` Employee #${state.settings.myEmployeeNumber} is used for training signups.` : " Add your employee number for training signup checks.";
@@ -1747,6 +1946,7 @@ function render() {
   renderNotes();
   renderSettings();
   renderTraining();
+  renderInterviews();
 }
 
 function setActiveTab(tabName) {
@@ -2041,7 +2241,8 @@ function saveSettings() {
     googleEmail: els.googleEmail?.value || "",
     storageUrl: els.storageUrl?.value || DEFAULT_STORAGE_URL,
     myEmployeeNumber: els.myEmployeeNumber?.value || "",
-    trainingUrl: els.trainingUrl?.value || DEFAULT_TRAINING_URL
+    trainingUrl: els.trainingUrl?.value || DEFAULT_TRAINING_URL,
+    interviewUrl: els.interviewUrl?.value || DEFAULT_INTERVIEW_URL
   });
   googleAccessToken = "";
   googleTokenClient = null;
@@ -2133,11 +2334,14 @@ document.addEventListener("click", async (event) => {
   }
   if (action === "import-google") importGoogleSheet();
   if (action === "refresh-training") {
-    const result = await refreshTraining({ prompt: "" });
-    if (result.error) {
+    const trainingResult = await refreshTraining({ prompt: "" });
+    const interviewResult = await refreshInterviews({ prompt: "" });
+    if (trainingResult.error || interviewResult.error) {
       googleAccessToken = "";
-      const retry = await refreshTraining({ prompt: "consent", force: true });
-      if (retry.error) alert(retry.error.message);
+      const retryTraining = await refreshTraining({ prompt: "consent", force: true });
+      const retryInterviews = await refreshInterviews({ prompt: "", force: false });
+      const errors = [retryTraining.error, retryInterviews.error].filter(Boolean);
+      if (errors.length) alert(errors.map((error) => error.message).join("\n"));
     }
   }
   if (action === "save-settings") saveSettings();

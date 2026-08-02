@@ -1907,3 +1907,65 @@ menu {
 .stat-flat-cut-fill {
   fill: #2a2025;
 }
+
+
+/* Upcoming interviews inside the training panel */
+.upcoming-interviews-section {
+  display: grid;
+  gap: 9px;
+  margin-top: 13px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.upcoming-interviews-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.upcoming-interviews-heading h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.upcoming-interviews-heading .muted {
+  font-size: 0.62rem;
+  text-align: right;
+}
+
+.upcoming-interviews-list {
+  display: grid;
+  gap: 9px;
+}
+
+.upcoming-interview-card {
+  position: relative;
+  min-width: 0;
+  border: 1px solid rgba(121, 144, 168, 0.24);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(17, 24, 33, 0.98), rgba(10, 15, 22, 0.98));
+  padding: 11px;
+}
+
+.upcoming-interview-card h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.interview-region {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.interview-people-grid {
+  grid-template-columns: 1fr;
+}
