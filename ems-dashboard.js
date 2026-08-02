@@ -1581,7 +1581,7 @@ async function refreshInterviews(options = {}) {
     interviewLoadState = "ready";
     interviewLoadMessage = liveInterviewSessions.length
       ? `Newest set: ${liveInterviewSessions[0].sheetTitle}`
-      : "Newest interview set has no upcoming sessions";
+      : "";
     renderInterviews();
     return { sessions: liveInterviewSessions, error: null };
   } catch (error) {

@@ -3003,3 +3003,10 @@ dialog menu {
   margin-top: 4px;
   margin-bottom: 6px;
 }
+
+/* Upcoming interviews header */
+.upcoming-interviews-header h3,
+.interview-header h3,
+.overview-interviews-header h3{
+  white-space: nowrap;
+}
