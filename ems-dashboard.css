@@ -5055,3 +5055,245 @@ dialog.ra-focus-dossier menu button[value="cancel"] {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* =========================================================
+   Smaller RA Focus modal — keep outer box within the screen
+   ========================================================= */
+
+dialog.ra-focus-dossier {
+  width: min(790px, calc(100vw - 28px)) !important;
+  max-width: 790px !important;
+  height: auto !important;
+  max-height: 82vh !important;
+  overflow: hidden !important;
+}
+
+dialog.ra-focus-dossier form {
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 82vh !important;
+  overflow: hidden !important;
+  padding: 16px !important;
+}
+
+dialog.ra-focus-dossier > form > h2 {
+  flex: 0 0 auto;
+  margin: 5px 54px 0 104px !important;
+  font-size: 1.42rem !important;
+}
+
+.ra-dossier-person {
+  flex: 0 0 auto;
+  min-height: 78px !important;
+  margin-top: -35px !important;
+  margin-bottom: 10px !important;
+  gap: 14px !important;
+}
+
+.ra-dossier-person > img {
+  width: 72px !important;
+  height: 72px !important;
+  padding: 10px !important;
+}
+
+.ra-dossier-person-copy,
+.ra-dossier-person > div {
+  gap: 3px !important;
+  padding-top: 38px !important;
+}
+
+.ra-dossier-person p {
+  font-size: 0.76rem !important;
+}
+
+.ra-dossier-person > div > span:not(.pill),
+.ra-dossier-person-copy > span {
+  font-size: 0.68rem !important;
+}
+
+.ra-dossier-stats {
+  flex: 0 0 auto;
+  gap: 9px !important;
+  margin-bottom: 9px !important;
+}
+
+.ra-dossier-stats article {
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  min-height: 76px !important;
+  gap: 8px !important;
+  padding: 9px 10px !important;
+}
+
+.ra-stat-symbol {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+.ra-stat-symbol svg {
+  width: 29px !important;
+  height: 29px !important;
+}
+
+.ra-dossier-stats strong {
+  font-size: 0.98rem !important;
+}
+
+.ra-dossier-stats strong.is-empty {
+  font-size: 0.76rem !important;
+}
+
+.ra-dossier-stats h3 {
+  margin: 1px 0 2px !important;
+  font-size: 0.71rem !important;
+}
+
+.ra-dossier-stats p {
+  font-size: 0.56rem !important;
+  line-height: 1.2 !important;
+}
+
+.ra-dossier-section {
+  margin-top: 9px !important;
+  padding: 11px !important;
+}
+
+.ra-section-heading {
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+  font-size: 0.88rem !important;
+}
+
+.ra-section-heading svg {
+  width: 21px !important;
+  height: 21px !important;
+}
+
+.ra-focus-card-grid {
+  gap: 7px !important;
+}
+
+.ra-focus-card {
+  grid-template-columns: 32px minmax(0, 1fr) !important;
+  min-height: 54px !important;
+  gap: 8px !important;
+  padding: 8px 9px !important;
+}
+
+.ra-focus-card-icon {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.ra-focus-card-icon svg {
+  width: 27px !important;
+  height: 27px !important;
+}
+
+.ra-focus-card strong {
+  font-size: 0.69rem !important;
+}
+
+.ra-focus-card small {
+  margin-top: 1px !important;
+  font-size: 0.56rem !important;
+}
+
+/* Keep the main dialog fixed; only the notes history scrolls */
+.ra-training-notes {
+  max-height: 205px !important;
+  overflow-y: auto !important;
+  gap: 6px !important;
+  padding-right: 4px;
+}
+
+.ra-training-note {
+  grid-template-columns: 125px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  padding: 8px 10px !important;
+}
+
+.ra-training-note-meta {
+  gap: 3px !important;
+  padding-right: 9px !important;
+}
+
+.ra-training-note-meta strong {
+  font-size: 0.76rem !important;
+}
+
+.ra-training-note-date {
+  gap: 4px !important;
+  font-size: 0.56rem !important;
+}
+
+.ra-training-note-date svg {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.ra-training-note-copy h4 {
+  margin-bottom: 2px !important;
+  font-size: 0.63rem !important;
+}
+
+.ra-training-note-copy p {
+  font-size: 0.58rem !important;
+  line-height: 1.28 !important;
+}
+
+.ra-dossier-legend {
+  gap: 14px !important;
+  margin-top: 7px !important;
+  font-size: 0.56rem !important;
+}
+
+.ra-dossier-legend i {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+dialog.ra-focus-dossier menu {
+  flex: 0 0 auto;
+  position: static !important;
+  margin: 6px 0 0 !important;
+  padding: 4px 0 0 !important;
+  background: transparent !important;
+}
+
+dialog.ra-focus-dossier menu button[value="cancel"] {
+  min-width: 92px !important;
+  min-height: 31px !important;
+  font-size: 0.72rem !important;
+  padding: 4px 10px !important;
+}
+
+dialog.ra-focus-dossier .close {
+  top: 12px !important;
+  right: 12px !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+dialog.ra-focus-dossier .close::before {
+  font-size: 1.35rem !important;
+}
+
+@media (max-width: 680px) {
+  dialog.ra-focus-dossier {
+    width: calc(100vw - 14px) !important;
+    max-height: 91vh !important;
+  }
+
+  dialog.ra-focus-dossier form {
+    max-height: 91vh !important;
+  }
+
+  .ra-dossier-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .ra-training-note {
+    grid-template-columns: 100px minmax(0, 1fr) !important;
+  }
+}
