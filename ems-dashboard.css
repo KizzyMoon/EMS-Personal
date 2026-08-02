@@ -4771,3 +4771,287 @@ dialog.ra-focus-dossier menu button[value="cancel"] {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* =========================================================
+   RA Focus visual match to supplied reference
+   ========================================================= */
+
+dialog.ra-focus-dossier {
+  width: min(920px, calc(100vw - 34px)) !important;
+  max-width: 920px !important;
+  max-height: 92vh !important;
+}
+
+dialog.ra-focus-dossier form {
+  padding: 22px !important;
+}
+
+dialog.ra-focus-dossier > form > h2 {
+  margin: 16px 64px 0 132px !important;
+  font-size: 1.72rem !important;
+  letter-spacing: -0.02em;
+}
+
+.ra-dossier-person {
+  min-height: 112px !important;
+  margin-top: -52px !important;
+  margin-bottom: 18px !important;
+  gap: 20px !important;
+}
+
+.ra-dossier-person > img {
+  width: 98px !important;
+  height: 98px !important;
+  padding: 15px !important;
+}
+
+.ra-dossier-person-copy,
+.ra-dossier-person > div {
+  gap: 6px !important;
+  padding-top: 56px !important;
+}
+
+.ra-dossier-person p {
+  font-size: 0.92rem !important;
+}
+
+.ra-dossier-person > div > span:not(.pill),
+.ra-dossier-person-copy > span {
+  font-size: 0.82rem !important;
+}
+
+.ra-dossier-stats {
+  gap: 16px !important;
+  margin-bottom: 20px !important;
+}
+
+.ra-dossier-stats article {
+  grid-template-columns: 60px minmax(0, 1fr) !important;
+  min-height: 126px !important;
+  gap: 14px !important;
+  padding: 16px !important;
+}
+
+.ra-stat-symbol {
+  width: 52px !important;
+  height: 52px !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.ra-stat-symbol svg {
+  width: 42px;
+  height: 42px;
+  fill: none;
+  stroke: #ff7b9e;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ra-dossier-stats strong {
+  font-size: 1.35rem !important;
+}
+
+.ra-dossier-stats strong.is-empty {
+  font-size: 1.05rem !important;
+}
+
+.ra-dossier-stats h3 {
+  margin: 3px 0 4px !important;
+  font-size: 0.98rem !important;
+}
+
+.ra-dossier-stats p {
+  font-size: 0.76rem !important;
+  line-height: 1.3 !important;
+}
+
+.ra-dossier-section {
+  margin-top: 18px !important;
+  padding: 20px !important;
+}
+
+.ra-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px !important;
+  font-size: 1.18rem !important;
+}
+
+.ra-section-heading > span {
+  display: inline-flex;
+  color: #ff7b9e;
+}
+
+.ra-section-heading svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ra-focus-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.ra-focus-card {
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  min-height: 82px !important;
+  gap: 12px !important;
+  align-items: center !important;
+  padding: 14px !important;
+}
+
+.ra-focus-card-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: currentColor;
+}
+
+.ra-focus-card-icon svg {
+  width: 38px;
+  height: 38px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ra-focus-card.focus-orange {
+  color: #ff8f2a;
+}
+
+.ra-focus-card.focus-red {
+  color: #ff536f;
+}
+
+.ra-focus-card.focus-green {
+  color: #59d98c;
+}
+
+.ra-focus-card strong {
+  font-size: 0.92rem !important;
+}
+
+.ra-focus-card small {
+  margin-top: 4px !important;
+  font-size: 0.76rem !important;
+  color: #b4c0cf !important;
+}
+
+.ra-training-notes {
+  max-height: 390px !important;
+  gap: 10px !important;
+}
+
+.ra-training-note {
+  grid-template-columns: 190px minmax(0, 1fr) !important;
+  gap: 22px !important;
+  padding: 16px 18px !important;
+}
+
+.ra-training-note-meta {
+  gap: 8px !important;
+  padding-right: 18px !important;
+}
+
+.ra-training-note-meta strong {
+  font-size: 1.05rem !important;
+}
+
+.ra-training-note-date {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #acb8c7;
+  font-size: 0.78rem !important;
+}
+
+.ra-training-note-date svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ra-training-note-copy h4 {
+  margin-bottom: 6px !important;
+  font-size: 0.9rem !important;
+}
+
+.ra-training-note-copy p {
+  font-size: 0.8rem !important;
+  line-height: 1.52 !important;
+}
+
+.ra-dossier-legend {
+  gap: 28px !important;
+  margin-top: 16px !important;
+  font-size: 0.76rem !important;
+}
+
+.ra-dossier-legend i {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+dialog.ra-focus-dossier menu {
+  margin-top: 10px !important;
+  padding-top: 18px !important;
+}
+
+dialog.ra-focus-dossier menu button[value="cancel"] {
+  min-width: 118px !important;
+  min-height: 44px !important;
+  font-size: 0.9rem;
+}
+
+.ra-untrained-focus-icon {
+  font-size: 0;
+}
+
+.ra-untrained-focus-icon::before {
+  content: "i";
+  font-size: 0.72rem;
+}
+
+@media (max-width: 760px) {
+  dialog.ra-focus-dossier > form > h2 {
+    margin: 92px 52px 0 0 !important;
+  }
+
+  .ra-dossier-person {
+    margin-top: -156px !important;
+  }
+
+  .ra-dossier-person > img {
+    width: 76px !important;
+    height: 76px !important;
+  }
+
+  .ra-dossier-person-copy,
+  .ra-dossier-person > div {
+    padding-top: 96px !important;
+  }
+
+  .ra-dossier-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ra-training-note {
+    grid-template-columns: 1fr !important;
+  }
+}

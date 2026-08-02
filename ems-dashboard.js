@@ -2952,6 +2952,68 @@ async function refreshCadetFocusFromOwnSheet(cadet) {
 }
 
 
+
+function raIcon(name) {
+  const icons = {
+    clipboard: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 5h6m-5-2h4a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V5a2 2 0 0 1 2-2Z"/>
+        <path d="M8 11h8M8 15h8"/>
+      </svg>`,
+    people: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="9" cy="8" r="3"/>
+        <circle cx="17" cy="9" r="2.5"/>
+        <path d="M3 20c0-4 2.7-6 6-6s6 2 6 6M14 15c2.8.2 5 1.9 5 5"/>
+      </svg>`,
+    calendar: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="16" rx="2"/>
+        <path d="M7 3v4M17 3v4M3 10h18M8 14h2M14 14h2M8 18h2M14 18h2"/>
+      </svg>`,
+    target: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8"/>
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+      </svg>`,
+    notes: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="5" y="3" width="14" height="18" rx="2"/>
+        <path d="M8 8h8M8 12h8M8 16h5"/>
+      </svg>`,
+    wheel: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8"/>
+        <circle cx="12" cy="12" r="2"/>
+        <path d="M12 4v6M5 10h14M7 18l4-6M17 18l-4-6"/>
+      </svg>`,
+    person: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="7" r="3"/>
+        <path d="M5 21c0-5 3-8 7-8s7 3 7 8"/>
+      </svg>`,
+    hand: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 11V5a1.5 1.5 0 0 1 3 0v5M10 10V3.5a1.5 1.5 0 0 1 3 0V10M13 10V5a1.5 1.5 0 0 1 3 0v6M16 11V7a1.5 1.5 0 0 1 3 0v7c0 5-3 8-7 8-3 0-5-1.5-6-4l-2-4a1.7 1.7 0 0 1 3-1l1 2"/>
+      </svg>`,
+    info: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 11v6M12 7h.01"/>
+      </svg>`
+  };
+  return icons[name] || icons.info;
+}
+
+function focusIconName(label = "") {
+  const text = String(label).toLowerCase();
+  if (/driv|response|ambulance|vehicle/.test(text)) return "wheel";
+  if (/contact|patient|person|public/.test(text)) return "person";
+  if (/shake|shoulder|touch/.test(text)) return "hand";
+  return "info";
+}
+
 function focusColour(value = "") {
   const text = String(value).toLowerCase();
   if (text.includes("red")) return "red";
@@ -3005,10 +3067,10 @@ function raFocusCards(groups = []) {
 
   return items.map((item) => `
     <article class="ra-focus-card focus-${item.colour}">
-      <span class="ra-focus-card-dot" aria-hidden="true"></span>
+      <span class="ra-focus-card-icon" aria-hidden="true">${raIcon(focusIconName(item.label))}</span>
       <div>
         <strong>${escapeHtml(item.label)}</strong>
-        <small>${item.colour === "green" ? "All good" : item.colour === "red" ? "Bad — needs focused help" : "Struggling"}</small>
+        <small>${item.colour === "green" ? "All good" : item.colour === "red" ? "Needs focused help" : "Needs improvement"}</small>
       </div>
     </article>
   `).join("");
@@ -3049,7 +3111,7 @@ function trainingNotesTimeline(notes = []) {
       <article class="ra-training-note">
         <div class="ra-training-note-meta">
           <strong>${escapeHtml(note.callsign)}</strong>
-          ${note.date ? `<span>${escapeHtml(formatDate(note.date))}</span>` : ""}
+          ${note.date ? `<span class="ra-training-note-date">${raIcon("calendar")}${escapeHtml(formatDate(note.date))}</span>` : ""}
         </div>
         <div class="ra-training-note-copy">
           ${note.title ? `<h4>${escapeHtml(note.title)}</h4>` : ""}
@@ -3088,7 +3150,7 @@ async function openCadetSheetNotes(cadet) {
       </header>
 
       <section class="ra-dossier-section">
-        <h3>Current Focus Areas</h3>
+        <h3 class="ra-section-heading"><span>${raIcon("target")}</span>Current Focus Areas</h3>
 
         <article class="ra-untrained-focus-card">
           <span class="ra-untrained-focus-icon" aria-hidden="true">i</span>
@@ -3100,7 +3162,7 @@ async function openCadetSheetNotes(cadet) {
       </section>
 
       <section class="ra-dossier-section">
-        <h3>Training Notes</h3>
+        <h3 class="ra-section-heading"><span>${raIcon("notes")}</span>Training Notes</h3>
         <div class="ra-training-notes">${notes}</div>
       </section>
     `;
@@ -3147,7 +3209,7 @@ async function openCadetSheetNotes(cadet) {
 
     <section class="ra-dossier-stats">
       <article>
-        <span class="ra-stat-symbol">RA</span>
+        <span class="ra-stat-symbol">${raIcon("clipboard")}</span>
         <div>
           <strong>${raOffers}</strong>
           <h3>RAs Offered</h3>
@@ -3156,7 +3218,7 @@ async function openCadetSheetNotes(cadet) {
       </article>
 
       <article>
-        <span class="ra-stat-symbol">FTO</span>
+        <span class="ra-stat-symbol">${raIcon("people")}</span>
         <div>
           <strong>${uniqueFtos}</strong>
           <h3>Unique FTO RAs</h3>
@@ -3165,7 +3227,7 @@ async function openCadetSheetNotes(cadet) {
       </article>
 
       <article>
-        <span class="ra-stat-symbol">DATE</span>
+        <span class="ra-stat-symbol">${raIcon("calendar")}</span>
         <div>
           <strong class="${cadet.lastRaDate ? "" : "is-empty"}">${escapeHtml(lastRaLabel)}</strong>
           <h3>Last RA</h3>
@@ -3175,12 +3237,12 @@ async function openCadetSheetNotes(cadet) {
     </section>
 
     <section class="ra-dossier-section">
-      <h3>Current Focus Areas</h3>
+      <h3 class="ra-section-heading"><span>${raIcon("target")}</span>Current Focus Areas</h3>
       <div class="ra-focus-card-grid">${focusCards}</div>
     </section>
 
     <section class="ra-dossier-section">
-      <h3>Training Notes</h3>
+      <h3 class="ra-section-heading"><span>${raIcon("notes")}</span>Training Notes</h3>
       <div class="ra-training-notes">${notes}</div>
 
       <footer class="ra-dossier-legend">
