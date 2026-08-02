@@ -775,6 +775,7 @@ async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) 
     cadet.latestStruggles = score.latestStruggles;
     cadet.unassessedItems = score.unassessedItems;
     cadet.sheetNotes = cadetSheetNotes(sheet);
+    cadet.lastRaDate = latestRaDateFromRows(cells) || cadet.lastRaDate;
   });
   saveState();
   render();
@@ -870,6 +871,37 @@ function uniqueFtoRaCount(rows = []) {
   );
   return uniqueCallsigns.size;
 }
+
+
+function latestRaDateFromRows(rows = []) {
+  const dateRowIndex = rows.findIndex((row, index) => {
+    const values = row.values || [];
+    const hasDateHeader = values.some((cell) => normalizeKey(cellText(cell)) === "dategoeshere");
+    if (!hasDateHeader) return false;
+
+    const previousRow = rows[index - 1]?.values || [];
+    const hasCallsignHeader = previousRow.some(
+      (cell) => normalizeKey(cellText(cell)) === "callsignhere"
+    );
+    return hasCallsignHeader;
+  });
+
+  if (dateRowIndex < 0) return "";
+
+  const values = rows[dateRowIndex]?.values || [];
+  const labelIndex = values.findIndex(
+    (cell) => normalizeKey(cellText(cell)) === "dategoeshere"
+  );
+
+  const dates = values
+    .slice(Math.max(labelIndex + 1, 0))
+    .map((cell) => parseDate(cellText(cell)))
+    .filter(Boolean)
+    .sort();
+
+  return dates.at(-1) || "";
+}
+
 
 function cadetSheetNotes(sheet = {}) {
   const rows = sheet.data?.[0]?.rowData || [];
@@ -1856,10 +1888,12 @@ function cadetCard(cadet, options = {}) {
         <span>${escapeHtml(trainingText)}</span>
       </div>
 
-      <div class="cadet-training-progress">
-        <span class="${cadet.day1 ? "is-complete" : ""}">Day 1</span>
-        <span class="${cadet.day2 ? "is-complete" : ""}">Day 2</span>
-      </div>
+      ${(!cadet.day1 || !cadet.day2) ? `
+        <div class="cadet-training-progress">
+          ${!cadet.day1 ? "<span>Day 1</span>" : ""}
+          ${!cadet.day2 ? "<span>Day 2</span>" : ""}
+        </div>
+      ` : ""}
 
       <p class="cadet-last-training">${escapeHtml(latestTraining)}</p>
     </article>
@@ -2442,6 +2476,29 @@ function raOfferHistory(cadet) {
 }
 
 
+/*
+=============================================================================
+IMPORTANT
+
+The Cadet Focus popup MUST always refresh from the cadet's OWN sheet tab
+before opening.
+
+Do NOT replace this with cached state.cadets data.
+
+Reason:
+- Training struggles
+- Sheet notes
+- RA information
+- Training scores
+
+must always reflect the cadet's latest Google Sheet.
+
+If the live fetch fails, only then fall back to cached values.
+
+This behaviour is intentional and should not be "optimised away".
+=============================================================================
+*/
+
 async function refreshCadetFocusFromOwnSheet(cadet) {
   if (!cadet?.day1 || !cadet.callsign) return cadet;
 
@@ -2480,6 +2537,7 @@ async function refreshCadetFocusFromOwnSheet(cadet) {
   if (cadet.uniqueFtoRaSource !== "roster") {
     cadet.uniqueFtoRaCount = uniqueFtoRaCount(rows);
   }
+  cadet.lastRaDate = latestRaDateFromRows(rows) || cadet.lastRaDate;
 
   saveState({ cloud: false });
   return cadet;
