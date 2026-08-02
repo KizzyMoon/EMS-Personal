@@ -489,7 +489,19 @@ function replaceMembers(existing, incoming) {
   for (const item of incoming.map(normalizeMember).filter((entry) => entry.name || entry.callsign || entry.employeeNumber)) {
     const key = memberKey(item);
     const match = previous.get(key);
-    unique.set(key, match ? { ...match, ...item, id: match.id, notes: match.notes || item.notes } : item);
+    unique.set(
+      key,
+      match
+        ? {
+            ...match,
+            ...item,
+            id: match.id,
+            notes: match.notes || item.notes,
+            birthday: item.birthday || match.birthday,
+            joinDate: item.joinDate || match.joinDate
+          }
+        : item
+    );
   }
   return [...unique.values()].sort((a, b) => {
     const callCompare = String(a.callsign || "").localeCompare(String(b.callsign || ""), undefined, { numeric: true });
@@ -1886,7 +1898,19 @@ function directoryRow(member) {
           member.timezone || "No timezone"
         ].join(" • "))}</span>
       </div>
-      <span class="roster-member-tags">${roleTagRow(member.tags || [])}</span>
+      <div class="roster-member-actions">
+        <span class="roster-member-tags">${roleTagRow(member.tags || [])}</span>
+        <button
+          class="roster-birthday-button"
+          type="button"
+          data-edit-birthday="${member.id}"
+          title="${member.birthday ? "Update birthday" : "Add birthday"}"
+        >
+          ${member.birthday
+            ? `Birthday: ${escapeHtml(formatManualBirthday(member.birthday))}`
+            : "Add birthday"}
+        </button>
+      </div>
     </div>
   `;
 }
@@ -1987,6 +2011,10 @@ function cadetCard(cadet, options = {}) {
   const latestTraining = cadet.lastRaDate
     ? `Last RA: ${formatDate(cadet.lastRaDate)}`
     : "No RA date recorded";
+  const uniqueFtoRaTotal = Number(cadet.uniqueFtoRaCount || 0);
+  const uniqueFtoRaText = uniqueFtoRaTotal === 1
+    ? "1 unique FTO RA"
+    : `${uniqueFtoRaTotal} unique FTO RAs`;
 
   return `
     <article
@@ -2029,7 +2057,10 @@ function cadetCard(cadet, options = {}) {
         </div>
       ` : ""}
 
-      <p class="cadet-last-training">${escapeHtml(latestTraining)}</p>
+      <div class="cadet-card-footer">
+        <p class="cadet-last-training">${escapeHtml(latestTraining)}</p>
+        <strong class="cadet-unique-ra-count">${escapeHtml(uniqueFtoRaText)}</strong>
+      </div>
     </article>
   `;
 }
@@ -2290,6 +2321,69 @@ function renderCadets() {
   renderRaOffers();
 }
 
+
+
+function formatManualBirthday(value) {
+  const [month, day] = String(value || "").split("-").map(Number);
+  if (!month || !day) return "Not set";
+
+  const date = new Date(2000, month - 1, day);
+  if (Number.isNaN(date.valueOf())) return "Not set";
+
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short"
+  });
+}
+
+function editMemberBirthday(member) {
+  if (!member) return;
+
+  const current = member.birthday
+    ? `${String(member.birthday.split("-")[1] || "").padStart(2, "0")}/${String(member.birthday.split("-")[0] || "").padStart(2, "0")}`
+    : "";
+
+  const answer = prompt(
+    `Enter ${member.name || "this member"}'s birthday as DD/MM.\n\nLeave it blank to remove the birthday.`,
+    current
+  );
+
+  if (answer === null) return;
+
+  const value = String(answer).trim();
+  if (!value) {
+    member.birthday = "";
+    saveState();
+    render();
+    return;
+  }
+
+  const match = value.match(/^(\d{1,2})[\/. -](\d{1,2})$/);
+  if (!match) {
+    alert("Please enter the birthday as DD/MM, for example 04/08.");
+    return;
+  }
+
+  const day = Number(match[1]);
+  const month = Number(match[2]);
+  const testDate = new Date(2000, month - 1, day);
+
+  if (
+    month < 1
+    || month > 12
+    || day < 1
+    || day > 31
+    || testDate.getMonth() !== month - 1
+    || testDate.getDate() !== day
+  ) {
+    alert("That birthday is not a valid date.");
+    return;
+  }
+
+  member.birthday = `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  saveState();
+  render();
+}
 
 function upcomingBirthday(member) {
   if (!member.birthday) return null;
@@ -3115,6 +3209,15 @@ document.addEventListener("click", async (event) => {
       alert(error.message);
     }
   }
+  const birthdayButton = event.target.closest("[data-edit-birthday]");
+  if (birthdayButton) {
+    const member = state.members.find(
+      (entry) => String(entry.id) === String(birthdayButton.dataset.editBirthday)
+    );
+    editMemberBirthday(member);
+    return;
+  }
+
   if (action === "refresh-training") {
     const trainingResult = await refreshTraining({ prompt: "" });
     const interviewResult = await refreshInterviews({ prompt: "" });
