@@ -74,6 +74,8 @@ const els = {
   needsTrainingList: document.querySelector("[data-needs-training-list]"),
   limitList: document.querySelector("[data-limit-list]"),
   cadetGrid: document.querySelector("[data-cadet-grid]"),
+  sidebarCadetCount: document.querySelector("[data-sidebar-cadet-count]"),
+  sidebarRosterCount: document.querySelector("[data-sidebar-roster-count]"),
   cadetPageSummary: document.querySelector("[data-cadet-page-summary]"),
   cadetOverviewStats: document.querySelector("[data-cadet-overview-stats]"),
   cadetLimitList: document.querySelector("[data-cadet-limit-list]"),
@@ -509,7 +511,14 @@ async function ensureGoogleAccessToken(options = {}) {
       scope: SHEETS_SCOPE,
       include_granted_scopes: true,
       login_hint: loginHint || undefined,
-      error_callback: (error) => reject(new Error(error?.message || error?.type || "Google sign-in was blocked."))
+      error_callback: (error) => {
+        const type = String(error?.type || error?.message || "");
+        if (/popup_closed|popup window closed/i.test(type)) {
+          reject(new Error("Google sign-in was closed before syncing finished. Click Sync Sheet and complete the Google sign-in window."));
+          return;
+        }
+        reject(new Error(error?.message || error?.type || "Google sign-in was blocked."));
+      }
     });
     googleTokenClient.callback = (response) => {
       if (response.error) return reject(new Error(response.error_description || response.error));
@@ -1959,9 +1968,6 @@ function renderStats() {
   const cadetTotal = state.cadets.length;
   const rosterTotal = state.members.length;
 
-  if (els.sidebarCadetCount) els.sidebarCadetCount.textContent = cadetTotal;
-  if (els.sidebarRosterCount) els.sidebarRosterCount.textContent = rosterTotal;
-
   if (els.stats) {
     const stats = [
       { label: "Cadets", value: cadets.length, icon: "cadets" },
@@ -2205,7 +2211,22 @@ function empty(text) {
   return `<div class="empty">${escapeHtml(text)}</div>`;
 }
 
+
+function updateSidebarCounts() {
+  const cadetTotal = Array.isArray(state.cadets) ? state.cadets.length : 0;
+  const rosterTotal = Array.isArray(state.members) ? state.members.length : 0;
+
+  if (els.sidebarCadetCount) {
+    els.sidebarCadetCount.textContent = String(cadetTotal);
+  }
+
+  if (els.sidebarRosterCount) {
+    els.sidebarRosterCount.textContent = String(rosterTotal);
+  }
+}
+
 function render() {
+  updateSidebarCounts();
   renderStats();
   renderOverview();
   renderCadets();
@@ -2804,7 +2825,16 @@ document.addEventListener("click", async (event) => {
       alert(error.message);
     }
   }
-  if (action === "import-google") importGoogleSheet();
+  if (action === "import-google") {
+    try {
+      if (!googleAccessToken) {
+        await ensureGoogleAccessToken({ prompt: "consent", force: true });
+      }
+      await importGoogleSheet({ prompt: "" });
+    } catch (error) {
+      alert(error.message);
+    }
+  }
   if (action === "refresh-training") {
     const trainingResult = await refreshTraining({ prompt: "" });
     const interviewResult = await refreshInterviews({ prompt: "" });
@@ -2942,9 +2972,16 @@ document.addEventListener("click", async (event) => {
 
 
 async function autoSyncGoogleSheets() {
+  // Browser popup rules do not allow Google authentication to be opened
+  // automatically during page load. Only auto-sync when this page already
+  // has a valid token from a user-initiated Sync Sheet or Google Sign In click.
+  if (!googleAccessToken) return;
+
   try {
     const result = await importGoogleSheet({ silent: true, prompt: "" });
-    if (result?.errors?.length) notifyCloudError(new Error(result.errors.join("\n")), "Auto-sync had issues");
+    if (result?.errors?.length) {
+      notifyCloudError(new Error(result.errors.join("\n")), "Auto-sync had issues");
+    }
   } catch (error) {
     notifyCloudError(error, "Auto-sync failed");
   }
