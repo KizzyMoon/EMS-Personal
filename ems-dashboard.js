@@ -1272,44 +1272,39 @@ function trainingCardMarkup(session) {
     ? (session.signedUp ? "SIGNED UP" : "NOT SIGNED UP")
     : "SET EMPLOYEE #";
 
+  const relativeDate = trainingDateLabel(session.date);
+  const dateText = ["Today", "Tomorrow"].includes(relativeDate)
+    ? `${relativeDate}${session.time ? ` • ${session.time}` : ""}`
+    : `${formatDate(session.date)}${session.time ? ` • ${session.time}` : ""}`;
+
   return `
     <article class="upcoming-training-card">
-      <span class="training-signup-badge ${signupClass}">${signupText}</span>
-      <div class="training-title-row">
-        <div>
-          <span class="training-day-label">EU DAY ${session.day}</span>
-          <h3>Training Day ${session.day}</h3>
-          <p class="training-date-line">
-            <strong>${escapeHtml(trainingDateLabel(session.date))}</strong>
-            <span>${escapeHtml(formatDate(session.date))}${session.time ? ` • ${escapeHtml(session.time)}` : ""}</span>
-          </p>
-        </div>
+      <div class="training-compact-head">
+        <h3>Training Day ${session.day}</h3>
+        <span class="training-signup-badge ${signupClass}">${signupText}</span>
       </div>
 
-      <div class="training-summary-grid">
-        <div>
-          <span>Hosted by</span>
-          <strong>${trainingHostMarkup(session.host)}</strong>
-        </div>
-        <div>
-          <span>Cadets</span>
-          <strong>${session.eligibleSignedUp} / ${session.eligibleTotal} signed up</strong>
-        </div>
-        <div>
-          <span>Staff</span>
-          <strong>${session.staff.length}</strong>
-        </div>
+      <p class="training-compact-date">${escapeHtml(dateText)}</p>
+
+      <div class="training-host-row">
+        <span>Hosted by</span>
+        <strong>${trainingHostMarkup(session.host)}</strong>
+      </div>
+
+      <div class="training-count-row">
+        <span>👥 <strong>${session.eligibleSignedUp} / ${session.eligibleTotal}</strong> Cadets</span>
+        <span>👷 <strong>${session.staff.length}</strong> Staff</span>
       </div>
 
       <div class="training-people-grid">
         <section>
-          <h4>Cadets signed up</h4>
+          <h4>Cadets</h4>
           ${session.cadets.length
             ? `<ul>${session.cadets.map(trainingPersonMarkup).join("")}</ul>`
             : `<p class="muted">No cadets signed up yet.</p>`}
         </section>
         <section>
-          <h4>Supervisors, FTOs & Helpers</h4>
+          <h4>Staff</h4>
           ${session.staff.length
             ? `<ul>${session.staff.map(trainingPersonMarkup).join("")}</ul>`
             : `<p class="muted">No staff signed up yet.</p>`}

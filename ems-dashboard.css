@@ -1736,3 +1736,87 @@ menu {
 .dashboard-side .training-date-line span {
   font-size: 0.7rem;
 }
+
+
+/* Compact training card refinement */
+.training-compact-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.training-compact-head h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.training-compact-head .training-signup-badge {
+  position: static;
+  flex: 0 0 auto;
+}
+
+.training-compact-date {
+  margin: 4px 0 10px !important;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.training-host-row {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 9px;
+}
+
+.training-host-row span {
+  color: var(--muted);
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.training-host-row strong {
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.training-count-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.training-count-row > span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+  font-size: 0.68rem;
+  padding: 4px 7px;
+}
+
+.training-count-row strong {
+  color: #fff;
+}
+
+.dashboard-side .upcoming-training-card {
+  padding: 11px;
+}
+
+.dashboard-side .training-people-grid {
+  gap: 8px;
+}
+
+.dashboard-side .training-people-grid h4 {
+  margin-bottom: 5px;
+}
+
+.dashboard-side .training-title-row,
+.dashboard-side .training-summary-grid,
+.dashboard-side .training-day-label,
+.dashboard-side .training-date-line {
+  display: none !important;
+}
