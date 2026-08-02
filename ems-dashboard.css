@@ -4029,3 +4029,47 @@ dialog menu {
   line-height: 1.2;
 }
 
+
+
+/* Roster-only qualification filter */
+.toolbar input {
+  max-width: 720px;
+}
+
+.roster-page-heading {
+  gap: 16px;
+}
+
+.roster-qualification-filter {
+  display: grid;
+  grid-template-columns: auto 190px;
+  align-items: center;
+  gap: 8px;
+}
+
+.roster-qualification-filter > span {
+  color: #ffadc0;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.roster-qualification-filter select {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(13, 18, 25, 0.92);
+  color: var(--text);
+  padding: 7px 10px;
+}
+
+@media (max-width: 720px) {
+  .roster-page-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .roster-qualification-filter {
+    grid-template-columns: 1fr;
+  }
+}

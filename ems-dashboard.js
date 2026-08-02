@@ -68,6 +68,7 @@ const els = {
   csvFile: document.querySelector("[data-csv-file]"),
   search: document.querySelector("[data-search]"),
   statusFilter: document.querySelector("[data-status-filter]"),
+  rosterQualificationFilter: document.querySelector("[data-roster-qualification-filter]"),
   views: document.querySelectorAll("[data-view]"),
   tabs: document.querySelectorAll("[data-tab]"),
   needsRaList: document.querySelector("[data-needs-ra-list]"),
@@ -2419,12 +2420,21 @@ function relativeChangeTime(value) {
 
 function renderDirectory() {
   const query = els.search.value.trim().toLowerCase();
-  const members = state.members.filter((member) =>
-    !query
-    || `${member.name} ${member.callsign} ${member.rank} ${member.employeeNumber} ${member.timezone} ${(member.tags || []).join(" ")}`
-      .toLowerCase()
-      .includes(query)
-  );
+  const qualification = els.rosterQualificationFilter?.value || "all";
+
+  const members = state.members.filter((member) => {
+    const matchesSearch =
+      !query
+      || `${member.name} ${member.callsign} ${member.rank} ${member.employeeNumber} ${member.timezone} ${(member.tags || []).join(" ")}`
+        .toLowerCase()
+        .includes(query);
+
+    const matchesQualification =
+      qualification === "all"
+      || (member.tags || []).includes(qualification);
+
+    return matchesSearch && matchesQualification;
+  });
 
   if (els.directoryCount) {
     els.directoryCount.textContent = members.length;
@@ -3371,7 +3381,8 @@ async function autoSyncGoogleSheets() {
 }
 
 els.search.addEventListener("input", render);
-els.statusFilter.addEventListener("change", render);
+els.statusFilter?.addEventListener("change", render);
+els.rosterQualificationFilter?.addEventListener("change", renderDirectory);
 els.raOfferMonth?.addEventListener("change", renderRaOffers);
 
 els.dialogForm.addEventListener("submit", (event) => {

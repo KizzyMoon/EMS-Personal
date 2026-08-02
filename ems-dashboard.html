@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-56" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260802-57" />
   </head>
   <body>
     <main class="app">
@@ -118,13 +118,6 @@
 
       <section class="toolbar">
         <input data-search type="search" placeholder="Search names, callsigns, notes..." />
-        <select data-status-filter>
-          <option value="all">All statuses</option>
-          <option value="active">Active</option>
-          <option value="needs-ra">Needs RA</option>
-          <option value="limit-risk">14/28 day risk</option>
-          <option value="needs-training">Needs day training</option>
-        </select>
         <span class="sync-status-chip" data-overview-sync-status>Not synced yet</span>
         <button data-action="import-google" type="button">Sync Sheet</button>
       </section>
@@ -252,6 +245,17 @@
                 <h2>EMS Roster</h2>
                 <p class="muted"><span data-directory-count>0</span> members across all ranks.</p>
               </div>
+
+              <label class="roster-qualification-filter">
+                <span>Qualification</span>
+                <select data-roster-qualification-filter>
+                  <option value="all">All qualifications</option>
+                  <option value="FTO">FTO</option>
+                  <option value="HART">HART</option>
+                  <option value="MET">MET</option>
+                  <option value="Doctor">Doctor</option>
+                </select>
+              </label>
             </header>
 
             <div class="roster-directory" data-directory></div>
@@ -523,6 +527,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260802-55"></script>
+    <script src="ems-dashboard.js?v=20260802-57"></script>
   </body>
 </html>
