@@ -111,6 +111,8 @@ const els = {
   dialogSave: document.querySelector("[data-dialog-save]"),
   myCallsign: document.querySelector("[data-my-callsign]"),
   settingsSummary: document.querySelector("[data-settings-summary]"),
+  settingsSyncTable: document.querySelector("[data-settings-sync-table]"),
+  settingsSyncHistory: document.querySelector("[data-settings-sync-history]"),
   googleEmail: document.querySelector("[data-google-email]")
 };
 
@@ -127,11 +129,12 @@ function loadState() {
       checklistOverrides: saved.checklistOverrides && typeof saved.checklistOverrides === "object"
         ? saved.checklistOverrides
         : {},
+      syncHistory: Array.isArray(saved.syncHistory) ? saved.syncHistory.slice(0, 20) : [],
       settings: normalizeSettings(saved.settings),
       lastUpdated: saved.lastUpdated || ""
     };
   } catch {
-    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), checklistOverrides: {}, settings: normalizeSettings(), lastUpdated: "" };
+    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), checklistOverrides: {}, syncHistory: [], settings: normalizeSettings(), lastUpdated: "" };
   }
 }
 
@@ -529,6 +532,7 @@ function importRows(rows) {
   }
   state.cadets = cadetRows.length ? replaceByName(state.cadets, cadetRows, normalizeCadet) : state.cadets;
   state.lastUpdated = new Date().toISOString();
+    recordSyncAttempt("success", "Success — all available sources synced");
   saveState();
   render();
   return cadetRows.length;
@@ -3121,6 +3125,90 @@ function renderReviewPage() {
     : empty("No FTO workload data is available.");
 }
 
+
+function recordSyncAttempt(status, message) {
+  state.syncHistory = Array.isArray(state.syncHistory) ? state.syncHistory : [];
+  state.syncHistory.unshift({
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+    status,
+    message
+  });
+  state.syncHistory = state.syncHistory.slice(0, 20);
+  saveState({ cloud: false });
+}
+
+function syncStatusRow(label, status, details, lastSynced) {
+  const tone = status === "Success"
+    ? "success"
+    : status === "No Upcoming"
+      ? "warning"
+      : status === "Not synced"
+        ? "neutral"
+        : "danger";
+
+  return `
+    <div class="settings-sync-row">
+      <span class="settings-sync-sheet"><strong>${escapeHtml(label)}</strong></span>
+      <span class="settings-sync-status ${tone}">${escapeHtml(status)}</span>
+      <span>${escapeHtml(details || "—")}</span>
+      <span>${escapeHtml(lastSynced || "—")}</span>
+    </div>
+  `;
+}
+
+function renderSettingsSyncPanels() {
+  if (!els.settingsSyncTable || !els.settingsSyncHistory) return;
+
+  const lastSync = state.lastUpdated ? new Date(state.lastUpdated).toLocaleString("en-GB") : "Not synced";
+  const trainingStatus = trainingLoadState === "success" ? "Success" : trainingLoadState === "error" ? "Failed" : "Not synced";
+  const interviewStatus = interviewLoadState === "success"
+    ? (liveInterviewSessions.length ? "Success" : "No Upcoming")
+    : interviewLoadState === "error"
+      ? "Failed"
+      : "Not synced";
+
+  els.settingsSyncTable.innerHTML = `
+    <div class="settings-sync-head">
+      <span>Sheet</span><span>Status</span><span>Details</span><span>Last Synced</span>
+    </div>
+    ${syncStatusRow("Cadets Sheet", state.cadets.length ? "Success" : "Not synced", `${state.cadets.length} rows`, lastSync)}
+    ${syncStatusRow("Roster Sheet", state.members.length ? "Success" : "Not synced", `${state.members.length} rows`, lastSync)}
+    ${syncStatusRow("Training Sheet", trainingStatus, liveTrainingSessions.length ? `${liveTrainingSessions.length} session(s)` : trainingLoadMessage, lastSync)}
+    ${syncStatusRow("Interviews Sheet", interviewStatus, liveInterviewSessions.length ? `${liveInterviewSessions.length} session(s)` : interviewLoadMessage, lastSync)}
+    ${syncStatusRow("Live Cadet Fetch", state.cadets.some((cadet) => cadet.sheetNotes?.length) ? "Success" : "Not synced", "Own cadet sheets", lastSync)}
+  `;
+
+  const history = Array.isArray(state.syncHistory) ? state.syncHistory : [];
+  els.settingsSyncHistory.innerHTML = history.length
+    ? history.map((entry) => {
+        const tone = entry.status === "success" ? "success" : entry.status === "warning" ? "warning" : "danger";
+        return `
+          <div class="settings-history-row">
+            <span>${escapeHtml(new Date(entry.createdAt).toLocaleString("en-GB"))}</span>
+            <strong class="${tone}">${escapeHtml(entry.message)}</strong>
+          </div>
+        `;
+      }).join("")
+    : `<div class="empty">No sync attempts recorded yet.</div>`;
+}
+
+function updateSettingsSheetLinks() {
+  const pairs = [
+    ["[data-open-training-sheet]", els.trainingUrl?.value],
+    ["[data-open-interview-sheet]", els.interviewUrl?.value],
+    ["[data-open-cadet-sheet]", els.googleUrl?.value],
+    ["[data-open-roster-sheet]", els.rosterUrl?.value],
+    ["[data-open-storage-sheet]", els.storageUrl?.value]
+  ];
+
+  pairs.forEach(([selector, value]) => {
+    const link = document.querySelector(selector);
+    if (!link) return;
+    link.href = value || "#";
+  });
+}
+
 function render() {
   updateSidebarCounts();
   renderStats();
@@ -3128,6 +3216,8 @@ function render() {
   renderCadets();
   renderDirectory();
   renderReviewPage();
+  renderSettingsSyncPanels();
+  updateSettingsSheetLinks();
   renderNotes();
   renderSettings();
   renderTraining();
@@ -4260,3 +4350,12 @@ document.addEventListener("click", (event) => {
   const refreshedCadet = state.cadets.find((entry) => entry.id === cadetId);
   if (refreshedCadet) openCadetFocus(refreshedCadet);
 });
+
+
+[
+  els.trainingUrl,
+  els.interviewUrl,
+  els.googleUrl,
+  els.rosterUrl,
+  els.storageUrl
+].forEach((input) => input?.addEventListener("input", updateSettingsSheetLinks));
