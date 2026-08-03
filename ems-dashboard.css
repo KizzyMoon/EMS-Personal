@@ -7598,3 +7598,167 @@ dialog.ra-focus-dossier > form > h2 {
 [data-view="overview"] .cadet-training-status-block {
   display: none !important;
 }
+
+
+/* =========================================================
+   Overview page — reference layout
+   ========================================================= */
+
+.overview-reference-layout {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.overview-reference-heading {
+  min-height: 58px;
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 12px;
+  background: rgba(7, 14, 22, 0.5);
+  padding: 12px 18px;
+}
+
+.overview-reference-heading h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.22rem;
+}
+
+.overview-reference-heading p {
+  margin: 2px 0 0;
+  color: #96a6b9;
+  font-size: 0.68rem;
+}
+
+.overview-reference-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 12px;
+  background: rgba(7, 14, 22, 0.48);
+  padding: 10px 16px;
+}
+
+.overview-reference-stats article {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 58px;
+  border: 1px solid rgba(119, 142, 166, 0.17);
+  border-radius: 8px;
+  background: rgba(10, 18, 30, 0.72);
+  padding: 10px 18px;
+}
+
+.overview-reference-stats strong {
+  color: #ea9fb8;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.overview-reference-stats span {
+  color: #dce4ed;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.overview-reference-primary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(320px, 0.95fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.overview-reference-primary > article {
+  height: 100%;
+  min-height: 0;
+  margin: 0 !important;
+}
+
+.overview-list-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.overview-list-panel .overview-panel-title {
+  min-height: 34px;
+  margin-bottom: 6px;
+}
+
+.overview-list-panel .overview-panel-title > span {
+  display: grid;
+  place-items: center;
+  min-width: 25px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(234, 159, 184, 0.14);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.overview-reference-list {
+  flex: 1;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.overview-reference-primary .overview-schedule-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100%;
+}
+
+.overview-reference-primary .overview-schedule-panel .upcoming-training-grid {
+  flex: 0 0 auto;
+}
+
+.overview-reference-primary .overview-schedule-panel .schedule-refresh-footer {
+  margin-top: auto;
+}
+
+.overview-reference-layout .overview-attention-panel,
+.overview-reference-layout .overview-limits-panel {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+.overview-reference-layout .attention-card-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.overview-reference-layout .overview-limit-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+@media (max-width: 1180px) {
+  .overview-reference-primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .overview-reference-primary .overview-schedule-panel {
+    grid-column: 1 / -1;
+  }
+
+  .overview-reference-layout .attention-card-list,
+  .overview-reference-layout .overview-limit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .overview-reference-stats,
+  .overview-reference-primary,
+  .overview-reference-layout .attention-card-list,
+  .overview-reference-layout .overview-limit-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .overview-reference-primary .overview-schedule-panel {
+    grid-column: auto;
+  }
+}
