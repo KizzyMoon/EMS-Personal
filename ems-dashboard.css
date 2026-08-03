@@ -8223,3 +8223,186 @@ dialog.ra-focus-dossier > form > h2 {
     justify-items: end;
   }
 }
+
+
+/* =========================================================
+   Overview — Needs RA uses main cadet card styling
+   ========================================================= */
+
+.overview-reference-primary {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr) !important;
+  align-items: start !important;
+}
+
+.needs-ra-panel {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.needs-ra-panel [data-needs-ra-list] {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 10px !important;
+  max-height: none !important;
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.overview-ra-cadet-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 158px;
+  border: 1px solid rgba(234, 159, 184, 0.2);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 11px 12px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.overview-ra-cadet-card:hover,
+.overview-ra-cadet-card:focus-visible {
+  border-color: rgba(234, 159, 184, 0.5);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.overview-ra-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.overview-ra-identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  color: #b5c0cc;
+  font-size: 0.6rem;
+  font-weight: 750;
+}
+
+.overview-ra-identity strong {
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.overview-ra-identity b {
+  color: #c9d2dc;
+  font-size: 0.61rem;
+}
+
+.overview-ra-identity small {
+  color: #9aa8b7;
+  font-size: 0.56rem;
+}
+
+.overview-ra-card-region {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+}
+
+.overview-ra-card-region .pill {
+  margin: 0;
+}
+
+.overview-ra-training {
+  color: #ea9fb8;
+  font-size: 0.61rem;
+  font-weight: 900;
+}
+
+.overview-ra-countdowns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.overview-ra-countdowns span {
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 6px;
+  background: rgba(7, 14, 22, 0.44);
+  color: #ffd166;
+  padding: 6px 7px;
+  font-size: 0.55rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.overview-ra-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 7px;
+  border-top: 1px solid rgba(119, 142, 166, 0.13);
+  color: #9fb0c3;
+  font-size: 0.54rem;
+}
+
+.overview-ra-footer strong {
+  color: #ea9fb8;
+  font-size: 0.54rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.overview-ra-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.overview-ra-progress > span {
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(119, 142, 166, 0.16);
+}
+
+.overview-ra-progress > span i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #ea9fb8;
+  box-shadow: 0 0 7px rgba(234, 159, 184, 0.32);
+}
+
+.overview-ra-progress > strong {
+  color: #ea9fb8;
+  font-size: 0.55rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .overview-reference-primary {
+    grid-template-columns: 1fr !important;
+  }
+
+  .needs-ra-panel [data-needs-ra-list] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .needs-ra-panel [data-needs-ra-list] {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-ra-countdowns {
+    grid-template-columns: 1fr;
+  }
+}
