@@ -7762,3 +7762,187 @@ dialog.ra-focus-dossier > form > h2 {
     grid-column: auto;
   }
 }
+
+
+/* =========================================================
+   Overview Mass Ping + RA's page
+   ========================================================= */
+
+.overview-mass-ping-panel {
+  width: 100%;
+  margin: 0;
+  padding: 12px;
+}
+
+.mass-ping-recent-list,
+.ras-history-table {
+  display: grid;
+  gap: 8px;
+}
+
+.mass-ping-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 110px 190px;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid rgba(119, 142, 166, 0.17);
+  border-radius: 8px;
+  background: rgba(8, 16, 24, 0.58);
+  padding: 9px 10px;
+}
+
+.mass-ping-row.compact {
+  grid-template-columns: 110px minmax(0, 1fr) 100px 180px;
+}
+
+.mass-ping-date {
+  display: grid;
+  gap: 2px;
+}
+
+.mass-ping-date strong {
+  color: #fff;
+  font-size: 0.68rem;
+}
+
+.mass-ping-date small {
+  color: #8f9dad;
+  font-size: 0.54rem;
+}
+
+.mass-ping-response-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-width: 0;
+}
+
+.mass-ping-empty-response {
+  color: #8e9cad;
+  font-size: 0.58rem;
+}
+
+.mass-ping-response-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(255, 154, 63, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 154, 63, 0.09);
+  color: #ffb66b;
+  padding: 3px 6px;
+  font-size: 0.54rem;
+  font-weight: 800;
+}
+
+.mass-ping-response-tag.completed {
+  border-color: rgba(86, 218, 139, 0.3);
+  background: rgba(86, 218, 139, 0.09);
+  color: #72df9b;
+}
+
+.mass-ping-response-tag button {
+  min-height: 20px;
+  padding: 2px 5px;
+  border-radius: 999px;
+  font-size: 0.5rem;
+}
+
+.mass-ping-counts {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  color: #9ba9b8;
+  font-size: 0.54rem;
+}
+
+.mass-ping-counts strong {
+  color: #ea9fb8;
+  font-size: 0.6rem;
+}
+
+.mass-ping-row select {
+  width: 100%;
+  min-width: 0;
+}
+
+.mass-ping-view-all {
+  margin-top: 10px;
+  border: 0;
+  background: transparent;
+  color: #ea9fb8;
+  padding: 4px 0;
+  font-size: 0.6rem;
+  font-weight: 900;
+}
+
+.ras-page {
+  display: grid;
+  gap: 12px;
+}
+
+.ras-page.is-hidden {
+  display: none;
+}
+
+.ras-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ras-page-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.ras-page-header p {
+  margin: 3px 0 0;
+}
+
+.ras-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.ras-summary-strip article {
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 8px;
+  background: rgba(7, 14, 22, 0.5);
+  padding: 12px;
+  text-align: center;
+}
+
+.ras-summary-strip span {
+  display: block;
+  color: #9ca9b7;
+  font-size: 0.58rem;
+}
+
+.ras-summary-strip strong {
+  display: block;
+  margin-top: 5px;
+  color: #ea9fb8;
+  font-size: 1.15rem;
+}
+
+.ras-history-panel {
+  padding: 12px;
+}
+
+@media (max-width: 900px) {
+  .mass-ping-row,
+  .mass-ping-row.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .mass-ping-counts {
+    justify-items: start;
+  }
+
+  .ras-summary-strip {
+    grid-template-columns: 1fr;
+  }
+}
