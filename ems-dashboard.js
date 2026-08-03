@@ -3413,12 +3413,10 @@ async function openCadetSheetNotes(cadet) {
         <article>
           <span>Days as Cadet</span>
           <strong>${(() => {
-            const start = cadet.startDate ? new Date(`${cadet.startDate}T00:00`) : null;
-            if (!start || Number.isNaN(start.valueOf())) return "— / 28";
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const days = Math.max(0, Math.floor((today - start) / 86400000));
-            return `${days} / 28`;
+            const daysLeft = daysUntil(cadet.day28Due);
+            if (daysLeft === null) return "— / 28";
+            const elapsed = Math.max(0, Math.min(28, 28 - daysLeft));
+            return `${elapsed} / 28`;
           })()}</strong>
         </article>
         <article>
