@@ -7823,3 +7823,84 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* RA's sidebar icon alignment */
+.sidebar button[data-tab="ras"] .nav-icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  font-size: 0.9rem;
+}
+
+/* Compact Needs RA From Me table */
+[data-needs-ra-list] {
+  display: grid;
+  gap: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 7px;
+}
+
+.compact-needs-ra-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 62px 48px 38px;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 32px;
+  border: 0;
+  border-bottom: 1px solid rgba(119, 142, 166, 0.12);
+  border-radius: 0;
+  background: transparent;
+  color: #dce4ed;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.compact-needs-ra-row:last-child {
+  border-bottom: 0;
+}
+
+.compact-needs-ra-row:hover,
+.compact-needs-ra-row:focus-visible {
+  background: rgba(234, 159, 184, 0.055);
+  outline: none;
+}
+
+.compact-needs-ra-name {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.63rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compact-needs-ra-callsign,
+.compact-needs-ra-days {
+  color: #a8b5c4;
+  font-size: 0.58rem;
+  font-weight: 750;
+}
+
+.compact-needs-ra-days,
+.compact-needs-ra-fto {
+  text-align: right;
+}
+
+.compact-needs-ra-fto {
+  color: #ea9fb8;
+  font-size: 0.58rem;
+}
+
+.overview-reference-primary .overview-list-panel:first-child {
+  max-width: 420px !important;
+}
+
+.overview-reference-primary .overview-list-panel:first-child .overview-reference-list {
+  overflow: visible !important;
+  max-height: none !important;
+}

@@ -2623,7 +2623,30 @@ function renderOverview() {
 
   if (els.needsRaList) {
     els.needsRaList.innerHTML = needsRaItems.length
-      ? needsRaItems.slice(0, 5).map((cadet) => overviewTodoRow(cadet, "ra")).join("")
+      ? needsRaItems.slice(0, 5).map((cadet) => {
+          const days = daysUntil(cadet.day28Due);
+          const daysText = days === null
+            ? "—"
+            : days < 0
+              ? `${Math.abs(days)}d overdue`
+              : `${days}d`;
+
+          const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
+
+          return `
+            <button
+              class="compact-needs-ra-row"
+              type="button"
+              data-view-sheet-notes="${escapeHtml(cadet.id)}"
+              aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
+            >
+              <span class="compact-needs-ra-name">${escapeHtml(cadet.name || "Unnamed cadet")}</span>
+              <span class="compact-needs-ra-callsign">${escapeHtml(cadet.callsign || "—")}</span>
+              <span class="compact-needs-ra-days">${escapeHtml(daysText)}</span>
+              <strong class="compact-needs-ra-fto">${uniqueFtos}/4</strong>
+            </button>
+          `;
+        }).join("")
       : empty("No cadets currently need an RA.");
   }
 
