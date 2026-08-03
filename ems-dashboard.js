@@ -74,6 +74,7 @@ const els = {
   needsRaList: document.querySelector("[data-needs-ra-list]"),
   needsTrainingList: document.querySelector("[data-needs-training-list]"),
   limitList: document.querySelector("[data-limit-list]"),
+  attentionList: document.querySelector("[data-attention-list]"),
   cadetGrid: document.querySelector("[data-cadet-grid]"),
   sidebarCadetCount: document.querySelector("[data-sidebar-cadet-count]"),
   sidebarRosterCount: document.querySelector("[data-sidebar-roster-count]"),
@@ -2236,11 +2237,204 @@ function overviewLimitItem(cadet) {
   `;
 }
 
+
+function daysSince(dateText) {
+  if (!dateText) return null;
+  const date = new Date(`${dateText}T00:00`);
+  if (Number.isNaN(date.valueOf())) return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.floor((today - date) / 86400000));
+}
+
+function focusColourCounts(groups = []) {
+  const counts = { red: 0, orange: 0, green: 0 };
+
+  for (const group of groups || []) {
+    const items = Array.isArray(group?.items) ? group.items : [group];
+
+    for (const item of items) {
+      const text = typeof item === "string"
+        ? item
+        : `${item?.colour || item?.color || item?.status || ""} ${item?.label || item?.name || item?.text || ""}`;
+
+      const normalized = String(text).toLowerCase();
+      if (normalized.includes("red")) counts.red += 1;
+      else if (normalized.includes("orange") || normalized.includes("yellow")) counts.orange += 1;
+      else if (normalized.includes("green")) counts.green += 1;
+    }
+  }
+
+  return counts;
+}
+
+function cadetAttentionDetails(cadet) {
+  const reasons = [];
+  let severity = 0;
+
+  const addReason = (text, level) => {
+    if (!reasons.includes(text)) reasons.push(text);
+    severity = Math.max(severity, level);
+  };
+
+  const daysToLimit = daysUntil(cadet.day28Due);
+  const sinceLastRa = daysSince(cadet.lastRaDate);
+  const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
+  const focusCounts = focusColourCounts(cadet.latestStruggles || []);
+  const performance = cadetPerformance(cadet);
+
+  if (!cadet.day1) {
+    addReason("Day 1 training not completed", 2);
+  } else if (!cadet.day2) {
+    addReason("Day 2 training not completed", 2);
+  }
+
+  if (daysToLimit !== null) {
+    if (daysToLimit < 0) {
+      addReason(`${Math.abs(daysToLimit)} day${Math.abs(daysToLimit) === 1 ? "" : "s"} over the 28-day limit`, 3);
+    } else if (daysToLimit <= 3) {
+      addReason(`Approaching 28-day limit (${daysToLimit} day${daysToLimit === 1 ? "" : "s"})`, 3);
+    } else if (daysToLimit <= 7) {
+      addReason(`Approaching 28-day limit (${daysToLimit} days)`, 2);
+    }
+  }
+
+  if (cadet.day1) {
+    if (!cadet.lastRaDate) {
+      addReason("No RA date recorded", 2);
+    } else if (sinceLastRa !== null && sinceLastRa >= 10) {
+      addReason(`No RA in ${sinceLastRa} days`, 2);
+    } else if (sinceLastRa !== null && sinceLastRa >= 7) {
+      addReason(`No RA in ${sinceLastRa} days`, 1);
+    }
+
+    if (uniqueFtos === 0) {
+      addReason("No unique FTO RAs recorded", 2);
+    } else if (uniqueFtos === 1) {
+      addReason("Only 1 unique FTO RA", 1);
+    }
+  }
+
+  if (focusCounts.red > 0 || performance.className === "performance-focus") {
+    addReason(
+      focusCounts.red === 1
+        ? "1 recent focus area is red"
+        : focusCounts.red > 1
+          ? `${focusCounts.red} recent focus areas are red`
+          : "Recent performance needs focused help",
+      3
+    );
+  } else if (focusCounts.orange > 0 || performance.className === "performance-watch") {
+    if (cadet.day1 && cadet.lastRaDate) {
+      addReason(
+        focusCounts.orange === 1
+          ? "1 recent focus area needs improvement"
+          : focusCounts.orange > 1
+            ? `${focusCounts.orange} recent focus areas need improvement`
+            : "Recent RA shows some struggles",
+        1
+      );
+    }
+  }
+
+  if (!reasons.length) return null;
+
+  const priority = severity >= 3
+    ? { label: "Urgent", className: "attention-urgent", order: 3 }
+    : severity === 2
+      ? { label: "Needs Attention", className: "attention-needed", order: 2 }
+      : { label: "Monitor", className: "attention-monitor", order: 1 };
+
+  return {
+    cadet,
+    reasons: reasons.slice(0, 3),
+    priority,
+    daysToLimit
+  };
+}
+
+function cadetDaysActive(cadet) {
+  const days = daysSince(cadet.startDate);
+  if (days === null) return "Not recorded";
+  return `${days} day${days === 1 ? "" : "s"}`;
+}
+
+function attentionTableRow(item) {
+  const { cadet, reasons, priority } = item;
+
+  return `
+    <button
+      class="attention-table-row"
+      type="button"
+      data-open-cadet-focus="${cadet.id}"
+      aria-label="Open ${escapeHtml(cadet.name || "cadet")} RA Focus"
+    >
+      <span class="attention-cadet">
+        <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+        <small>${escapeHtml(cadet.callsign || "No callsign")}</small>
+      </span>
+
+      <span class="attention-reasons">
+        ${reasons.map((reason) => `<small>• ${escapeHtml(reason)}</small>`).join("")}
+      </span>
+
+      <span>
+        <strong class="attention-priority ${priority.className}">${priority.label}</strong>
+      </span>
+
+      <span class="attention-date">
+        ${cadet.lastRaDate ? escapeHtml(formatDate(cadet.lastRaDate)) : "No RA"}
+      </span>
+
+      <span class="attention-days">${escapeHtml(cadetDaysActive(cadet))}</span>
+    </button>
+  `;
+}
+
+function renderAttentionTable(cadets = []) {
+  if (!els.attentionList) return;
+
+  const items = cadets
+    .map(cadetAttentionDetails)
+    .filter(Boolean)
+    .sort((a, b) => {
+      const priorityDifference = b.priority.order - a.priority.order;
+      if (priorityDifference) return priorityDifference;
+
+      const aLimit = a.daysToLimit ?? 999;
+      const bLimit = b.daysToLimit ?? 999;
+      if (aLimit !== bLimit) return aLimit - bLimit;
+
+      return String(a.cadet.name || "").localeCompare(String(b.cadet.name || ""));
+    });
+
+  if (!items.length) {
+    els.attentionList.innerHTML = empty("No cadets currently need additional attention.");
+    return;
+  }
+
+  els.attentionList.innerHTML = `
+    <div class="attention-table-head" aria-hidden="true">
+      <span>Cadet</span>
+      <span>Reason(s)</span>
+      <span>Priority</span>
+      <span>Last RA</span>
+      <span>Days as Cadet</span>
+    </div>
+    <div class="attention-table-body">
+      ${items.map(attentionTableRow).join("")}
+    </div>
+  `;
+}
+
 function renderOverview() {
   const cadets = filteredCadets();
   const needsRaItems = cadets.filter(needsRa);
   const needsTrainingItems = cadets.filter((cadet) => !cadet.day1 || !cadet.day2);
   const limitItems = cadets.filter(isBetweenFourteenAndTwentyEightDays);
+
+  renderAttentionTable(cadets);
 
   if (els.needsRaCount) els.needsRaCount.textContent = needsRaItems.length;
   if (els.needsTrainingCount) els.needsTrainingCount.textContent = needsTrainingItems.length;

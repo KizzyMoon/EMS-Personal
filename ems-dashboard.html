@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-1" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-2" />
   </head>
   <body>
     <main class="app">
@@ -172,6 +172,23 @@
             </footer>
           </article>
         </div>
+
+        <article class="panel overview-attention-panel">
+          <div class="overview-panel-title">
+            <div>
+              <h2>Cadets Needing Attention</h2>
+              <p class="muted">Cadets requiring follow-up based on training, limits, RA activity and recent performance.</p>
+            </div>
+          </div>
+
+          <div class="attention-table" data-attention-list></div>
+
+          <div class="attention-priority-legend" aria-label="Attention priority key">
+            <span><i class="attention-dot attention-urgent-dot"></i>Urgent — immediate action</span>
+            <span><i class="attention-dot attention-needed-dot"></i>Needs attention — follow up soon</span>
+            <span><i class="attention-dot attention-monitor-dot"></i>Monitor — keep an eye on</span>
+          </div>
+        </article>
 
         <article class="panel overview-limits-panel">
           <div class="overview-panel-title">
@@ -526,6 +543,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260802-69"></script>
+    <script src="ems-dashboard.js?v=20260803-2"></script>
   </body>
 </html>
