@@ -116,11 +116,14 @@ function loadState() {
       pingOffers: Array.isArray(saved.pingOffers) ? saved.pingOffers.map(normalizePingOffer).filter((offer) => offer.createdAt) : [],
       rosterChanges: Array.isArray(saved.rosterChanges) ? saved.rosterChanges.map(normalizeRosterChange) : [],
       rosterUpdate: normalizeRosterUpdate(saved.rosterUpdate),
+      checklistOverrides: saved.checklistOverrides && typeof saved.checklistOverrides === "object"
+        ? saved.checklistOverrides
+        : {},
       settings: normalizeSettings(saved.settings),
       lastUpdated: saved.lastUpdated || ""
     };
   } catch {
-    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), settings: normalizeSettings(), lastUpdated: "" };
+    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), checklistOverrides: {}, settings: normalizeSettings(), lastUpdated: "" };
   }
 }
 
@@ -3329,31 +3332,52 @@ function cadetRedFocusCount(cadet) {
   return count;
 }
 
-function checklistRow(label, complete, value = "") {
+function checklistOverrideKey(cadet, itemKey) {
+  return `${cadet.id || cadet.employeeNumber || cadet.callsign || cadet.name}::${itemKey}`;
+}
+
+function checklistValue(cadet, itemKey, sheetValue) {
+  const key = checklistOverrideKey(cadet, itemKey);
+  const saved = state.checklistOverrides?.[key];
+
+  if (typeof saved === "boolean") return saved;
+  return Boolean(sheetValue);
+}
+
+function checklistRow(cadet, itemKey, label, complete, value = "") {
   return `
-    <div class="cadet-checklist-row ${complete ? "is-complete" : "is-incomplete"}">
+    <button
+      class="cadet-checklist-row ${complete ? "is-complete" : "is-incomplete"}"
+      type="button"
+      data-checklist-cadet="${escapeHtml(cadet.id)}"
+      data-checklist-item="${escapeHtml(itemKey)}"
+      aria-pressed="${complete ? "true" : "false"}"
+      title="Click to manually ${complete ? "untick" : "tick"} this item"
+    >
       <span class="cadet-check-box" aria-hidden="true">${complete ? "✓" : ""}</span>
       <span class="cadet-check-label">${escapeHtml(label)}</span>
       ${value
         ? `<strong>${escapeHtml(value)}</strong>`
         : `<span class="cadet-check-result">${complete ? "Complete" : "Outstanding"}</span>`}
-    </div>
+    </button>
   `;
 }
 
 function cadetCompletionChecklist(cadet) {
   const minimumRas = 4;
-  const minimumFtos = 3;
   const raCount = Number(cadet.trainingRaCount || 0);
-  const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
-  const redFocusCount = cadetRedFocusCount(cadet);
+
+  const day1 = checklistValue(cadet, "day1", cadet.day1);
+  const day2 = checklistValue(cadet, "day2", cadet.day2);
+  const phraseSent = checklistValue(cadet, "phraseSent", cadetPhraseSent(cadet));
+  const minimumRasDone = checklistValue(cadet, "minimumRas", raCount >= minimumRas);
 
   return `
     <div class="cadet-checklist">
-      ${checklistRow("Day 1 Training", Boolean(cadet.day1))}
-      ${checklistRow("Day 2 Training", Boolean(cadet.day2))}
-      ${checklistRow("Phrase Sent", cadetPhraseSent(cadet))}
-      ${checklistRow(`Minimum RAs (${minimumRas})`, raCount >= minimumRas, `${raCount} / ${minimumRas}`)}
+      ${checklistRow(cadet, "day1", "Day 1 Training", day1)}
+      ${checklistRow(cadet, "day2", "Day 2 Training", day2)}
+      ${checklistRow(cadet, "phraseSent", "Phrase Sent", phraseSent)}
+      ${checklistRow(cadet, "minimumRas", `Minimum RAs (${minimumRas})`, minimumRasDone, `${raCount} / ${minimumRas}`)}
     </div>
   `;
 }
@@ -3897,3 +3921,27 @@ els.dialogForm.addEventListener("submit", (event) => {
 render();
 setActiveTab(activeTab);
 autoSyncGoogleSheets();
+
+
+document.addEventListener("click", (event) => {
+  const checklistButton = event.target.closest("[data-checklist-cadet][data-checklist-item]");
+  if (!checklistButton) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const cadetId = checklistButton.dataset.checklistCadet;
+  const itemKey = checklistButton.dataset.checklistItem;
+  const cadet = state.cadets.find((entry) => entry.id === cadetId);
+  if (!cadet) return;
+
+  const overrideKey = checklistOverrideKey(cadet, itemKey);
+  const current = checklistButton.getAttribute("aria-pressed") === "true";
+
+  state.checklistOverrides = state.checklistOverrides || {};
+  state.checklistOverrides[overrideKey] = !current;
+  saveState();
+
+  const refreshedCadet = state.cadets.find((entry) => entry.id === cadetId);
+  if (refreshedCadet) openCadetFocus(refreshedCadet);
+});
