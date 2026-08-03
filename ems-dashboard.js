@@ -2623,67 +2623,7 @@ function renderOverview() {
 
   if (els.needsRaList) {
     els.needsRaList.innerHTML = needsRaItems.length
-      ? needsRaItems.map((cadet) => {
-          const day14 = daysUntil(cadet.day14Due);
-          const day28 = daysUntil(cadet.day28Due);
-          const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
-          const progress = Math.max(0, Math.min(100, (uniqueFtos / 4) * 100));
-          const performance = cadetPerformance(cadet);
-
-          const countdownText = (days, limit) => {
-            if (days === null) return `Not recorded / ${limit}`;
-            if (days < 0) return `${Math.abs(days)} days overdue / ${limit}`;
-            return `${days} days left / ${limit}`;
-          };
-
-          const trainingNeed = !cadet.day1
-            ? "Needs Day 1 Training"
-            : !cadet.day2
-              ? "Needs Day 2 Training"
-              : "";
-
-          return `
-            <article
-              class="overview-ra-cadet-card"
-              data-view-sheet-notes="${escapeHtml(cadet.id)}"
-              tabindex="0"
-              role="button"
-              aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
-            >
-              <div class="overview-ra-card-top">
-                <div class="overview-ra-identity">
-                  <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
-                  <span>|</span>
-                  <b>${escapeHtml(cadet.callsign || "No callsign")}</b>
-                  <span>|</span>
-                  <small>${escapeHtml(cadet.employeeNumber ? `#${cadet.employeeNumber}` : "")}</small>
-                </div>
-
-                <div class="overview-ra-card-region">
-                  ${cadet.timezone ? pill(cadet.timezone, "zone") : ""}
-                  <i class="cadet-performance-dot ${performance.className}" aria-hidden="true"></i>
-                </div>
-              </div>
-
-              ${trainingNeed ? `<div class="overview-ra-training">${escapeHtml(trainingNeed)}</div>` : ""}
-
-              <div class="overview-ra-countdowns">
-                <span>${escapeHtml(countdownText(day14, 14))}</span>
-                <span>${escapeHtml(countdownText(day28, 28))}</span>
-              </div>
-
-              <div class="overview-ra-footer">
-                <span>${cadet.lastRaDate ? `Last RA: ${escapeHtml(formatDate(cadet.lastRaDate))}` : "No RA date recorded"}</span>
-                <strong>${uniqueFtos} unique FTO RA${uniqueFtos === 1 ? "" : "s"}</strong>
-              </div>
-
-              <div class="overview-ra-progress">
-                <span><i style="width:${progress}%"></i></span>
-                <strong>${uniqueFtos} / 4</strong>
-              </div>
-            </article>
-          `;
-        }).join("")
+      ? needsRaItems.map((cadet) => cadetCard(cadet)).join("")
       : empty("No cadets currently need an RA.");
   }
 

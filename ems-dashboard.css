@@ -7665,52 +7665,6 @@ dialog.ra-focus-dossier > form > h2 {
 
 
 /* =========================================================
-   Overview — compact Needs RA From Me panel
-   ========================================================= */
-
-.overview-reference-primary .overview-list-panel:first-child {
-  max-width: 430px;
-}
-
-.overview-reference-primary .overview-list-panel:first-child .overview-reference-list,
-.overview-reference-primary .overview-list-panel:first-child [data-needs-ra-list] {
-  max-height: none !important;
-  overflow: visible !important;
-}
-
-.overview-reference-primary .overview-list-panel:first-child .todo-item,
-.overview-reference-primary .overview-list-panel:first-child .todo-row,
-.overview-reference-primary .overview-list-panel:first-child [data-view-sheet-notes] {
-  min-height: 34px !important;
-  padding: 6px 10px !important;
-}
-
-.overview-reference-primary .overview-list-panel:first-child .todo-item > div,
-.overview-reference-primary .overview-list-panel:first-child .todo-row > div {
-  min-width: 0;
-}
-
-.overview-reference-primary .overview-list-panel:first-child h3,
-.overview-reference-primary .overview-list-panel:first-child strong {
-  font-size: 0.66rem !important;
-}
-
-.overview-reference-primary .overview-list-panel:first-child p,
-.overview-reference-primary .overview-list-panel:first-child small,
-.overview-reference-primary .overview-list-panel:first-child span {
-  font-size: 0.54rem !important;
-  line-height: 1.15 !important;
-}
-
-.overview-reference-primary .overview-list-panel:first-child .todo-item,
-.overview-reference-primary .overview-list-panel:first-child .todo-row {
-  grid-template-columns: minmax(0, 1fr) auto !important;
-  gap: 8px !important;
-}
-
-
-
-/* =========================================================
    Cadet Training Status placement
    ========================================================= */
 
@@ -7833,181 +7787,6 @@ dialog.ra-focus-dossier > form > h2 {
   height: 22px;
   font-size: 0.9rem;
 }
-
-/* Compact Needs RA From Me table */
-[data-needs-ra-list] {
-  display: grid;
-  gap: 0 !important;
-  max-height: none !important;
-  overflow: visible !important;
-  border: 1px solid rgba(119, 142, 166, 0.16);
-  border-radius: 7px;
-}
-
-.compact-needs-ra-row {
-  display: grid;
-  grid-template-columns: minmax(120px, 1fr) 62px 48px 38px;
-  gap: 8px;
-  align-items: center;
-  width: 100%;
-  min-height: 32px;
-  border: 0;
-  border-bottom: 1px solid rgba(119, 142, 166, 0.12);
-  border-radius: 0;
-  background: transparent;
-  color: #dce4ed;
-  padding: 6px 10px;
-  text-align: left;
-}
-
-.compact-needs-ra-row:last-child {
-  border-bottom: 0;
-}
-
-.compact-needs-ra-row:hover,
-.compact-needs-ra-row:focus-visible {
-  background: rgba(234, 159, 184, 0.055);
-  outline: none;
-}
-
-.compact-needs-ra-name {
-  overflow: hidden;
-  color: #fff;
-  font-size: 0.63rem;
-  font-weight: 850;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.compact-needs-ra-callsign,
-.compact-needs-ra-days {
-  color: #a8b5c4;
-  font-size: 0.58rem;
-  font-weight: 750;
-}
-
-.compact-needs-ra-days,
-.compact-needs-ra-fto {
-  text-align: right;
-}
-
-.compact-needs-ra-fto {
-  color: #ea9fb8;
-  font-size: 0.58rem;
-}
-
-.overview-reference-primary .overview-list-panel:first-child {
-  max-width: 420px !important;
-}
-
-.overview-reference-primary .overview-list-panel:first-child .overview-reference-list {
-  overflow: visible !important;
-  max-height: none !important;
-}
-
-
-/* =========================================================
-   Final Needs RA From Me compact table
-   ========================================================= */
-
-.needs-ra-panel {
-  width: 100%;
-  max-width: 390px !important;
-  min-width: 0;
-  align-self: start;
-}
-
-.needs-ra-panel .overview-panel-title {
-  margin-bottom: 8px;
-}
-
-.needs-ra-panel [data-needs-ra-list] {
-  max-height: none !important;
-  overflow: visible !important;
-  border: 0 !important;
-  background: transparent !important;
-}
-
-.needs-ra-compact-table {
-  display: grid;
-  width: 100%;
-  overflow: hidden;
-  border: 1px solid rgba(234, 159, 184, 0.26);
-  border-radius: 8px;
-  background: rgba(7, 14, 22, 0.48);
-}
-
-.needs-ra-compact-row {
-  display: grid;
-  grid-template-columns: minmax(118px, 1fr) 56px 42px 34px;
-  gap: 8px;
-  align-items: center;
-  width: 100%;
-  min-height: 30px;
-  border: 0;
-  border-bottom: 1px solid rgba(119, 142, 166, 0.11);
-  border-radius: 0;
-  background: transparent;
-  color: #dce4ed;
-  padding: 5px 10px;
-  text-align: left;
-}
-
-.needs-ra-compact-row:last-child {
-  border-bottom: 0;
-}
-
-.needs-ra-compact-row:hover,
-.needs-ra-compact-row:focus-visible {
-  background: rgba(234, 159, 184, 0.06);
-  outline: none;
-}
-
-.needs-ra-compact-name {
-  overflow: hidden;
-  color: #fff;
-  font-size: 0.61rem;
-  font-weight: 850;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.needs-ra-compact-callsign,
-.needs-ra-compact-days {
-  color: #b4c0ce;
-  font-size: 0.56rem;
-  font-weight: 750;
-  white-space: nowrap;
-}
-
-.needs-ra-compact-days,
-.needs-ra-compact-fto {
-  text-align: right;
-}
-
-.needs-ra-compact-fto {
-  color: #ea9fb8;
-  font-size: 0.56rem;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-/* Remove old row styling from this panel */
-.needs-ra-panel .compact-needs-ra-row {
-  display: none !important;
-}
-
-@media (max-width: 760px) {
-  .needs-ra-panel {
-    max-width: none !important;
-  }
-
-  .needs-ra-compact-row {
-    grid-template-columns: minmax(110px, 1fr) 54px 40px 32px;
-    gap: 6px;
-  }
-}
-
 
 /* =========================================================
    Final RA page navigation + top-aligned layout
@@ -8225,8 +8004,10 @@ dialog.ra-focus-dossier > form > h2 {
 }
 
 
+
+
 /* =========================================================
-   Overview — Needs RA uses main cadet card styling
+   Overview Needs RA — real Cadets page cards
    ========================================================= */
 
 .overview-reference-primary {
@@ -8237,11 +8018,12 @@ dialog.ra-focus-dossier > form > h2 {
 .needs-ra-panel {
   width: 100% !important;
   max-width: none !important;
+  align-self: start;
 }
 
 .needs-ra-panel [data-needs-ra-list] {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)) !important;
   gap: 10px !important;
   max-height: none !important;
   overflow: visible !important;
@@ -8249,142 +8031,9 @@ dialog.ra-focus-dossier > form > h2 {
   background: transparent !important;
 }
 
-.overview-ra-cadet-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.needs-ra-panel [data-needs-ra-list] > .cadet-profile-card {
   min-width: 0;
-  min-height: 158px;
-  border: 1px solid rgba(234, 159, 184, 0.2);
-  border-radius: 8px;
-  background: var(--panel-2);
-  color: var(--text);
-  padding: 11px 12px;
-  cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
-}
-
-.overview-ra-cadet-card:hover,
-.overview-ra-cadet-card:focus-visible {
-  border-color: rgba(234, 159, 184, 0.5);
-  outline: none;
-  transform: translateY(-1px);
-}
-
-.overview-ra-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.overview-ra-identity {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px;
-  min-width: 0;
-  color: #b5c0cc;
-  font-size: 0.6rem;
-  font-weight: 750;
-}
-
-.overview-ra-identity strong {
-  color: #fff;
-  font-size: 0.72rem;
-  font-weight: 900;
-}
-
-.overview-ra-identity b {
-  color: #c9d2dc;
-  font-size: 0.61rem;
-}
-
-.overview-ra-identity small {
-  color: #9aa8b7;
-  font-size: 0.56rem;
-}
-
-.overview-ra-card-region {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex: 0 0 auto;
-}
-
-.overview-ra-card-region .pill {
-  margin: 0;
-}
-
-.overview-ra-training {
-  color: #ea9fb8;
-  font-size: 0.61rem;
-  font-weight: 900;
-}
-
-.overview-ra-countdowns {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
-}
-
-.overview-ra-countdowns span {
-  border: 1px solid rgba(119, 142, 166, 0.16);
-  border-radius: 6px;
-  background: rgba(7, 14, 22, 0.44);
-  color: #ffd166;
-  padding: 6px 7px;
-  font-size: 0.55rem;
-  font-weight: 850;
-  text-align: center;
-}
-
-.overview-ra-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 7px;
-  border-top: 1px solid rgba(119, 142, 166, 0.13);
-  color: #9fb0c3;
-  font-size: 0.54rem;
-}
-
-.overview-ra-footer strong {
-  color: #ea9fb8;
-  font-size: 0.54rem;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.overview-ra-progress {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: center;
-}
-
-.overview-ra-progress > span {
-  display: block;
-  height: 5px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(119, 142, 166, 0.16);
-}
-
-.overview-ra-progress > span i {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: #ea9fb8;
-  box-shadow: 0 0 7px rgba(234, 159, 184, 0.32);
-}
-
-.overview-ra-progress > strong {
-  color: #ea9fb8;
-  font-size: 0.55rem;
-  white-space: nowrap;
+  width: 100%;
 }
 
 @media (max-width: 1100px) {
@@ -8393,16 +8042,12 @@ dialog.ra-focus-dossier > form > h2 {
   }
 
   .needs-ra-panel [data-needs-ra-list] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
 
 @media (max-width: 700px) {
   .needs-ra-panel [data-needs-ra-list] {
-    grid-template-columns: 1fr;
-  }
-
-  .overview-ra-countdowns {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 }
