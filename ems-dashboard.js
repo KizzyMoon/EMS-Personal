@@ -2824,51 +2824,86 @@ function renderManualScheduleEvents() {
           .map(manualScheduleMember)
           .filter(Boolean);
 
+        const dateText = event.date
+          ? `${formatDate(event.date)}${event.time ? ` • ${event.time}` : ""}`
+          : "No date set";
+
+        const cadetPerson = cadet
+          ? {
+              ...cadet,
+              roleTag: "CADET"
+            }
+          : null;
+
+        const supervisorPerson = supervisor
+          ? {
+              ...supervisor,
+              roleTag: "SUPERVISOR"
+            }
+          : null;
+
+        const ftoPeople = ftos.map((member) => ({
+          ...member,
+          roleTag: "FTO"
+        }));
+
         return `
-          <article class="manual-schedule-event">
-            <div class="manual-schedule-event-copy">
-              <div class="manual-schedule-event-title">
-                <strong>${escapeHtml(event.title || "Untitled Event")}</strong>
-                <span>${escapeHtml(formatManualEventDateTime(event))}</span>
-              </div>
-
-              <dl class="manual-schedule-attendees">
-                <div>
-                  <dt>Cadet</dt>
-                  <dd>${escapeHtml(
-                    cadet ? manualSchedulePersonLabel(cadet) : "Not selected"
-                  )}</dd>
-                </div>
-                <div>
-                  <dt>Supervisor</dt>
-                  <dd>${escapeHtml(
-                    supervisor
-                      ? manualSchedulePersonLabel(supervisor)
-                      : "Not selected"
-                  )}</dd>
-                </div>
-                <div>
-                  <dt>FTOs</dt>
-                  <dd>${escapeHtml(
-                    ftos.length
-                      ? ftos.map(manualSchedulePersonLabel).join(", ")
-                      : "None selected"
-                  )}</dd>
-                </div>
-              </dl>
-
-              ${event.notes
-                ? `<small>${escapeHtml(event.notes)}</small>`
-                : ""
-              }
+          <article class="upcoming-training-card manual-training-card">
+            <div class="training-compact-head">
+              <h3>${escapeHtml(event.title || "Untitled Event")}</h3>
+              <button
+                class="manual-training-delete"
+                type="button"
+                data-delete-manual-event="${escapeHtml(event.id)}"
+                aria-label="Remove ${escapeHtml(event.title || "event")}"
+                title="Remove event"
+              >×</button>
             </div>
 
-            <button
-              type="button"
-              data-delete-manual-event="${escapeHtml(event.id)}"
-              aria-label="Remove ${escapeHtml(event.title || "event")}"
-              title="Remove event"
-            >×</button>
+            <p class="training-compact-date">${escapeHtml(dateText)}</p>
+
+            <div class="training-host-row">
+              <span>Supervisor</span>
+              <strong>${
+                supervisor
+                  ? escapeHtml(manualSchedulePersonLabel(supervisor))
+                  : `<span class="muted">Not selected</span>`
+              }</strong>
+            </div>
+
+            <div class="training-count-row">
+              <span><strong>${cadet ? 1 : 0}</strong> Cadet</span>
+              <span><strong>${ftos.length}</strong> FTO${ftos.length === 1 ? "" : "s"}</span>
+            </div>
+
+            <div class="training-people-grid manual-training-people">
+              <section>
+                <h4>Cadet</h4>
+                ${
+                  cadetPerson
+                    ? `<ul>${trainingPersonMarkup(cadetPerson)}</ul>`
+                    : `<p class="muted">No cadet selected.</p>`
+                }
+              </section>
+
+              <section>
+                <h4>Staff</h4>
+                ${
+                  supervisorPerson || ftoPeople.length
+                    ? `<ul>
+                        ${supervisorPerson ? trainingPersonMarkup(supervisorPerson) : ""}
+                        ${ftoPeople.map(trainingPersonMarkup).join("")}
+                      </ul>`
+                    : `<p class="muted">No staff selected.</p>`
+                }
+              </section>
+            </div>
+
+            ${
+              event.notes
+                ? `<p class="manual-training-notes">${escapeHtml(event.notes)}</p>`
+                : ""
+            }
           </article>
         `;
       }).join("")

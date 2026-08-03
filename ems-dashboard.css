@@ -8443,3 +8443,47 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Manual events — match live training card style
+   ========================================================= */
+
+.manual-schedule-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.manual-training-card {
+  width: 100%;
+}
+
+.manual-training-delete {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px;
+  min-height: 28px;
+  padding: 0;
+  border-radius: 6px;
+  color: #9ca8b8;
+}
+
+.manual-training-delete:hover {
+  color: #ff5c76;
+  border-color: rgba(255, 92, 118, 0.4);
+}
+
+.manual-training-people {
+  margin-top: 2px;
+}
+
+.manual-training-notes {
+  margin: 10px 0 0 !important;
+  border-top: 1px solid rgba(119, 142, 166, 0.14);
+  color: #9ca8b8;
+  font-size: 0.65rem;
+  line-height: 1.35;
+  padding-top: 9px;
+}
