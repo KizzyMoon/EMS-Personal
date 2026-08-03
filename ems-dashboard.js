@@ -2426,23 +2426,22 @@ function cadetAttentionDetails(cadet) {
   const focusCounts = focusColourCounts(cadet.latestStruggles || []);
   const performance = cadetPerformance(cadet);
 
+  /*
+  ============================================================================
+  PERFORMANCE GATING
+
+  Do not assess RA performance, focus colours, RA inactivity or unique-FTO
+  coverage until the cadet has completed Day 1 training.
+  ============================================================================
+  */
+
   if (!cadet.day1) {
     addReason("Day 1 training not completed", 2);
-  } else if (!cadet.day2) {
-    addReason("Day 2 training not completed", 2);
-  }
-
-  if (daysToLimit !== null) {
-    if (daysToLimit < 0) {
-      addReason(`${Math.abs(daysToLimit)} day${Math.abs(daysToLimit) === 1 ? "" : "s"} over the 28-day limit`, 3);
-    } else if (daysToLimit <= 3) {
-      addReason(`Approaching 28-day limit (${daysToLimit} day${daysToLimit === 1 ? "" : "s"})`, 3);
-    } else if (daysToLimit <= 7) {
-      addReason(`Approaching 28-day limit (${daysToLimit} days)`, 2);
+  } else {
+    if (!cadet.day2) {
+      addReason("Day 2 training not completed", 2);
     }
-  }
 
-  if (cadet.day1) {
     if (!cadet.lastRaDate) {
       addReason("No RA date recorded", 2);
     } else if (sinceLastRa !== null && sinceLastRa >= 10) {
@@ -2456,19 +2455,17 @@ function cadetAttentionDetails(cadet) {
     } else if (uniqueFtos === 1) {
       addReason("Only 1 unique FTO RA", 1);
     }
-  }
 
-  if (focusCounts.red > 0 || performance.className === "performance-focus") {
-    addReason(
-      focusCounts.red === 1
-        ? "1 recent focus area is red"
-        : focusCounts.red > 1
-          ? `${focusCounts.red} recent focus areas are red`
-          : "Recent performance needs focused help",
-      3
-    );
-  } else if (focusCounts.orange > 0 || performance.className === "performance-watch") {
-    if (cadet.day1 && cadet.lastRaDate) {
+    if (focusCounts.red > 0 || performance.className === "performance-focus") {
+      addReason(
+        focusCounts.red === 1
+          ? "1 recent focus area is red"
+          : focusCounts.red > 1
+            ? `${focusCounts.red} recent focus areas are red`
+            : "Recent performance needs focused help",
+        3
+      );
+    } else if (focusCounts.orange > 0 || performance.className === "performance-watch") {
       addReason(
         focusCounts.orange === 1
           ? "1 recent focus area needs improvement"
@@ -2477,6 +2474,22 @@ function cadetAttentionDetails(cadet) {
             : "Recent RA shows some struggles",
         1
       );
+    }
+  }
+
+  if (daysToLimit !== null) {
+    if (daysToLimit < 0) {
+      addReason(
+        `${Math.abs(daysToLimit)} day${Math.abs(daysToLimit) === 1 ? "" : "s"} over the 28-day limit`,
+        3
+      );
+    } else if (daysToLimit <= 3) {
+      addReason(
+        `Approaching 28-day limit (${daysToLimit} day${daysToLimit === 1 ? "" : "s"})`,
+        3
+      );
+    } else if (daysToLimit <= 7) {
+      addReason(`Approaching 28-day limit (${daysToLimit} days)`, 2);
     }
   }
 
