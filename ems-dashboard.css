@@ -7904,3 +7904,106 @@ dialog.ra-focus-dossier > form > h2 {
   overflow: visible !important;
   max-height: none !important;
 }
+
+
+/* =========================================================
+   Final Needs RA From Me compact table
+   ========================================================= */
+
+.needs-ra-panel {
+  width: 100%;
+  max-width: 390px !important;
+  min-width: 0;
+  align-self: start;
+}
+
+.needs-ra-panel .overview-panel-title {
+  margin-bottom: 8px;
+}
+
+.needs-ra-panel [data-needs-ra-list] {
+  max-height: none !important;
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.needs-ra-compact-table {
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(234, 159, 184, 0.26);
+  border-radius: 8px;
+  background: rgba(7, 14, 22, 0.48);
+}
+
+.needs-ra-compact-row {
+  display: grid;
+  grid-template-columns: minmax(118px, 1fr) 56px 42px 34px;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 30px;
+  border: 0;
+  border-bottom: 1px solid rgba(119, 142, 166, 0.11);
+  border-radius: 0;
+  background: transparent;
+  color: #dce4ed;
+  padding: 5px 10px;
+  text-align: left;
+}
+
+.needs-ra-compact-row:last-child {
+  border-bottom: 0;
+}
+
+.needs-ra-compact-row:hover,
+.needs-ra-compact-row:focus-visible {
+  background: rgba(234, 159, 184, 0.06);
+  outline: none;
+}
+
+.needs-ra-compact-name {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.61rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.needs-ra-compact-callsign,
+.needs-ra-compact-days {
+  color: #b4c0ce;
+  font-size: 0.56rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.needs-ra-compact-days,
+.needs-ra-compact-fto {
+  text-align: right;
+}
+
+.needs-ra-compact-fto {
+  color: #ea9fb8;
+  font-size: 0.56rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Remove old row styling from this panel */
+.needs-ra-panel .compact-needs-ra-row {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .needs-ra-panel {
+    max-width: none !important;
+  }
+
+  .needs-ra-compact-row {
+    grid-template-columns: minmax(110px, 1fr) 54px 40px 32px;
+    gap: 6px;
+  }
+}

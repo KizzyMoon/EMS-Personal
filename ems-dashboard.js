@@ -2623,30 +2623,35 @@ function renderOverview() {
 
   if (els.needsRaList) {
     els.needsRaList.innerHTML = needsRaItems.length
-      ? needsRaItems.slice(0, 5).map((cadet) => {
-          const days = daysUntil(cadet.day28Due);
-          const daysText = days === null
-            ? "—"
-            : days < 0
-              ? `${Math.abs(days)}d overdue`
-              : `${days}d`;
+      ? `
+        <div class="needs-ra-compact-table" role="table" aria-label="Cadets needing an RA from me">
+          ${needsRaItems.map((cadet) => {
+            const days = daysUntil(cadet.day28Due);
+            const daysText = days === null
+              ? "—"
+              : days < 0
+                ? `${Math.abs(days)}d overdue`
+                : `${days}d`;
 
-          const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
+            const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
 
-          return `
-            <button
-              class="compact-needs-ra-row"
-              type="button"
-              data-view-sheet-notes="${escapeHtml(cadet.id)}"
-              aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
-            >
-              <span class="compact-needs-ra-name">${escapeHtml(cadet.name || "Unnamed cadet")}</span>
-              <span class="compact-needs-ra-callsign">${escapeHtml(cadet.callsign || "—")}</span>
-              <span class="compact-needs-ra-days">${escapeHtml(daysText)}</span>
-              <strong class="compact-needs-ra-fto">${uniqueFtos}/4</strong>
-            </button>
-          `;
-        }).join("")
+            return `
+              <button
+                class="needs-ra-compact-row"
+                type="button"
+                role="row"
+                data-view-sheet-notes="${escapeHtml(cadet.id)}"
+                aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
+              >
+                <span class="needs-ra-compact-name" role="cell">${escapeHtml(cadet.name || "Unnamed cadet")}</span>
+                <span class="needs-ra-compact-callsign" role="cell">${escapeHtml(cadet.callsign || "—")}</span>
+                <span class="needs-ra-compact-days" role="cell">${escapeHtml(daysText)}</span>
+                <strong class="needs-ra-compact-fto" role="cell">${uniqueFtos}/4</strong>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      `
       : empty("No cadets currently need an RA.");
   }
 
