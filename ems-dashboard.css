@@ -8051,3 +8051,29 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* =========================================================
+   Overview Needs RA — match Cadets page card width
+   ========================================================= */
+
+.needs-ra-panel [data-needs-ra-list] {
+  grid-template-columns: repeat(auto-fill, minmax(230px, 250px)) !important;
+  justify-content: start !important;
+  align-items: stretch !important;
+}
+
+.needs-ra-panel [data-needs-ra-list] > .cadet-profile-card {
+  width: 100% !important;
+  max-width: 250px !important;
+}
+
+@media (max-width: 700px) {
+  .needs-ra-panel [data-needs-ra-list] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .needs-ra-panel [data-needs-ra-list] > .cadet-profile-card {
+    max-width: none !important;
+  }
+}
