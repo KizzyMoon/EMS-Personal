@@ -6383,3 +6383,78 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Overview attention cards — full-width responsive grid
+   ========================================================= */
+
+.overview-attention-panel {
+  width: 100% !important;
+  max-width: none !important;
+  justify-self: stretch !important;
+}
+
+/*
+  Cards automatically fill the available width.
+  On a standard desktop, nine cadets should appear as 3 × 3.
+*/
+.attention-card-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.attention-card-row {
+  grid-template-columns: 4px minmax(0, 1fr) 118px 14px !important;
+  min-height: 100px !important;
+  height: 100%;
+  align-items: start !important;
+  padding: 11px 10px 11px 0 !important;
+}
+
+.attention-card-main {
+  align-self: stretch;
+  align-content: start;
+}
+
+.attention-card-title-line {
+  flex-wrap: wrap;
+}
+
+.attention-card-reasons {
+  margin-top: 2px;
+}
+
+.attention-card-side {
+  align-self: stretch;
+  align-content: start;
+  justify-items: end;
+}
+
+.attention-card-side > small {
+  white-space: normal !important;
+  line-height: 1.25;
+}
+
+.attention-card-arrow {
+  align-self: center;
+}
+
+/* Two columns on medium landscape screens */
+@media (max-width: 1150px) {
+  .attention-card-list {
+    grid-template-columns: repeat(2, minmax(280px, 1fr)) !important;
+  }
+}
+
+/* One column on narrow/mobile screens */
+@media (max-width: 700px) {
+  .attention-card-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .attention-card-row {
+    grid-template-columns: 4px minmax(0, 1fr) 105px 14px !important;
+  }
+}
