@@ -2176,6 +2176,11 @@ function cadetCard(cadet, options = {}) {
   const uniqueFtoRaText = uniqueFtoRaTotal === 1
     ? "1 unique FTO RA"
     : `${uniqueFtoRaTotal} unique FTO RAs`;
+  const minimumUniqueFtos = 4;
+  const uniqueFtoProgress = Math.max(
+    0,
+    Math.min(100, (uniqueFtoRaTotal / minimumUniqueFtos) * 100)
+  );
 
   return `
     <article
@@ -2216,6 +2221,13 @@ function cadetCard(cadet, options = {}) {
       <div class="cadet-card-footer compact-cadet-footer">
         <span>${escapeHtml(lastRaText)}</span>
         <strong>${escapeHtml(uniqueFtoRaText)}</strong>
+      </div>
+
+      <div class="main-cadet-fto-progress" aria-label="${escapeHtml(`${uniqueFtoRaTotal} of ${minimumUniqueFtos} unique FTO RAs`)}">
+        <span class="main-cadet-fto-progress-track" aria-hidden="true">
+          <i style="width:${uniqueFtoProgress}%"></i>
+        </span>
+        <strong>${uniqueFtoRaTotal} / ${minimumUniqueFtos}</strong>
       </div>
     </article>
   `;
@@ -2637,10 +2649,6 @@ function trainingStatusDotClass(cadet, group) {
 }
 
 function cadetTrainingStatusCard(cadet, group) {
-  const minimumUniqueFtos = 4;
-  const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
-  const progress = Math.max(0, Math.min(100, (uniqueFtos / minimumUniqueFtos) * 100));
-
   const daysLeft = daysUntil(cadet.day28Due);
   const daysLabel = daysLeft === null
     ? ""
@@ -2679,16 +2687,6 @@ function cadetTrainingStatusCard(cadet, group) {
         <span class="cadet-training-card-side">
           <i class="cadet-training-status-dot ${trainingStatusDotClass(cadet, group)}" aria-hidden="true"></i>
           ${groupTag}
-        </span>
-      </span>
-
-      <span class="cadet-fto-progress">
-        <span class="cadet-fto-progress-label">
-          <span>Unique FTO RAs</span>
-          <strong>${uniqueFtos} / ${minimumUniqueFtos}</strong>
-        </span>
-        <span class="cadet-fto-progress-track" aria-hidden="true">
-          <i style="width:${progress}%"></i>
         </span>
       </span>
     </button>

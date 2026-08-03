@@ -7543,3 +7543,58 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Main All Cadets cards — Unique FTO progress
+   ========================================================= */
+
+.main-cadet-fto-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 1px;
+}
+
+.main-cadet-fto-progress-track {
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(119, 142, 166, 0.16);
+}
+
+.main-cadet-fto-progress-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #ea9fb8;
+  box-shadow: 0 0 7px rgba(234, 159, 184, 0.32);
+}
+
+.main-cadet-fto-progress > strong {
+  color: #ea9fb8;
+  font-size: 0.57rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Training-status cards are now stage summaries only */
+.cadet-training-status-card {
+  min-height: 68px !important;
+  gap: 4px !important;
+}
+
+.cadet-training-status-card .cadet-fto-progress {
+  display: none !important;
+}
+
+/* This block belongs only inside the Cadets page */
+.cadets-page > .cadet-training-status-block {
+  margin-top: 14px;
+}
+
+[data-view="overview"] .cadet-training-status-block {
+  display: none !important;
+}
