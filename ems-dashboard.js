@@ -2659,6 +2659,38 @@ function manualScheduleFtoMembers() {
   return ftos.length ? ftos : state.members;
 }
 
+
+function refreshManualFtoPicker() {
+  const selectedWrap = els.dialogBody.querySelector("[data-fto-selected]");
+  const checked = [...els.dialogBody.querySelectorAll("[data-fto-checkbox]:checked")];
+
+  if (selectedWrap) {
+    selectedWrap.innerHTML = checked.length
+      ? checked.map((input) => {
+          const option = input.closest("[data-fto-option]");
+          const strong = option?.querySelector("strong")?.textContent || "FTO";
+          const small = option?.querySelector("small")?.textContent || "";
+
+          return `
+            <span class="manual-event-fto-chip">
+              <strong>${escapeHtml(strong)}</strong>
+              ${small ? `<small>${escapeHtml(small)}</small>` : ""}
+            </span>
+          `;
+        }).join("")
+      : `<span class="muted">No FTOs selected.</span>`;
+  }
+}
+
+function filterManualFtoPicker(query = "") {
+  const normalized = String(query || "").trim().toLowerCase();
+
+  els.dialogBody.querySelectorAll("[data-fto-option]").forEach((option) => {
+    const haystack = String(option.dataset.ftoSearchText || "");
+    option.hidden = normalized && !haystack.includes(normalized);
+  });
+}
+
 function openManualScheduleEventForm() {
   els.dialog.classList.remove("ra-focus-dossier");
   setDialogReadonly(false);
@@ -2696,16 +2728,43 @@ function openManualScheduleEventForm() {
 
       <fieldset class="manual-event-fto-fieldset full">
         <legend>FTOs attending</legend>
-        <div class="manual-event-fto-options">
+
+        <input
+          class="manual-event-fto-search"
+          type="search"
+          placeholder="Search FTO name or callsign…"
+          data-fto-search
+        />
+
+        <div class="manual-event-fto-selected" data-fto-selected>
+          <span class="muted">No FTOs selected.</span>
+        </div>
+
+        <div class="manual-event-fto-options" data-fto-options>
           ${ftos.length
             ? ftos.map((member) => `
-                <label class="manual-event-fto-option">
+                <label
+                  class="manual-event-fto-option"
+                  data-fto-option
+                  data-fto-search-text="${escapeHtml(
+                    manualSchedulePersonLabel(member).toLowerCase()
+                  )}"
+                >
                   <input
                     type="checkbox"
                     name="ftoIds"
                     value="${escapeHtml(member.id)}"
+                    data-fto-checkbox
                   />
-                  <span>${escapeHtml(manualSchedulePersonLabel(member))}</span>
+                  <span class="manual-event-fto-check" aria-hidden="true"></span>
+                  <span class="manual-event-fto-label">
+                    <strong>${escapeHtml(member.name || member.callsign || "Unknown")}</strong>
+                    <small>${escapeHtml(
+                      [member.callsign, member.employeeNumber ? `#${member.employeeNumber}` : ""]
+                        .filter(Boolean)
+                        .join(" • ")
+                    )}</small>
+                  </span>
                 </label>
               `).join("")
             : `<p class="muted">No FTOs are available in the synced roster.</p>`
@@ -2723,6 +2782,7 @@ function openManualScheduleEventForm() {
   els.dialog.dataset.mode = "manual-schedule-event";
   els.dialog.dataset.id = "";
   els.dialog.showModal();
+  refreshManualFtoPicker();
 }
 
 function formatManualEventDateTime(event) {
@@ -4996,4 +5056,17 @@ document.addEventListener("click", (event) => {
   if (!eventId) return;
 
   deleteManualScheduleEvent(eventId);
+});
+
+
+document.addEventListener("input", (event) => {
+  const search = event.target.closest("[data-fto-search]");
+  if (!search) return;
+  filterManualFtoPicker(search.value);
+});
+
+document.addEventListener("change", (event) => {
+  const checkbox = event.target.closest("[data-fto-checkbox]");
+  if (!checkbox) return;
+  refreshManualFtoPicker();
 });
