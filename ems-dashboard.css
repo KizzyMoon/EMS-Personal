@@ -6023,3 +6023,77 @@ dialog.ra-focus-dossier .close {
     color: #7f8c9c;
   }
 }
+
+
+/* =========================================================
+   Cadet RA Focus — compact summary header
+   ========================================================= */
+
+dialog.ra-focus-dossier .close,
+dialog.ra-focus-dossier menu {
+  display: none !important;
+}
+
+dialog.ra-focus-dossier > form > h2 {
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+  text-align: left !important;
+  font-size: 1.2rem !important;
+}
+
+.ra-dossier-person.ra-dossier-person-text-only {
+  display: none !important;
+}
+
+.ra-dossier-summary-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid rgba(119, 142, 166, 0.18);
+  border-radius: 8px;
+  background: rgba(8, 17, 26, 0.58);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.ra-dossier-summary-row article {
+  min-width: 0;
+  border-right: 1px solid rgba(119, 142, 166, 0.18);
+  padding: 10px 14px;
+}
+
+.ra-dossier-summary-row article:last-child {
+  border-right: 0;
+}
+
+.ra-dossier-summary-row span {
+  display: block;
+  margin-bottom: 5px;
+  color: #aeb9c7;
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.ra-dossier-summary-row strong {
+  display: block;
+  color: #f5f7fb;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.ra-dossier-summary-row article:nth-child(3) strong {
+  color: #ea9fb8;
+}
+
+@media (max-width: 620px) {
+  .ra-dossier-summary-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ra-dossier-summary-row article:nth-child(2) {
+    border-right: 0;
+  }
+
+  .ra-dossier-summary-row article:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(119, 142, 166, 0.18);
+  }
+}

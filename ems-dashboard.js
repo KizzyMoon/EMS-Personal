@@ -3338,9 +3338,8 @@ async function openCadetSheetNotes(cadet) {
 
     els.dialogBody.innerHTML = `
       <header class="ra-dossier-person ra-dossier-person-text-only">
-        <div>
-          <p>${escapeHtml([cadet.callsign, cadet.rank || "Cadet"].filter(Boolean).join(" • "))}</p>
-          <span>${pill(cadet.status || "Active", "good")}</span>
+        <div class="ra-dossier-person-copy">
+          <p>${escapeHtml(`${cadet.name || "Unnamed Cadet"} | ${cadet.callsign || "No Callsign"}`)}</p>
         </div>
       </header>
 
@@ -3401,34 +3400,31 @@ async function openCadetSheetNotes(cadet) {
       </div>
     </header>
 
-    <section class="ra-dossier-stats">
-      <article>
-        <span class="ra-stat-symbol">${raIcon("clipboard")}</span>
-        <div>
-          <strong>${raOffers}</strong>
-          <h3>RAs Offered</h3>
-          <p>Total RA offers logged</p>
-        </div>
-      </article>
-
-      <article>
-        <span class="ra-stat-symbol">${raIcon("people")}</span>
-        <div>
-          <strong>${uniqueFtos}</strong>
-          <h3>Unique FTO RAs</h3>
-          <p>Different FTOs they have had an RA with</p>
-        </div>
-      </article>
-
-      <article>
-        <span class="ra-stat-symbol">${raIcon("calendar")}</span>
-        <div>
-          <strong class="${cadet.lastRaDate ? "" : "is-empty"}">${escapeHtml(lastRaLabel)}</strong>
-          <h3>Last RA</h3>
-          <p>${cadet.lastRaDate ? "Most recent recorded RA" : "No RA date recorded"}</p>
-        </div>
-      </article>
-    </section>
+    <section class="ra-dossier-summary-row">
+        <article>
+          <span>RAs Offered</span>
+          <strong>${cadet.raOffers?.length || 0}</strong>
+        </article>
+        <article>
+          <span>Unique FTO RAs</span>
+          <strong>${cadet.uniqueFtoRaCount || 0}</strong>
+        </article>
+        <article>
+          <span>Days as Cadet</span>
+          <strong>${(() => {
+            const start = cadet.startDate ? new Date(`${cadet.startDate}T00:00`) : null;
+            if (!start || Number.isNaN(start.valueOf())) return "— / 28";
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const days = Math.max(0, Math.floor((today - start) / 86400000));
+            return `${days} / 28`;
+          })()}</strong>
+        </article>
+        <article>
+          <span>Last RA</span>
+          <strong>${cadet.lastRaDate ? escapeHtml(formatDate(cadet.lastRaDate)) : "No RA"}</strong>
+        </article>
+      </section>
 
     <section class="ra-dossier-section">
       <h3 class="ra-section-heading"><span>${raIcon("target")}</span>Current Focus Areas</h3>
