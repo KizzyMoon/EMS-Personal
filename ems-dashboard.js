@@ -86,6 +86,14 @@ const els = {
   recentRosterChanges: document.querySelector("[data-recent-roster-changes]"),
   upcomingBirthdays: document.querySelector("[data-upcoming-birthdays]"),
   rosterUpdatePanel: document.querySelector("[data-roster-update-panel]"),
+  reviewQuickStats: document.querySelector("[data-review-quick-stats]"),
+  reviewMonthLabel: document.querySelector("[data-review-month-label]"),
+  reviewMonthlySummary: document.querySelector("[data-review-monthly-summary]"),
+  reviewCompareLabel: document.querySelector("[data-review-compare-label]"),
+  reviewComparison: document.querySelector("[data-review-comparison]"),
+  reviewFtoCoverage: document.querySelector("[data-review-fto-coverage]"),
+  reviewTrainingHistory: document.querySelector("[data-review-training-history]"),
+  reviewFtoWorkload: document.querySelector("[data-review-fto-workload]"),
   notesList: document.querySelector("[data-notes-list]"),
   needsRaCount: document.querySelector("[data-count-needs-ra]"),
   needsTrainingCount: document.querySelector("[data-count-needs-training]"),
@@ -2807,12 +2815,253 @@ function updateSidebarCounts() {
   }
 }
 
+
+function monthKey(date = new Date()) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function monthLabel(date = new Date()) {
+  return date.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+}
+
+function previousMonth(date = new Date()) {
+  return new Date(date.getFullYear(), date.getMonth() - 1, 1);
+}
+
+function isDateInMonth(dateText, date = new Date()) {
+  if (!dateText) return false;
+  const parsed = new Date(dateText);
+  if (Number.isNaN(parsed.valueOf())) return false;
+  return parsed.getFullYear() === date.getFullYear() && parsed.getMonth() === date.getMonth();
+}
+
+function reviewMetricCard(label, value, note = "", tone = "") {
+  return `
+    <article class="review-metric-card ${tone}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(String(value))}</strong>
+      ${note ? `<small>${escapeHtml(note)}</small>` : ""}
+    </article>
+  `;
+}
+
+function reviewChangeCard(label, value, suffix = "", positive = true) {
+  const number = Number(value || 0);
+  const direction = number > 0 ? "↑" : number < 0 ? "↓" : "—";
+  const className = number === 0 ? "is-neutral" : positive === (number > 0) ? "is-positive" : "is-negative";
+  return `
+    <article class="review-change-card ${className}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${direction} ${escapeHtml(String(Math.abs(number)))}${escapeHtml(suffix)}</strong>
+    </article>
+  `;
+}
+
+function currentMonthRaCount(cadets, date = new Date()) {
+  return cadets.reduce((total, cadet) => {
+    const offers = Array.isArray(cadet.raOffers) ? cadet.raOffers : [];
+    return total + offers.filter((offer) => isDateInMonth(offer.createdAt, date)).length;
+  }, 0);
+}
+
+function activeFtoMembers() {
+  return state.members.filter((member) =>
+    Array.isArray(member.qualifications) &&
+    member.qualifications.some((qualification) => String(qualification).toUpperCase() === "FTO")
+  );
+}
+
+function trainingSessionsForMonth(date = new Date()) {
+  return (liveTrainingSessions || []).filter((session) => {
+    const raw = session.date || session.startDate || session.datetime || "";
+    return isDateInMonth(raw, date);
+  });
+}
+
+function cadetsTrainedInMonth(date = new Date()) {
+  return state.cadets.filter((cadet) =>
+    (cadet.day1 && isDateInMonth(cadet.lastTrainingDate || cadet.startDate, date)) ||
+    (cadet.day2 && isDateInMonth(cadet.lastTrainingDate || cadet.startDate, date))
+  ).length;
+}
+
+function passedCadetsInMonth(date = new Date()) {
+  return state.cadets.filter((cadet) =>
+    /passed|complete|graduated/i.test(String(cadet.status || "")) &&
+    isDateInMonth(cadet.lastRaDate || cadet.day28Due, date)
+  ).length;
+}
+
+function removedCadetsInMonth(date = new Date()) {
+  return (state.rosterChanges || []).filter((change) =>
+    /left|removed/i.test(String(change.type || change.action || "")) &&
+    isDateInMonth(change.createdAt || change.date, date)
+  ).length;
+}
+
+function ftoCoverageData() {
+  const ftoMembers = activeFtoMembers();
+
+  return ftoMembers.map((member) => {
+    const callsign = normalizeCallsign(member.callsign || "");
+    let totalRas = 0;
+    const cadets = new Set();
+    let latestDate = "";
+
+    for (const cadet of state.cadets) {
+      const notes = Array.isArray(cadet.sheetNotes) ? cadet.sheetNotes : [];
+      let hasFto = false;
+
+      for (const note of notes) {
+        const text = typeof note === "string"
+          ? note
+          : `${note?.callsign || ""} ${note?.title || ""} ${note?.body || ""}`;
+        if (callsign && normalizeCallsign(text).includes(callsign)) {
+          hasFto = true;
+          totalRas += 1;
+          const noteDate = parseDate(note?.date || "");
+          if (noteDate && (!latestDate || noteDate > latestDate)) latestDate = noteDate;
+        }
+      }
+
+      if (hasFto) cadets.add(cadet.name || cadet.callsign);
+    }
+
+    return {
+      name: member.name || member.callsign || "Unknown FTO",
+      callsign: member.callsign || "",
+      totalRas,
+      uniqueCadets: cadets.size,
+      lastRa: latestDate,
+      missingCadets: state.cadets
+        .filter((cadet) => !cadets.has(cadet.name || cadet.callsign))
+        .slice(0, 3)
+        .map((cadet) => cadet.name || cadet.callsign)
+    };
+  }).sort((a, b) => b.totalRas - a.totalRas || a.name.localeCompare(b.name));
+}
+
+function renderReviewPage() {
+  if (!els.reviewQuickStats) return;
+
+  const now = new Date();
+  const previous = previousMonth(now);
+
+  const currentSessions = trainingSessionsForMonth(now);
+  const previousSessions = trainingSessionsForMonth(previous);
+  const currentRaCount = currentMonthRaCount(state.cadets, now);
+  const previousRaCount = currentMonthRaCount(state.cadets, previous);
+  const currentTrained = cadetsTrainedInMonth(now);
+  const previousTrained = cadetsTrainedInMonth(previous);
+  const currentPassed = passedCadetsInMonth(now);
+  const previousPassed = passedCadetsInMonth(previous);
+  const activeFtos = activeFtoMembers().length;
+  const currentlyTraining = state.cadets.filter((cadet) => cadet.day1 && !cadet.day2).length;
+  const day1Pending = state.cadets.filter((cadet) => !cadet.day1).length;
+  const raDueSoon = state.cadets.filter((cadet) => {
+    const days = daysUntil(cadet.day28Due);
+    return days !== null && days >= 0 && days <= 7;
+  }).length;
+  const readyForRa = state.cadets.filter((cadet) => cadet.day1 && cadet.day2).length;
+  const overdueRa = state.cadets.filter((cadet) => {
+    const since = daysSince(cadet.lastRaDate);
+    return cadet.day1 && (cadet.lastRaDate ? since >= 14 : true);
+  }).length;
+
+  els.reviewQuickStats.innerHTML = [
+    reviewMetricCard("Total Cadets", state.cadets.length, "Active in programme"),
+    reviewMetricCard("In Training", currentlyTraining, "Currently training"),
+    reviewMetricCard("Day 1 Pending", day1Pending, "Awaiting Day 1"),
+    reviewMetricCard("RA Due Soon", raDueSoon, "Within 7 days"),
+    reviewMetricCard("Ready for RA", readyForRa, "Cleared to ride"),
+    reviewMetricCard("Overdue RA", overdueRa, "14+ days overdue", overdueRa ? "is-alert" : "")
+  ].join("");
+
+  if (els.reviewMonthLabel) els.reviewMonthLabel.textContent = monthLabel(now);
+  if (els.reviewCompareLabel) els.reviewCompareLabel.textContent = `Compared to ${monthLabel(previous)}`;
+
+  els.reviewMonthlySummary.innerHTML = [
+    reviewMetricCard("Training Sessions", currentSessions.length),
+    reviewMetricCard("Cadets Trained", currentTrained),
+    reviewMetricCard("RAs Completed", currentRaCount),
+    reviewMetricCard("Active FTOs", activeFtos),
+    reviewMetricCard("Cadets Passed", currentPassed),
+    reviewMetricCard("Cadets Removed", removedCadetsInMonth(now))
+  ].join("");
+
+  const currentAvgFtos = state.cadets.length
+    ? state.cadets.reduce((sum, cadet) => sum + Number(cadet.uniqueFtoRaCount || 0), 0) / state.cadets.length
+    : 0;
+
+  els.reviewComparison.innerHTML = [
+    reviewChangeCard("RAs Completed", currentRaCount - previousRaCount, "", true),
+    reviewChangeCard("Cadets Trained", currentTrained - previousTrained, "", true),
+    reviewChangeCard("Training Sessions", currentSessions.length - previousSessions.length, "", true),
+    reviewChangeCard("Unique FTOs per Cadet", Number(currentAvgFtos.toFixed(1)), "", true),
+    reviewChangeCard("Cadets Passed", currentPassed - previousPassed, "", true)
+  ].join("");
+
+  const coverage = ftoCoverageData();
+
+  els.reviewFtoCoverage.innerHTML = coverage.length
+    ? `
+      <div class="review-table review-fto-table">
+        <div class="review-table-head">
+          <span>FTO</span><span>RAs</span><span>Cadets</span><span>Last RA</span><span>Not Yet Taken</span>
+        </div>
+        ${coverage.map((item) => `
+          <div class="review-table-row">
+            <span><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.callsign)}</small></span>
+            <span>${item.totalRas}</span>
+            <span>${item.uniqueCadets}</span>
+            <span>${item.lastRa ? escapeHtml(formatDate(item.lastRa)) : "—"}</span>
+            <span>${item.missingCadets.length ? escapeHtml(item.missingCadets.join(", ")) : "All covered"}</span>
+          </div>
+        `).join("")}
+      </div>
+    `
+    : empty("No FTO roster data is available yet.");
+
+  const sessions = (liveTrainingSessions || []).slice(0, 6);
+  els.reviewTrainingHistory.innerHTML = sessions.length
+    ? sessions.map((session) => {
+        const title = session.title || session.name || "Training Session";
+        const attended = Number(session.cadetCount || session.attended || session.cadets?.length || 0);
+        const staff = Number(session.staffCount || session.staff?.length || 0);
+        const noShows = Number(session.noShows || 0);
+        return `
+          <article class="review-training-row">
+            <div>
+              <strong>${escapeHtml(title)}</strong>
+              <small>${escapeHtml(session.date || session.startDate || "")}</small>
+            </div>
+            <span><small>Attended</small><strong>${attended}</strong></span>
+            <span><small>No Show</small><strong>${noShows}</strong></span>
+            <span><small>Staff</small><strong>${staff}</strong></span>
+          </article>
+        `;
+      }).join("")
+    : empty("No recent training sessions are available.");
+
+  const maxWorkload = Math.max(1, ...coverage.map((item) => item.totalRas));
+  els.reviewFtoWorkload.innerHTML = coverage.length
+    ? coverage.slice(0, 8).map((item) => `
+        <article class="review-workload-row">
+          <span>${escapeHtml(item.callsign || item.name)}</span>
+          <div><i style="width:${Math.max(4, (item.totalRas / maxWorkload) * 100)}%"></i></div>
+          <strong>${item.totalRas}</strong>
+        </article>
+      `).join("")
+    : empty("No FTO workload data is available.");
+}
+
 function render() {
   updateSidebarCounts();
   renderStats();
   renderOverview();
   renderCadets();
   renderDirectory();
+  renderReviewPage();
   renderNotes();
   renderSettings();
   renderTraining();

@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-9" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-10" />
   </head>
   <body>
     <main class="app">
@@ -35,6 +35,10 @@
             <img class="nav-icon" src="Roster.png?v=20260802-1" alt="" />
             <span>Roster</span>
             <strong class="sidebar-page-count" data-sidebar-roster-count>0</strong>
+          </button>
+          <button data-tab="review" type="button" aria-label="Review">
+            <img class="nav-icon" src="nav-overview.png?v=20260728-1" alt="" />
+            <span>Review</span>
           </button>
           <button data-tab="cheat-sheet" type="button" aria-label="Cheat Sheet">
             <img class="nav-icon" src="cheat sheet.png?v=20260802-1" alt="" />
@@ -310,6 +314,67 @@
         </div>
       </section>
 
+      <section class="view is-hidden review-page" data-view="review">
+        <section class="panel review-quick-overview">
+          <div class="review-section-head">
+            <div>
+              <span class="review-eyebrow">Quick Overview</span>
+              <h2>Review</h2>
+            </div>
+          </div>
+          <div class="review-stat-grid" data-review-quick-stats></div>
+        </section>
+
+        <section class="panel review-monthly-summary">
+          <div class="review-section-head">
+            <div>
+              <span class="review-eyebrow">Monthly Summary</span>
+              <h2 data-review-month-label>Current Month</h2>
+            </div>
+          </div>
+          <div class="review-summary-grid" data-review-monthly-summary></div>
+          <div class="review-comparison">
+            <h3 data-review-compare-label>Compared to last month</h3>
+            <div class="review-comparison-grid" data-review-comparison></div>
+          </div>
+        </section>
+
+        <div class="review-lower-grid">
+          <section class="panel review-fto-coverage">
+            <div class="review-section-head">
+              <div>
+                <span class="review-eyebrow">FTO Coverage</span>
+                <h2>Coverage & Workload</h2>
+                <p class="muted">Track FTO activity, workload and cadet coverage.</p>
+              </div>
+            </div>
+            <div data-review-fto-coverage></div>
+          </section>
+
+          <section class="panel review-training-history">
+            <div class="review-section-head">
+              <div>
+                <span class="review-eyebrow">Training History</span>
+                <h2>Training Sessions</h2>
+                <p class="muted">Recent training sessions and attendance.</p>
+              </div>
+            </div>
+            <div class="review-training-list" data-review-training-history></div>
+          </section>
+
+          <section class="panel review-fto-workload">
+            <div class="review-section-head">
+              <div>
+                <span class="review-eyebrow">Top FTO Workload</span>
+                <h2>RA Activity</h2>
+                <p class="muted">By total RA attempts this month.</p>
+              </div>
+            </div>
+            <div class="review-workload-list" data-review-fto-workload></div>
+          </section>
+        </div>
+      </section>
+
       <section class="view is-hidden cheat-sheet-page" data-view="cheat-sheet">
         <div class="cheat-sheet-top-grid">
           <article class="cheat-sheet-panel medications-panel">
@@ -543,6 +608,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-9"></script>
+    <script src="ems-dashboard.js?v=20260803-10"></script>
   </body>
 </html>
