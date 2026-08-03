@@ -5791,3 +5791,16 @@ dialog.ra-focus-dossier .close {
     height: 23px !important;
   }
 }
+
+
+/* Desktop sidebar: remove only the main Quick Links title */
+.sidebar-quick-links > h2,
+.sidebar-quick-links > .quick-links-title,
+.sidebar-quick-links > .quick-links-heading {
+  display: none !important;
+}
+
+/* Keep category headings visible */
+.sidebar-quick-links .quick-link-category > h3 {
+  display: block !important;
+}
