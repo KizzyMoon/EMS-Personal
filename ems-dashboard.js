@@ -3006,11 +3006,7 @@ function ftoCoverageData() {
       callsign: member.callsign || "",
       totalRas,
       uniqueCadets: coveredCadets.size,
-      lastRa: latestDate,
-      missingCadets: state.cadets
-        .filter((cadet) => !coveredCadets.has(cadet.id || cadet.name || cadet.callsign))
-        .map((cadet) => cadet.name || cadet.callsign)
-        .filter(Boolean)
+      lastRa: latestDate
     };
   }).sort((a, b) =>
     b.totalRas - a.totalRas ||
@@ -3077,7 +3073,7 @@ function renderReviewPage() {
     ? `
       <div class="review-table review-fto-table">
         <div class="review-table-head">
-          <span>FTO</span><span>RAs</span><span>Cadets</span><span>Last RA</span><span>Not Yet Taken</span>
+          <span>FTO</span><span>RAs</span><span>Cadets</span><span>Last RA</span>
         </div>
         ${coverage.map((item) => `
           <div class="review-table-row">
@@ -3085,7 +3081,6 @@ function renderReviewPage() {
             <span>${item.totalRas}</span>
             <span>${item.uniqueCadets}</span>
             <span>${item.lastRa ? escapeHtml(formatDate(item.lastRa)) : "—"}</span>
-            <span>${item.missingCadets.length ? escapeHtml(item.missingCadets.join(", ")) : "All covered"}</span>
           </div>
         `).join("")}
       </div>
