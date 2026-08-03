@@ -2150,17 +2150,28 @@ function cadetTrainingStatusText(cadet) {
 
 function cadetCard(cadet, options = {}) {
   const performance = cadetPerformance(cadet);
-  const days = daysUntil(cadet.day28Due);
-  const limitText = days === null
-    ? "No limit date"
-    : days < 0
-      ? `${Math.abs(days)} days overdue`
-      : `${days} day${days === 1 ? "" : "s"} left`;
+  const day14 = daysUntil(cadet.day14Due);
+  const day28 = daysUntil(cadet.day28Due);
 
-  const trainingText = cadetTrainingStatusText(cadet);
-  const latestTraining = cadet.lastRaDate
+  const phaseLabel = (days, limit) => {
+    if (days === null) return `Not recorded / ${limit}`;
+    if (days < 0) {
+      const overdue = Math.abs(days);
+      return `${overdue} day${overdue === 1 ? "" : "s"} overdue / ${limit}`;
+    }
+    return `${days} day${days === 1 ? "" : "s"} left / ${limit}`;
+  };
+
+  const trainingNeed = !cadet.day1
+    ? "Needs Day 1 Training"
+    : !cadet.day2
+      ? "Needs Day 2 Training"
+      : "";
+
+  const lastRaText = cadet.lastRaDate
     ? `Last RA: ${formatDate(cadet.lastRaDate)}`
     : "No RA date recorded";
+
   const uniqueFtoRaTotal = Number(cadet.uniqueFtoRaCount || 0);
   const uniqueFtoRaText = uniqueFtoRaTotal === 1
     ? "1 unique FTO RA"
@@ -2168,48 +2179,43 @@ function cadetCard(cadet, options = {}) {
 
   return `
     <article
-      class="cadet-profile-card training-${trainingLevel(cadet)}"
+      class="cadet-profile-card compact-cadet-profile-card training-${trainingLevel(cadet)}"
       data-view-sheet-notes="${cadet.id}"
       tabindex="0"
       role="button"
       aria-label="Open live cadet sheet information for ${escapeHtml(cadet.name || "cadet")}"
     >
-      <div class="cadet-profile-card-head">
-        <div>
-          <h3>${escapeHtml(cadet.name || "Unnamed cadet")}</h3>
-          <p>${escapeHtml([
-            cadet.callsign || "No callsign",
-            cadet.employeeNumber ? `#${cadet.employeeNumber}` : "",
-            cadet.rank || "Cadet"
-          ].filter(Boolean).join(" • "))}</p>
+      <div class="compact-cadet-heading">
+        <div class="compact-cadet-identity">
+          <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+          <span aria-hidden="true">|</span>
+          <span>${escapeHtml(cadet.callsign || "No callsign")}</span>
+          <span aria-hidden="true">|</span>
+          <span>${escapeHtml(cadet.employeeNumber ? `#${cadet.employeeNumber}` : "No employee number")}</span>
         </div>
-        <span
-          class="cadet-performance-dot ${performance.className}"
-          title="${escapeHtml(performance.label)}"
-          aria-label="${escapeHtml(performance.label)}"
-        ></span>
-      </div>
 
-      <div class="cadet-profile-tags">
-        ${pill(cadet.status || "Active", String(cadet.status).toLowerCase().includes("active") ? "good" : "warn")}
-        ${cadet.timezone ? pill(cadet.timezone, "zone") : ""}
-      </div>
-
-      <div class="cadet-profile-status">
-        <strong>${escapeHtml(limitText)}</strong>
-        <span>${escapeHtml(trainingText)}</span>
-      </div>
-
-      ${(!cadet.day1 || !cadet.day2) ? `
-        <div class="cadet-training-progress">
-          ${!cadet.day1 ? "<span>Day 1</span>" : ""}
-          ${!cadet.day2 ? "<span>Day 2</span>" : ""}
+        <div class="compact-cadet-heading-right">
+          ${cadet.timezone ? pill(cadet.timezone, "zone") : ""}
+          <span
+            class="cadet-performance-dot ${performance.className}"
+            title="${escapeHtml(performance.label)}"
+            aria-label="${escapeHtml(performance.label)}"
+          ></span>
         </div>
+      </div>
+
+      ${trainingNeed ? `
+        <div class="compact-cadet-training-need">${escapeHtml(trainingNeed)}</div>
       ` : ""}
 
-      <div class="cadet-card-footer">
-        <p class="cadet-last-training">${escapeHtml(latestTraining)}</p>
-        <strong class="cadet-unique-ra-count">${escapeHtml(uniqueFtoRaText)}</strong>
+      <div class="compact-cadet-limits">
+        <span>${escapeHtml(phaseLabel(day14, 14))}</span>
+        <span>${escapeHtml(phaseLabel(day28, 28))}</span>
+      </div>
+
+      <div class="cadet-card-footer compact-cadet-footer">
+        <span>${escapeHtml(lastRaText)}</span>
+        <strong>${escapeHtml(uniqueFtoRaText)}</strong>
       </div>
     </article>
   `;

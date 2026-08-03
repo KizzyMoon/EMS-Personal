@@ -7426,3 +7426,120 @@ dialog.ra-focus-dossier > form > h2 {
 .cadet-training-status-block .cadet-fto-progress-track {
   height: 5px;
 }
+
+
+/* =========================================================
+   Main Cadet cards — compact information layout
+   ========================================================= */
+
+.compact-cadet-profile-card {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 142px !important;
+  height: 100% !important;
+  gap: 8px !important;
+  padding: 11px 12px !important;
+}
+
+.compact-cadet-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.compact-cadet-identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 0;
+  color: #aeb9c7;
+  font-size: 0.64rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.compact-cadet-identity strong {
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.compact-cadet-heading-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.compact-cadet-heading-right .pill {
+  margin: 0 !important;
+}
+
+.compact-cadet-heading-right .cadet-performance-dot {
+  flex: 0 0 auto;
+}
+
+.compact-cadet-training-need {
+  color: #ea9fb8;
+  font-size: 0.64rem;
+  font-weight: 900;
+}
+
+.compact-cadet-limits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.compact-cadet-limits span {
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 6px;
+  background: rgba(7, 14, 22, 0.46);
+  color: #ffd166;
+  padding: 6px 7px;
+  font-size: 0.58rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.compact-cadet-footer {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto !important;
+  padding-top: 7px !important;
+  border-top: 1px solid rgba(119, 142, 166, 0.13);
+  color: #9fb0c3;
+  font-size: 0.58rem;
+}
+
+.compact-cadet-footer strong {
+  color: #ea9fb8;
+  font-size: 0.58rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .compact-cadet-heading {
+    align-items: center;
+  }
+
+  .compact-cadet-identity {
+    display: grid;
+    gap: 2px;
+  }
+
+  .compact-cadet-identity > span[aria-hidden="true"] {
+    display: none;
+  }
+
+  .compact-cadet-limits {
+    grid-template-columns: 1fr;
+  }
+}
