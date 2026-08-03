@@ -2374,7 +2374,7 @@ function attentionTableRow(item) {
       class="attention-card-row ${priority.className}"
       type="button"
       data-open-cadet-focus="${cadet.id}"
-      aria-label="Open ${escapeHtml(cadet.name || "cadet")} RA Focus"
+      aria-label="Open ${escapeHtml(cadet.name || "cadet")} "
     >
       <span class="attention-card-accent" aria-hidden="true"></span>
 
@@ -3393,7 +3393,7 @@ async function openCadetSheetNotes(cadet) {
 
   prepareRaFocusDialog();
   els.dialogSave.hidden = true;
-  els.dialogTitle.textContent = `${cadet.name || "Cadet"} — RA Focus`;
+  els.dialogTitle.textContent = `${cadet.name || "Cadet"} — `;
 
   if (!cadet.day1) {
     const notes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
