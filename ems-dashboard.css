@@ -7093,3 +7093,31 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 4px minmax(0, 1fr) 100px 16px !important;
   }
 }
+
+
+/* Overview schedule height alignment */
+.overview-top-grid,
+.overview-main-grid,
+.overview-layout {
+  align-items: stretch !important;
+}
+
+.overview-schedule-panel,
+.schedule-panel,
+[data-overview-schedule] {
+  align-self: stretch !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+.overview-schedule-panel.panel,
+.schedule-panel.panel {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.overview-schedule-panel .schedule-body,
+.schedule-panel .schedule-body,
+[data-overview-schedule] .schedule-body {
+  flex: 1 1 auto !important;
+}
