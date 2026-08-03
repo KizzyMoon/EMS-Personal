@@ -3842,6 +3842,7 @@ function render() {
   renderCadetTrainingGroups();
   renderDirectory();
   renderMassPingPanels();
+  renderManualScheduleEvents();
 
   renderSettingsSyncPanels();
   updateSettingsSheetLinks();
