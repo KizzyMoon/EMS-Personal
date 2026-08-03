@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-22" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-23" />
   </head>
   <body>
     <main class="app">
@@ -207,34 +207,7 @@
       </section>
 
       <section class="view is-hidden cadets-page" data-view="cadets">
-
-        <section class="cadet-training-groups" aria-label="Cadet training status">
-          <article class="panel cadet-training-group training-complete-group">
-            <div class="cadet-training-group-head">
-              <h2>Training Complete</h2>
-              <strong data-training-complete-count>0</strong>
-            </div>
-            <div class="cadet-training-group-list" data-training-complete-list></div>
-          </article>
-
-          <article class="panel cadet-training-group needs-day1-group">
-            <div class="cadet-training-group-head">
-              <h2>Needs Day 1</h2>
-              <strong data-needs-day1-count>0</strong>
-            </div>
-            <div class="cadet-training-group-list" data-needs-day1-list></div>
-          </article>
-
-          <article class="panel cadet-training-group needs-day2-group">
-            <div class="cadet-training-group-head">
-              <h2>Needs Day 2</h2>
-              <strong data-needs-day2-count>0</strong>
-            </div>
-            <div class="cadet-training-group-list" data-needs-day2-list></div>
-          </article>
-        </section>
-
-        <div class="cadets-page-layout">
+<div class="cadets-page-layout">
           <main class="cadets-page-main">
             <header class="cadets-page-heading">
               <div>
@@ -284,6 +257,40 @@
           <div data-ra-offer-log class="ra-offer-log"></div>
         </article>
       </section>
+
+<section class="cadet-training-status-block">
+          <div class="cadet-training-status-heading">
+            <div>
+              <h2>Cadet Training Status</h2>
+              <p class="muted">A quick view of each cadet's current training stage.</p>
+            </div>
+          </div>
+          <div class="cadet-training-groups" aria-label="Cadet training status">
+          <article class="panel cadet-training-group training-complete-group">
+            <div class="cadet-training-group-head">
+              <h2>Training Complete</h2>
+              <strong data-training-complete-count>0</strong>
+            </div>
+            <div class="cadet-training-group-list" data-training-complete-list></div>
+          </article>
+
+          <article class="panel cadet-training-group needs-day1-group">
+            <div class="cadet-training-group-head">
+              <h2>Needs Day 1</h2>
+              <strong data-needs-day1-count>0</strong>
+            </div>
+            <div class="cadet-training-group-list" data-needs-day1-list></div>
+          </article>
+
+          <article class="panel cadet-training-group needs-day2-group">
+            <div class="cadet-training-group-head">
+              <h2>Needs Day 2</h2>
+              <strong data-needs-day2-count>0</strong>
+            </div>
+            <div class="cadet-training-group-list" data-needs-day2-list></div>
+          </article>
+        </section>
+        </section>
 
       <section class="view is-hidden roster-page" data-view="directory">
         <div class="roster-page-layout">
@@ -690,6 +697,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-22"></script>
+    <script src="ems-dashboard.js?v=20260803-23"></script>
   </body>
 </html>

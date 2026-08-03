@@ -7382,3 +7382,47 @@ dialog.ra-focus-dossier > form > h2 {
   .cadet-training-groups { grid-template-columns: 1fr; }
   .cadet-training-group-list { max-height: 340px; }
 }
+
+
+/* =========================================================
+   Cadets page layout — cards first, training status below
+   ========================================================= */
+
+.cadet-training-status-block {
+  margin-top: 14px;
+  border: 1px solid rgba(119, 142, 166, 0.18);
+  border-radius: 10px;
+  background: rgba(7, 14, 22, 0.42);
+  padding: 12px;
+}
+
+.cadet-training-status-heading {
+  margin-bottom: 10px;
+}
+
+.cadet-training-status-heading h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.cadet-training-status-heading p {
+  margin: 3px 0 0;
+  font-size: 0.6rem;
+}
+
+.cadet-training-status-block .cadet-training-groups {
+  margin-bottom: 0 !important;
+}
+
+.cadet-training-status-block .cadet-training-group {
+  min-height: 0;
+}
+
+.cadet-training-status-block .cadet-training-status-card {
+  min-height: 88px;
+}
+
+.cadet-training-status-block .cadet-fto-progress-track {
+  height: 5px;
+}

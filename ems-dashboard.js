@@ -4065,7 +4065,7 @@ async function openCadetSheetNotes(cadet) {
 
   prepareRaFocusDialog();
   els.dialogSave.hidden = true;
-  els.dialogTitle.textContent = `${cadet.name || "Cadet"} — `;
+  els.dialogTitle.textContent = `${cadet.name || "Unnamed Cadet"} | ${cadet.callsign || "No Callsign"}`;
 
   if (!cadet.day1) {
     const notes = Array.isArray(cadet.sheetNotes) && cadet.sheetNotes.length
