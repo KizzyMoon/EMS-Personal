@@ -1448,8 +1448,10 @@ function parseTrainingSession(rows, config) {
 
 function parseUpcomingEuTraining(rows) {
   const sessions = [
-    parseTrainingSession(rows, { day: 1, employeeColumn: 2, nameColumn: 3, timeColumn: 4 }),
-    parseTrainingSession(rows, { day: 2, employeeColumn: 12, nameColumn: 13, timeColumn: 14 })
+    // EU Day 1 is the first three-column training block.
+    parseTrainingSession(rows, { day: 1, employeeColumn: 0, nameColumn: 1, timeColumn: 2 }),
+    // EU Day 2 is the third three-column training block.
+    parseTrainingSession(rows, { day: 2, employeeColumn: 6, nameColumn: 7, timeColumn: 8 })
   ];
   const upcoming = sessions.filter((session) => isUpcomingTrainingDate(session.date));
   if (!upcoming.length) {
