@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-27" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-28" />
   </head>
   <body>
     <main class="app">
@@ -35,10 +35,6 @@
             <img class="nav-icon" src="Roster.png?v=20260802-1" alt="" />
             <span>Roster</span>
             <strong class="sidebar-page-count" data-sidebar-roster-count>0</strong>
-          </button>
-          <button data-tab="ras" type="button" aria-label="RA's">
-            <span class="nav-icon" aria-hidden="true">📋</span>
-            <span>RA's</span>
           </button>
 <button data-tab="cheat-sheet" type="button" aria-label="Cheat Sheet">
             <img class="nav-icon" src="cheat sheet.png?v=20260802-1" alt="" />
@@ -125,7 +121,7 @@
         <button data-action="import-google" type="button">Sync All Sheets</button>
       </section>
 
-      <section class="view overview-dashboard overview-reference-layout" data-view="overview">
+            <section class="view overview-dashboard overview-reference-layout" data-view="overview">
         <header class="overview-reference-heading">
           <div>
             <h1>To Do List</h1>
@@ -134,22 +130,10 @@
         </header>
 
         <section class="overview-reference-stats">
-          <article>
-            <strong data-summary-needs-ra>0</strong>
-            <span>Needs RA From Me</span>
-          </article>
-          <article>
-            <strong data-summary-needs-training>0</strong>
-            <span>Needs Training</span>
-          </article>
-          <article>
-            <strong data-summary-attention>0</strong>
-            <span>Cadets Needing Attention</span>
-          </article>
-          <article>
-            <strong data-summary-limits>0</strong>
-            <span>Approaching Limit</span>
-          </article>
+          <article><strong data-summary-needs-ra>0</strong><span>Needs RA From Me</span></article>
+          <article><strong data-summary-needs-training>0</strong><span>Needs Training</span></article>
+          <article><strong data-summary-attention>0</strong><span>Cadets Needing Attention</span></article>
+          <article><strong data-summary-limits>0</strong><span>Approaching Limit</span></article>
         </section>
 
         <section class="overview-reference-primary">
@@ -174,9 +158,7 @@
               <h2>Schedule</h2>
               <button data-action="refresh-training" type="button">Refresh</button>
             </div>
-
             <div class="upcoming-training-grid" data-training-list></div>
-
             <section class="upcoming-interviews-section">
               <div class="upcoming-interviews-heading">
                 <h3>Upcoming Interviews</h3>
@@ -184,7 +166,6 @@
               </div>
               <div class="upcoming-interviews-list" data-interview-list></div>
             </section>
-
             <footer class="schedule-refresh-footer">
               <span data-training-status>Refreshing live training information…</span>
             </footer>
@@ -199,9 +180,7 @@
             </div>
             <button data-tab="cadets" type="button">View all</button>
           </div>
-
           <div class="attention-table" data-attention-list></div>
-
           <div class="attention-priority-legend" aria-label="Attention priority key">
             <span><i class="attention-dot attention-urgent-dot"></i>Urgent — immediate action</span>
             <span><i class="attention-dot attention-needed-dot"></i>Needs attention — follow up soon</span>
@@ -216,7 +195,7 @@
           </div>
           <div class="overview-limit-grid" data-limit-list></div>
         </article>
-      
+
         <section class="panel overview-mass-ping-panel">
           <div class="overview-panel-title">
             <div>
@@ -225,14 +204,10 @@
             </div>
             <button data-action="create-mass-ping" type="button">Mass Ping Cadets</button>
           </div>
-
           <div class="mass-ping-recent-list" data-mass-ping-recent></div>
-
-          <button class="mass-ping-view-all" data-tab="ras" type="button">
-            View all mass ping offers →
-          </button>
+          <button class="mass-ping-view-all" data-tab="ras" type="button">View all mass ping offers →</button>
         </section>
-</section>
+      </section>
 
       <section class="view is-hidden cadets-page" data-view="cadets">
 <div class="cadets-page-layout">
@@ -381,8 +356,7 @@
 
       
 
-      
-      <section class="view is-hidden ras-page" data-view="ras">
+            <section class="view is-hidden ras-page" data-view="ras">
         <header class="ras-page-header">
           <div>
             <h2>RA Pings</h2>
@@ -392,18 +366,9 @@
         </header>
 
         <section class="panel ras-summary-strip">
-          <article>
-            <span>Total Mass Pings</span>
-            <strong data-ra-total-pings>0</strong>
-          </article>
-          <article>
-            <span>Total Responses</span>
-            <strong data-ra-total-responses>0</strong>
-          </article>
-          <article>
-            <span>Cadets Taken on RA</span>
-            <strong data-ra-total-completed>0</strong>
-          </article>
+          <article><span>Total Mass Pings</span><strong data-ra-total-pings>0</strong></article>
+          <article><span>Total Responses</span><strong data-ra-total-responses>0</strong></article>
+          <article><span>Cadets Taken on RA</span><strong data-ra-total-completed>0</strong></article>
         </section>
 
         <section class="panel ras-history-panel">
@@ -705,6 +670,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-27"></script>
+    <script src="ems-dashboard.js?v=20260803-28"></script>
   </body>
 </html>
