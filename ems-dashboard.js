@@ -76,6 +76,12 @@ const els = {
   limitList: document.querySelector("[data-limit-list]"),
   attentionList: document.querySelector("[data-attention-list]"),
   cadetGrid: document.querySelector("[data-cadet-grid]"),
+  trainingCompleteList: document.querySelector("[data-training-complete-list]"),
+  trainingCompleteCount: document.querySelector("[data-training-complete-count]"),
+  needsDay1List: document.querySelector("[data-needs-day1-list]"),
+  needsDay1Count: document.querySelector("[data-needs-day1-count]"),
+  needsDay2List: document.querySelector("[data-needs-day2-list]"),
+  needsDay2Count: document.querySelector("[data-needs-day2-count]"),
   sidebarCadetCount: document.querySelector("[data-sidebar-cadet-count]"),
   sidebarRosterCount: document.querySelector("[data-sidebar-roster-count]"),
   cadetPageSummary: document.querySelector("[data-cadet-page-summary]"),
@@ -2614,6 +2620,103 @@ function renderOverview() {
   }
 }
 
+
+function trainingStatusDotClass(cadet, group) {
+  if (group === "day1") return "status-focus";
+
+  const performance = cadetPerformance(cadet);
+  if (performance.className === "performance-good") return "status-good";
+  if (performance.className === "performance-watch") return "status-watch";
+  return "status-focus";
+}
+
+function cadetTrainingStatusCard(cadet, group) {
+  const minimumUniqueFtos = 4;
+  const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
+  const progress = Math.max(0, Math.min(100, (uniqueFtos / minimumUniqueFtos) * 100));
+
+  const daysLeft = daysUntil(cadet.day28Due);
+  const daysLabel = daysLeft === null
+    ? ""
+    : daysLeft < 0
+      ? `${Math.abs(daysLeft)} days overdue`
+      : `${daysLeft} days left`;
+
+  const groupTag = group === "day1"
+    ? `<span class="training-stage-tag">Day 1</span>`
+    : group === "day2"
+      ? `<span class="training-stage-tag">Day 2</span>`
+      : "";
+
+  const detailLine = group === "complete"
+    ? (cadet.lastRaDate ? `Last RA: ${formatDate(cadet.lastRaDate)}` : "No RA date recorded")
+    : daysLabel;
+
+  return `
+    <button
+      class="cadet-training-status-card"
+      type="button"
+      data-open-cadet-focus="${escapeHtml(cadet.id)}"
+      aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
+    >
+      <span class="cadet-training-card-top">
+        <span class="cadet-training-card-main">
+          <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+          <small>${escapeHtml([
+            cadet.callsign || "",
+            cadet.employeeNumber ? `#${cadet.employeeNumber}` : "",
+            "Cadet"
+          ].filter(Boolean).join(" • "))}</small>
+          <small class="cadet-training-card-note">${escapeHtml(detailLine)}</small>
+        </span>
+
+        <span class="cadet-training-card-side">
+          <i class="cadet-training-status-dot ${trainingStatusDotClass(cadet, group)}" aria-hidden="true"></i>
+          ${groupTag}
+        </span>
+      </span>
+
+      <span class="cadet-fto-progress">
+        <span class="cadet-fto-progress-label">
+          <span>Unique FTO RAs</span>
+          <strong>${uniqueFtos} / ${minimumUniqueFtos}</strong>
+        </span>
+        <span class="cadet-fto-progress-track" aria-hidden="true">
+          <i style="width:${progress}%"></i>
+        </span>
+      </span>
+    </button>
+  `;
+}
+
+function renderCadetTrainingGroups() {
+  if (!els.trainingCompleteList || !els.needsDay1List || !els.needsDay2List) return;
+
+  const cadets = [...state.cadets].sort((a, b) =>
+    String(a.name || "").localeCompare(String(b.name || ""))
+  );
+
+  const trainingComplete = cadets.filter((cadet) => cadet.day1 && cadet.day2);
+  const needsDay1 = cadets.filter((cadet) => !cadet.day1);
+  const needsDay2 = cadets.filter((cadet) => cadet.day1 && !cadet.day2);
+
+  els.trainingCompleteCount.textContent = String(trainingComplete.length);
+  els.needsDay1Count.textContent = String(needsDay1.length);
+  els.needsDay2Count.textContent = String(needsDay2.length);
+
+  els.trainingCompleteList.innerHTML = trainingComplete.length
+    ? trainingComplete.map((cadet) => cadetTrainingStatusCard(cadet, "complete")).join("")
+    : empty("No cadets have completed both training days yet.");
+
+  els.needsDay1List.innerHTML = needsDay1.length
+    ? needsDay1.map((cadet) => cadetTrainingStatusCard(cadet, "day1")).join("")
+    : empty("No cadets currently need Day 1 training.");
+
+  els.needsDay2List.innerHTML = needsDay2.length
+    ? needsDay2.map((cadet) => cadetTrainingStatusCard(cadet, "day2")).join("")
+    : empty("No cadets currently need Day 2 training.");
+}
+
 function renderCadets() {
   const cadets = filteredCadets();
   const allCadets = state.cadets;
@@ -3353,6 +3456,7 @@ function render() {
   renderStats();
   renderOverview();
   renderCadets();
+  renderCadetTrainingGroups();
   renderDirectory();
   renderReviewPage();
   renderSettingsSyncPanels();

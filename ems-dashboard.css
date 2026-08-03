@@ -7189,3 +7189,196 @@ dialog.ra-focus-dossier > form > h2 {
 .attention-priority-legend {
   margin-top: 7px !important;
 }
+
+
+/* Cadets page — training status groups */
+.cadet-training-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cadet-training-group {
+  min-width: 0;
+  padding: 12px;
+}
+
+.cadet-training-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(119, 142, 166, 0.16);
+}
+
+.cadet-training-group-head h2 {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.training-complete-group .cadet-training-group-head h2 { color: #56da8b; }
+.needs-day1-group .cadet-training-group-head h2 { color: #ff5c76; }
+.needs-day2-group .cadet-training-group-head h2 { color: #ff9a3f; }
+
+.cadet-training-group-head strong {
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  border: 1px solid rgba(234, 159, 184, 0.24);
+  border-radius: 999px;
+  background: rgba(234, 159, 184, 0.12);
+  color: #fff;
+  font-size: 0.65rem;
+}
+
+.cadet-training-group-list {
+  display: grid;
+  gap: 7px;
+  max-height: 440px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #ea9fb8 transparent;
+}
+
+.cadet-training-group-list::-webkit-scrollbar { width: 7px; }
+.cadet-training-group-list::-webkit-scrollbar-track { background: transparent; }
+.cadet-training-group-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #ea9fb8;
+}
+
+.cadet-training-status-card {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  min-height: 104px;
+  border: 1px solid rgba(119, 142, 166, 0.18);
+  border-radius: 8px;
+  background: rgba(8, 16, 24, 0.62);
+  color: #dce4ed;
+  padding: 10px;
+  text-align: left;
+}
+
+.cadet-training-status-card:hover,
+.cadet-training-status-card:focus-visible {
+  border-color: rgba(234, 159, 184, 0.38);
+  background: rgba(234, 159, 184, 0.055);
+  outline: none;
+}
+
+.cadet-training-card-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+}
+
+.cadet-training-card-main {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cadet-training-card-main strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cadet-training-card-main small {
+  color: #9aa9ba;
+  font-size: 0.58rem;
+  font-weight: 700;
+}
+
+.cadet-training-card-note {
+  margin-top: 3px;
+  color: #b8c3d0 !important;
+}
+
+.cadet-training-card-side {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.cadet-training-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.cadet-training-status-dot.status-good {
+  background: #56da8b;
+  box-shadow: 0 0 9px rgba(86, 218, 139, 0.52);
+}
+
+.cadet-training-status-dot.status-watch {
+  background: #ff9a3f;
+  box-shadow: 0 0 9px rgba(255, 154, 63, 0.45);
+}
+
+.cadet-training-status-dot.status-focus {
+  background: #ff5c76;
+  box-shadow: 0 0 9px rgba(255, 92, 118, 0.48);
+}
+
+.training-stage-tag {
+  border: 1px solid rgba(234, 159, 184, 0.36);
+  border-radius: 999px;
+  background: rgba(234, 159, 184, 0.11);
+  color: #ea9fb8;
+  padding: 3px 7px;
+  font-size: 0.56rem;
+  font-weight: 900;
+}
+
+.cadet-fto-progress {
+  display: grid;
+  gap: 5px;
+}
+
+.cadet-fto-progress-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #9eacbb;
+  font-size: 0.56rem;
+  font-weight: 750;
+}
+
+.cadet-fto-progress-label strong {
+  color: #ea9fb8;
+  font-size: 0.6rem;
+}
+
+.cadet-fto-progress-track {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(119, 142, 166, 0.15);
+}
+
+.cadet-fto-progress-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ea9fb8, #f2b7cb);
+  box-shadow: 0 0 8px rgba(234, 159, 184, 0.35);
+}
+
+@media (max-width: 1100px) {
+  .cadet-training-groups { grid-template-columns: 1fr; }
+  .cadet-training-group-list { max-height: 340px; }
+}
