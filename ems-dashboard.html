@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-32" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-34" />
   </head>
   <body>
     <main class="app">
@@ -198,8 +198,11 @@
             <button data-action="create-mass-ping" type="button">Mass Ping Cadets</button>
           </div>
           <div class="mass-ping-recent-list" data-mass-ping-recent></div>
-          <button class="mass-ping-view-all" data-tab="ras" type="button">View all mass ping offers →</button>
-        </section>
+          <button data-tab="ras" type="button" aria-label="RA's">
+            <img class="nav-icon" src="Ras.png?v=20260803-34" alt="" />
+            <span>RA's</span>
+          </button>
+</section>
       </section>
 
       <section class="view is-hidden cadets-page" data-view="cadets">
@@ -352,7 +355,7 @@
 
       
 
-                  <section class="view is-hidden ras-page simplified-ras-page" data-view="ras">
+                  <section class="view is-hidden ras-page simplified-ras-page ra-page-top-aligned" data-view="ras">
         <header class="ras-page-header">
           <div>
             <h2>RA's</h2>
@@ -688,6 +691,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-32"></script>
+    <script src="ems-dashboard.js?v=20260803-34"></script>
   </body>
 </html>

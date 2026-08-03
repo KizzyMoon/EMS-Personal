@@ -8007,3 +8007,72 @@ dialog.ra-focus-dossier > form > h2 {
     gap: 6px;
   }
 }
+
+
+/* =========================================================
+   Final RA page navigation + top-aligned layout
+   ========================================================= */
+
+.topbar nav button[data-tab="ras"] {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.topbar nav button[data-tab="ras"] .nav-icon {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.view[data-view="ras"],
+.ras-page,
+.simplified-ras-page,
+.ra-page-top-aligned {
+  display: grid !important;
+  grid-template-rows: auto auto !important;
+  align-content: start !important;
+  justify-content: stretch !important;
+  min-height: 0 !important;
+  height: auto !important;
+  gap: 12px !important;
+  padding-top: 14px !important;
+}
+
+.view[data-view="ras"].is-hidden {
+  display: none !important;
+}
+
+.view[data-view="ras"] .ras-page-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  align-self: start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.view[data-view="ras"] .ras-two-column-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+  align-self: start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+.view[data-view="ras"] .ras-mass-pings-panel,
+.view[data-view="ras"] .ras-accepted-panel {
+  align-self: start !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .view[data-view="ras"] .ras-two-column-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
