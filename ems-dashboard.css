@@ -8076,3 +8076,150 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* =========================================================
+   Overview cleanup + cohesive Needs RA panel
+   ========================================================= */
+
+.overview-reference-layout {
+  align-content: start !important;
+}
+
+.overview-action-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 36px;
+  margin: 0 0 2px;
+}
+
+.overview-action-row .overview-heading-mass-ping {
+  min-width: 130px;
+}
+
+/* Removed sections should never reappear through old styles */
+.overview-attention-panel,
+.overview-mass-ping-panel,
+.overview-reference-heading {
+  display: none !important;
+}
+
+.needs-ra-panel {
+  max-width: none !important;
+  min-width: 0;
+}
+
+.needs-ra-panel [data-needs-ra-list] {
+  display: grid;
+  gap: 6px !important;
+  max-height: none !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.needs-ra-dashboard-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 7px;
+  background: rgba(8, 16, 24, 0.58);
+  color: var(--text);
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.needs-ra-dashboard-row:hover,
+.needs-ra-dashboard-row:focus-visible {
+  border-color: rgba(234, 159, 184, 0.4);
+  background: rgba(234, 159, 184, 0.055);
+  outline: none;
+}
+
+.needs-ra-dashboard-person {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
+.needs-ra-dashboard-person strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.68rem !important;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.needs-ra-dashboard-person small {
+  color: #8f9dad;
+  font-size: 0.55rem !important;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.needs-ra-dashboard-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.needs-ra-dashboard-meta > span {
+  color: #aab6c5;
+  font-size: 0.56rem !important;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.needs-ra-dashboard-meta > strong {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  min-height: 21px;
+  border: 1px solid rgba(234, 159, 184, 0.3);
+  border-radius: 999px;
+  background: rgba(234, 159, 184, 0.1);
+  color: #ea9fb8;
+  font-size: 0.55rem !important;
+  font-weight: 900;
+  padding: 2px 7px;
+}
+
+/* Retire the previous table renderer styles */
+.needs-ra-compact-table,
+.needs-ra-compact-row,
+.compact-needs-ra-row {
+  display: none !important;
+}
+
+/* RA navigation icon */
+.topbar nav button[data-tab="ras"] .nav-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+@media (max-width: 700px) {
+  .needs-ra-dashboard-row {
+    align-items: flex-start;
+  }
+
+  .needs-ra-dashboard-person,
+  .needs-ra-dashboard-meta {
+    display: grid;
+    gap: 3px;
+  }
+
+  .needs-ra-dashboard-meta {
+    justify-items: end;
+  }
+}

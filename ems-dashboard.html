@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-34" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-35" />
   </head>
   <body>
     <main class="app">
@@ -35,6 +35,10 @@
             <img class="nav-icon" src="Roster.png?v=20260802-1" alt="" />
             <span>Roster</span>
             <strong class="sidebar-page-count" data-sidebar-roster-count>0</strong>
+          </button>
+          <button data-tab="ras" type="button" aria-label="RA's">
+            <img class="nav-icon" src="Ras.png?v=20260803-35" alt="" />
+            <span>RA's</span>
           </button>
 <button data-tab="cheat-sheet" type="button" aria-label="Cheat Sheet">
             <img class="nav-icon" src="cheat sheet.png?v=20260802-1" alt="" />
@@ -122,13 +126,9 @@
       </section>
 
             <section class="view overview-dashboard overview-reference-layout" data-view="overview">
-        <header class="overview-reference-heading">
-          <div>
-            <h1>To Do List</h1>
-            <p>EMS Training Hub</p>
-          </div>
+        <div class="overview-action-row">
           <button class="overview-heading-mass-ping" data-action="create-mass-ping" type="button">Mass Ping</button>
-        </header>
+        </div>
 <section class="overview-reference-primary">
           <article class="panel overview-list-panel needs-ra-panel">
             <div class="overview-panel-title">
@@ -164,46 +164,14 @@
             </footer>
           </article>
         </section>
-
-        <article class="panel overview-attention-panel">
-          <div class="overview-panel-title">
-            <div>
-              <h2>Cadets Needing Attention</h2>
-              <p class="muted">Cadets that should be prioritised for follow-up.</p>
-            </div>
-            <button data-tab="cadets" type="button">View all</button>
-          </div>
-          <div class="attention-table" data-attention-list></div>
-          <div class="attention-priority-legend" aria-label="Attention priority key">
-            <span><i class="attention-dot attention-urgent-dot"></i>Urgent — immediate action</span>
-            <span><i class="attention-dot attention-needed-dot"></i>Needs attention — follow up soon</span>
-            <span><i class="attention-dot attention-monitor-dot"></i>Monitor — keep an eye on</span>
-          </div>
-        </article>
-
-        <article class="panel overview-limits-panel">
+<article class="panel overview-limits-panel">
           <div class="overview-panel-title">
             <h2>Cadets Approaching Limit</h2>
             <button data-tab="cadets" type="button">View all</button>
           </div>
           <div class="overview-limit-grid" data-limit-list></div>
         </article>
-
-        <section class="panel overview-mass-ping-panel">
-          <div class="overview-panel-title">
-            <div>
-              <h2>Mass Ping Offers</h2>
-              <p class="muted">Ping all cadets, then record anyone who responds.</p>
-            </div>
-            <button data-action="create-mass-ping" type="button">Mass Ping Cadets</button>
-          </div>
-          <div class="mass-ping-recent-list" data-mass-ping-recent></div>
-          <button data-tab="ras" type="button" aria-label="RA's">
-            <img class="nav-icon" src="Ras.png?v=20260803-34" alt="" />
-            <span>RA's</span>
-          </button>
 </section>
-      </section>
 
       <section class="view is-hidden cadets-page" data-view="cadets">
 <div class="cadets-page-layout">
@@ -691,6 +659,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-34"></script>
+    <script src="ems-dashboard.js?v=20260803-35"></script>
   </body>
 </html>

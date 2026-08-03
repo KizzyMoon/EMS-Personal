@@ -2623,35 +2623,35 @@ function renderOverview() {
 
   if (els.needsRaList) {
     els.needsRaList.innerHTML = needsRaItems.length
-      ? `
-        <div class="needs-ra-compact-table" role="table" aria-label="Cadets needing an RA from me">
-          ${needsRaItems.map((cadet) => {
-            const days = daysUntil(cadet.day28Due);
-            const daysText = days === null
-              ? "—"
-              : days < 0
-                ? `${Math.abs(days)}d overdue`
-                : `${days}d`;
+      ? needsRaItems.map((cadet) => {
+          const days = daysUntil(cadet.day28Due);
+          const daysText = days === null
+            ? "No limit date"
+            : days < 0
+              ? `${Math.abs(days)} days overdue`
+              : `${days} days left`;
 
-            const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
+          const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
 
-            return `
-              <button
-                class="needs-ra-compact-row"
-                type="button"
-                role="row"
-                data-view-sheet-notes="${escapeHtml(cadet.id)}"
-                aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
-              >
-                <span class="needs-ra-compact-name" role="cell">${escapeHtml(cadet.name || "Unnamed cadet")}</span>
-                <span class="needs-ra-compact-callsign" role="cell">${escapeHtml(cadet.callsign || "—")}</span>
-                <span class="needs-ra-compact-days" role="cell">${escapeHtml(daysText)}</span>
-                <strong class="needs-ra-compact-fto" role="cell">${uniqueFtos}/4</strong>
-              </button>
-            `;
-          }).join("")}
-        </div>
-      `
+          return `
+            <button
+              class="needs-ra-dashboard-row"
+              type="button"
+              data-view-sheet-notes="${escapeHtml(cadet.id)}"
+              aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
+            >
+              <span class="needs-ra-dashboard-person">
+                <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+                <small>${escapeHtml(cadet.callsign || "No callsign")}</small>
+              </span>
+
+              <span class="needs-ra-dashboard-meta">
+                <span>${escapeHtml(daysText)}</span>
+                <strong>${uniqueFtos}/4</strong>
+              </span>
+            </button>
+          `;
+        }).join("")
       : empty("No cadets currently need an RA.");
   }
 
