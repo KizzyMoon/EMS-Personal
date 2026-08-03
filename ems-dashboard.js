@@ -2428,10 +2428,15 @@ function cadetAttentionDetails(cadet) {
 
   /*
   ============================================================================
-  PERFORMANCE GATING
+  STAGE-AWARE PRIORITY RULES
 
-  Do not assess RA performance, focus colours, RA inactivity or unique-FTO
-  coverage until the cadet has completed Day 1 training.
+  Urgent is reserved for genuinely time-critical or severe situations:
+  - Over the 28-day limit
+  - 3 days or less left
+  - 14+ days without an RA after Day 1
+  - Multiple red focus areas / severe performance concern
+
+  Missing Day 1 or Day 2 alone is Needs Attention, not Urgent.
   ============================================================================
   */
 
@@ -2444,36 +2449,26 @@ function cadetAttentionDetails(cadet) {
 
     if (!cadet.lastRaDate) {
       addReason("No RA date recorded", 2);
-    } else if (sinceLastRa !== null && sinceLastRa >= 10) {
-      addReason(`No RA in ${sinceLastRa} days`, 2);
+    } else if (sinceLastRa !== null && sinceLastRa >= 14) {
+      addReason(`No RA in ${sinceLastRa} days`, 3);
     } else if (sinceLastRa !== null && sinceLastRa >= 7) {
-      addReason(`No RA in ${sinceLastRa} days`, 1);
+      addReason(`No RA in ${sinceLastRa} days`, 2);
     }
 
     if (uniqueFtos === 0) {
       addReason("No unique FTO RAs recorded", 2);
     } else if (uniqueFtos === 1) {
-      addReason("Only 1 unique FTO RA", 1);
+      addReason("Only 1 unique FTO RA", 2);
     }
 
-    if (focusCounts.red > 0 || performance.className === "performance-focus") {
-      addReason(
-        focusCounts.red === 1
-          ? "1 recent focus area is red"
-          : focusCounts.red > 1
-            ? `${focusCounts.red} recent focus areas are red`
-            : "Recent performance needs focused help",
-        3
-      );
-    } else if (focusCounts.orange > 0 || performance.className === "performance-watch") {
-      addReason(
-        focusCounts.orange === 1
-          ? "1 recent focus area needs improvement"
-          : focusCounts.orange > 1
-            ? `${focusCounts.orange} recent focus areas need improvement`
-            : "Recent RA shows some struggles",
-        1
-      );
+    if (focusCounts.red >= 2) {
+      addReason(`${focusCounts.red} recent focus areas are red`, 3);
+    } else if (focusCounts.red === 1 || performance.className === "performance-focus") {
+      addReason("1 recent focus area is red", 2);
+    } else if (focusCounts.orange >= 2) {
+      addReason(`${focusCounts.orange} recent focus areas need improvement`, 2);
+    } else if (focusCounts.orange === 1 || performance.className === "performance-watch") {
+      addReason("1 recent focus area needs improvement", 1);
     }
   }
 
