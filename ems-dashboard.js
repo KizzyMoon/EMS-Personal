@@ -75,10 +75,6 @@ const els = {
   needsTrainingList: document.querySelector("[data-needs-training-list]"),
   limitList: document.querySelector("[data-limit-list]"),
   attentionList: document.querySelector("[data-attention-list]"),
-  summaryNeedsRa: document.querySelector("[data-summary-needs-ra]"),
-  summaryNeedsTraining: document.querySelector("[data-summary-needs-training]"),
-  summaryAttention: document.querySelector("[data-summary-attention]"),
-  summaryLimits: document.querySelector("[data-summary-limits]"),
   massPingRecent: document.querySelector("[data-mass-ping-recent]"),
   raPingHistory: document.querySelector("[data-ra-ping-history]"),
   raTotalPings: document.querySelector("[data-ra-total-pings]"),
@@ -2620,12 +2616,6 @@ function renderOverview() {
   const limitItems = cadets.filter(isBetweenFourteenAndTwentyEightDays);
 
   renderAttentionTable(cadets);
-
-  const attentionItems = cadets.map(cadetAttentionDetails).filter(Boolean);
-  if (els.summaryNeedsRa) els.summaryNeedsRa.textContent = String(needsRaItems.length);
-  if (els.summaryNeedsTraining) els.summaryNeedsTraining.textContent = String(needsTrainingItems.length);
-  if (els.summaryAttention) els.summaryAttention.textContent = String(attentionItems.length);
-  if (els.summaryLimits) els.summaryLimits.textContent = String(limitItems.length);
 
   if (els.needsRaCount) els.needsRaCount.textContent = needsRaItems.length;
   if (els.needsTrainingCount) els.needsTrainingCount.textContent = needsTrainingItems.length;

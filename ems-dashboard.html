@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-28" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-29" />
   </head>
   <body>
     <main class="app">
@@ -128,15 +128,7 @@
             <p>EMS Training Hub</p>
           </div>
         </header>
-
-        <section class="overview-reference-stats">
-          <article><strong data-summary-needs-ra>0</strong><span>Needs RA From Me</span></article>
-          <article><strong data-summary-needs-training>0</strong><span>Needs Training</span></article>
-          <article><strong data-summary-attention>0</strong><span>Cadets Needing Attention</span></article>
-          <article><strong data-summary-limits>0</strong><span>Approaching Limit</span></article>
-        </section>
-
-        <section class="overview-reference-primary">
+<section class="overview-reference-primary">
           <article class="panel overview-list-panel">
             <div class="overview-panel-title">
               <h2>Needs RA From Me</h2>
@@ -220,7 +212,41 @@
             </header>
 
             <div class="cadet-grid cadet-profile-grid" data-cadet-grid></div>
-          </main>
+          
+
+            <section class="cadet-training-status-block">
+          <div class="cadet-training-status-heading">
+            <div>
+              <h2>Cadet Training Status</h2>
+              <p class="muted">A quick view of each cadet's current training stage.</p>
+            </div>
+          </div>
+          <div class="cadet-training-groups" aria-label="Cadet training status">
+          <article class="panel cadet-training-group training-complete-group">
+            <div class="cadet-training-group-head">
+              <h2>Training Complete</h2>
+              <strong data-training-complete-count>0</strong>
+            </div>
+            <div class="cadet-training-group-list" data-training-complete-list></div>
+          </article>
+
+          <article class="panel cadet-training-group needs-day1-group">
+            <div class="cadet-training-group-head">
+              <h2>Needs Day 1</h2>
+              <strong data-needs-day1-count>0</strong>
+            </div>
+            <div class="cadet-training-group-list" data-needs-day1-list></div>
+          </article>
+
+          <article class="panel cadet-training-group needs-day2-group">
+            <div class="cadet-training-group-head">
+              <h2>Needs Day 2</h2>
+              <strong data-needs-day2-count>0</strong>
+            </div>
+            <div class="cadet-training-group-list" data-needs-day2-list></div>
+          </article>
+        </section>
+</main>
 
           <aside class="cadets-page-side">
             <article class="panel cadet-overview-panel">
@@ -261,38 +287,7 @@
         </article>
       
 
-        <section class="cadet-training-status-block">
-          <div class="cadet-training-status-heading">
-            <div>
-              <h2>Cadet Training Status</h2>
-              <p class="muted">A quick view of each cadet's current training stage.</p>
-            </div>
-          </div>
-          <div class="cadet-training-groups" aria-label="Cadet training status">
-          <article class="panel cadet-training-group training-complete-group">
-            <div class="cadet-training-group-head">
-              <h2>Training Complete</h2>
-              <strong data-training-complete-count>0</strong>
-            </div>
-            <div class="cadet-training-group-list" data-training-complete-list></div>
-          </article>
-
-          <article class="panel cadet-training-group needs-day1-group">
-            <div class="cadet-training-group-head">
-              <h2>Needs Day 1</h2>
-              <strong data-needs-day1-count>0</strong>
-            </div>
-            <div class="cadet-training-group-list" data-needs-day1-list></div>
-          </article>
-
-          <article class="panel cadet-training-group needs-day2-group">
-            <div class="cadet-training-group-head">
-              <h2>Needs Day 2</h2>
-              <strong data-needs-day2-count>0</strong>
-            </div>
-            <div class="cadet-training-group-list" data-needs-day2-list></div>
-          </article>
-        </section>
+        
 </section>
 
 
@@ -670,6 +665,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-28"></script>
+    <script src="ems-dashboard.js?v=20260803-29"></script>
   </body>
 </html>

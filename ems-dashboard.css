@@ -7662,3 +7662,73 @@ dialog.ra-focus-dossier > form > h2 {
   .mass-ping-row { grid-template-columns:1fr !important; }
   .overview-schedule-panel { grid-column:auto; }
 }
+
+
+/* =========================================================
+   Overview — compact Needs RA From Me panel
+   ========================================================= */
+
+.overview-reference-primary .overview-list-panel:first-child {
+  max-width: 430px;
+}
+
+.overview-reference-primary .overview-list-panel:first-child .overview-reference-list,
+.overview-reference-primary .overview-list-panel:first-child [data-needs-ra-list] {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.overview-reference-primary .overview-list-panel:first-child .todo-item,
+.overview-reference-primary .overview-list-panel:first-child .todo-row,
+.overview-reference-primary .overview-list-panel:first-child [data-view-sheet-notes] {
+  min-height: 34px !important;
+  padding: 6px 10px !important;
+}
+
+.overview-reference-primary .overview-list-panel:first-child .todo-item > div,
+.overview-reference-primary .overview-list-panel:first-child .todo-row > div {
+  min-width: 0;
+}
+
+.overview-reference-primary .overview-list-panel:first-child h3,
+.overview-reference-primary .overview-list-panel:first-child strong {
+  font-size: 0.66rem !important;
+}
+
+.overview-reference-primary .overview-list-panel:first-child p,
+.overview-reference-primary .overview-list-panel:first-child small,
+.overview-reference-primary .overview-list-panel:first-child span {
+  font-size: 0.54rem !important;
+  line-height: 1.15 !important;
+}
+
+.overview-reference-primary .overview-list-panel:first-child .todo-item,
+.overview-reference-primary .overview-list-panel:first-child .todo-row {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+}
+
+
+
+/* =========================================================
+   Cadet Training Status placement
+   ========================================================= */
+
+.cadets-page-main > .cadet-training-status-block {
+  width: 100%;
+  margin-top: 14px !important;
+  align-self: start;
+}
+
+.cadets-page-layout {
+  align-items: start !important;
+}
+
+.cadets-page-main {
+  min-width: 0;
+}
+
+.cadets-page-side {
+  align-self: start;
+}
+
