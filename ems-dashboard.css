@@ -7121,3 +7121,71 @@ dialog.ra-focus-dossier > form > h2 {
 [data-overview-schedule] .schedule-body {
   flex: 1 1 auto !important;
 }
+
+
+/* =========================================================
+   Compact Cadets Needing Attention cards
+   ========================================================= */
+
+.attention-card-list {
+  gap: 7px !important;
+}
+
+.attention-card-row {
+  min-height: 58px !important;
+  height: auto !important;
+  grid-template-columns: 4px minmax(0, 1fr) 108px 14px !important;
+  gap: 8px !important;
+  align-items: center !important;
+  padding: 7px 8px 7px 0 !important;
+}
+
+.attention-card-main {
+  gap: 3px !important;
+}
+
+.attention-card-title-line {
+  gap: 5px !important;
+}
+
+.attention-card-title-line strong {
+  font-size: 0.72rem !important;
+}
+
+.attention-card-title-line small {
+  font-size: 0.56rem !important;
+}
+
+.attention-card-reasons {
+  gap: 1px !important;
+  margin-top: 0 !important;
+}
+
+.attention-card-reasons small {
+  font-size: 0.56rem !important;
+  line-height: 1.18 !important;
+}
+
+.attention-card-side {
+  align-self: center !important;
+  gap: 2px !important;
+}
+
+.attention-card-side > small {
+  font-size: 0.51rem !important;
+  line-height: 1.15 !important;
+}
+
+.attention-priority {
+  min-height: 22px !important;
+  padding: 3px 7px !important;
+  font-size: 0.56rem !important;
+}
+
+.attention-card-arrow {
+  font-size: 1.05rem !important;
+}
+
+.attention-priority-legend {
+  margin-top: 7px !important;
+}
