@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-29" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-30" />
   </head>
   <body>
     <main class="app">
@@ -127,6 +127,7 @@
             <h1>To Do List</h1>
             <p>EMS Training Hub</p>
           </div>
+          <button class="overview-heading-mass-ping" data-action="create-mass-ping" type="button">Mass Ping</button>
         </header>
 <section class="overview-reference-primary">
           <article class="panel overview-list-panel">
@@ -351,30 +352,52 @@
 
       
 
-            <section class="view is-hidden ras-page" data-view="ras">
+                  <section class="view is-hidden ras-page simplified-ras-page" data-view="ras">
         <header class="ras-page-header">
           <div>
-            <h2>RA Pings</h2>
-            <p class="muted">A full history of mass cadet pings, responses and completed RAs.</p>
+            <h2>RA's</h2>
+            <p class="muted">Mass ping history and cadets who accepted an RA.</p>
           </div>
-          <button data-action="create-mass-ping" type="button">Mass Ping Cadets</button>
+          <button data-action="create-mass-ping" type="button">Mass Ping</button>
         </header>
 
-        <section class="panel ras-summary-strip">
-          <article><span>Total Mass Pings</span><strong data-ra-total-pings>0</strong></article>
-          <article><span>Total Responses</span><strong data-ra-total-responses>0</strong></article>
-          <article><span>Cadets Taken on RA</span><strong data-ra-total-completed>0</strong></article>
-        </section>
-
-        <section class="panel ras-history-panel">
-          <div class="panel-head">
-            <div>
-              <h2>All RA Pings</h2>
-              <p class="muted">Every mass ping and the cadets linked to it.</p>
+        <div class="ras-two-column-layout">
+          <section class="panel ras-mass-pings-panel">
+            <div class="panel-head">
+              <div>
+                <h2>All Mass Pings</h2>
+                <p class="muted">Select a cadet if someone accepts the ping.</p>
+              </div>
+              <strong data-ra-total-pings>0</strong>
             </div>
-          </div>
-          <div class="ras-history-table" data-ra-ping-history></div>
-        </section>
+
+            <div class="ras-simple-table">
+              <div class="ras-simple-table-head">
+                <span>Date & Time</span>
+                <span>Cadet</span>
+              </div>
+              <div data-ra-ping-history></div>
+            </div>
+          </section>
+
+          <section class="panel ras-accepted-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Cadets Taken on RA</h2>
+                <p class="muted">Automatically populated from mass ping selections.</p>
+              </div>
+              <strong data-ra-total-completed>0</strong>
+            </div>
+
+            <div class="ras-simple-table">
+              <div class="ras-simple-table-head accepted">
+                <span>Cadet</span>
+                <span>RA Date & Time</span>
+              </div>
+              <div data-ra-accepted-list></div>
+            </div>
+          </section>
+        </div>
       </section>
 
 <section class="view is-hidden cheat-sheet-page" data-view="cheat-sheet">
@@ -665,6 +688,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-29"></script>
+    <script src="ems-dashboard.js?v=20260803-30"></script>
   </body>
 </html>

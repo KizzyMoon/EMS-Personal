@@ -7732,3 +7732,94 @@ dialog.ra-focus-dossier > form > h2 {
   align-self: start;
 }
 
+
+
+/* Simplified RA page */
+.simplified-ras-page {
+  display: grid;
+  gap: 12px;
+}
+
+.simplified-ras-page.is-hidden {
+  display: none;
+}
+
+.ras-two-column-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.ras-mass-pings-panel,
+.ras-accepted-panel {
+  padding: 12px;
+}
+
+.ras-simple-table {
+  overflow: hidden;
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 8px;
+}
+
+.ras-simple-table-head,
+.ras-simple-row {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.ras-simple-table-head {
+  background: rgba(7, 14, 22, 0.72);
+  color: #9ca9b7;
+  padding: 9px 11px;
+  font-size: 0.56rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ras-simple-row {
+  border-top: 1px solid rgba(119, 142, 166, 0.12);
+  padding: 9px 11px;
+}
+
+.ras-simple-row > span {
+  display: grid;
+  gap: 2px;
+}
+
+.ras-simple-row strong {
+  color: #fff;
+  font-size: 0.65rem;
+}
+
+.ras-simple-row small {
+  color: #8f9dad;
+  font-size: 0.54rem;
+}
+
+.ras-simple-row select {
+  width: 100%;
+}
+
+.ras-simple-row.accepted {
+  grid-template-columns: minmax(0, 1fr) 180px;
+}
+
+.overview-reference-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.overview-heading-mass-ping {
+  min-width: 140px;
+}
+
+@media (max-width: 900px) {
+  .ras-two-column-layout {
+    grid-template-columns: 1fr;
+  }
+}

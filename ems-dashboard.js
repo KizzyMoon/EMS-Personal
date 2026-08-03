@@ -77,8 +77,8 @@ const els = {
   attentionList: document.querySelector("[data-attention-list]"),
   massPingRecent: document.querySelector("[data-mass-ping-recent]"),
   raPingHistory: document.querySelector("[data-ra-ping-history]"),
+  raAcceptedList: document.querySelector("[data-ra-accepted-list]"),
   raTotalPings: document.querySelector("[data-ra-total-pings]"),
-  raTotalResponses: document.querySelector("[data-ra-total-responses]"),
   raTotalCompleted: document.querySelector("[data-ra-total-completed]"),
   cadetGrid: document.querySelector("[data-cadet-grid]"),
   trainingCompleteList: document.querySelector("[data-training-complete-list]"),
@@ -3462,61 +3462,103 @@ function updateSettingsSheetLinks() {
 }
 
 
-function massPingCadetOptions() {
-  return `<option value="">Add cadet response…</option>${state.cadets.map((cadet) =>
-    `<option value="${escapeHtml(cadet.id)}">${escapeHtml(cadet.name || "Unnamed cadet")} | ${escapeHtml(cadet.callsign || "No callsign")}</option>`
-  ).join("")}`;
+function massPingCadetOptions(selectedId = "") {
+  return `
+    <option value="">Select accepted cadet…</option>
+    ${state.cadets.map((cadet) => `
+      <option value="${escapeHtml(cadet.id)}" ${String(cadet.id) === String(selectedId) ? "selected" : ""}>
+        ${escapeHtml(cadet.name || "Unnamed cadet")} | ${escapeHtml(cadet.callsign || "No callsign")}
+      </option>
+    `).join("")}
+  `;
 }
 
 function createMassPing() {
   state.massPingHistory = Array.isArray(state.massPingHistory) ? state.massPingHistory : [];
-  state.massPingHistory.unshift({ id: crypto.randomUUID(), createdAt: new Date().toISOString(), responses: [] });
+  state.massPingHistory.unshift({
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+    acceptedCadetId: ""
+  });
   saveState();
   renderMassPingPanels();
 }
 
-function addMassPingResponse(pingId, cadetId) {
-  const ping = (state.massPingHistory || []).find((x) => x.id === pingId);
-  const cadet = state.cadets.find((x) => String(x.id) === String(cadetId));
-  if (!ping || !cadet || !cadetId) return;
-  ping.responses = Array.isArray(ping.responses) ? ping.responses : [];
-  if (!ping.responses.some((x) => String(x.cadetId) === String(cadetId))) {
-    ping.responses.push({ cadetId: cadet.id, name: cadet.name || "", callsign: cadet.callsign || "", completedRa: false });
-  }
+function setMassPingAcceptedCadet(pingId, cadetId) {
+  const ping = (state.massPingHistory || []).find((entry) => entry.id === pingId);
+  if (!ping) return;
+  ping.acceptedCadetId = cadetId || "";
   saveState();
   renderMassPingPanels();
 }
 
-function toggleMassPingRa(pingId, cadetId) {
-  const ping = (state.massPingHistory || []).find((x) => x.id === pingId);
-  const response = ping?.responses?.find((x) => String(x.cadetId) === String(cadetId));
-  if (!response) return;
-  response.completedRa = !response.completedRa;
-  saveState();
-  renderMassPingPanels();
+function massPingHistoryRow(ping) {
+  return `
+    <div class="ras-simple-row">
+      <span class="ras-ping-date">
+        <strong>${escapeHtml(new Date(ping.createdAt).toLocaleDateString("en-GB"))}</strong>
+        <small>${escapeHtml(new Date(ping.createdAt).toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit"
+        }))}</small>
+      </span>
+      <select data-mass-ping-response-select="${escapeHtml(ping.id)}">
+        ${massPingCadetOptions(ping.acceptedCadetId || "")}
+      </select>
+    </div>
+  `;
 }
 
-function massPingRow(ping) {
-  const responses = Array.isArray(ping.responses) ? ping.responses : [];
-  return `<article class="mass-ping-row">
-    <div><strong>${escapeHtml(new Date(ping.createdAt).toLocaleDateString("en-GB"))}</strong><small>${escapeHtml(new Date(ping.createdAt).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}))}</small></div>
-    <div class="mass-ping-response-area">${responses.length ? responses.map((r) =>
-      `<button type="button" class="mass-ping-response-tag ${r.completedRa ? "completed" : ""}" data-toggle-mass-ping-ra="${escapeHtml(ping.id)}" data-cadet-id="${escapeHtml(r.cadetId)}">${escapeHtml(r.name || r.callsign || "Cadet")} — ${r.completedRa ? "RA Complete" : "Responded"}</button>`
-    ).join("") : `<span class="muted">No responses recorded</span>`}</div>
-    <select data-mass-ping-response-select="${escapeHtml(ping.id)}">${massPingCadetOptions()}</select>
-  </article>`;
+function acceptedRaRow(ping) {
+  const cadet = state.cadets.find(
+    (entry) => String(entry.id) === String(ping.acceptedCadetId)
+  );
+  if (!cadet) return "";
+
+  return `
+    <div class="ras-simple-row accepted">
+      <span>
+        <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+        <small>${escapeHtml(cadet.callsign || "No callsign")}</small>
+      </span>
+      <span class="ras-ping-date">
+        <strong>${escapeHtml(new Date(ping.createdAt).toLocaleDateString("en-GB"))}</strong>
+        <small>${escapeHtml(new Date(ping.createdAt).toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit"
+        }))}</small>
+      </span>
+    </div>
+  `;
 }
 
 function renderMassPingPanels() {
   const history = Array.isArray(state.massPingHistory) ? state.massPingHistory : [];
-  if (els.massPingRecent) els.massPingRecent.innerHTML = history.length ? history.slice(0,3).map(massPingRow).join("") : empty("No mass pings recorded yet.");
-  if (els.raPingHistory) els.raPingHistory.innerHTML = history.length ? history.map(massPingRow).join("") : empty("No RA pings recorded yet.");
-  const responses = history.reduce((n,p) => n + (p.responses?.length || 0), 0);
-  const completed = history.reduce((n,p) => n + (p.responses || []).filter((r) => r.completedRa).length, 0);
+
+  if (els.massPingRecent) {
+    els.massPingRecent.innerHTML = history.length
+      ? history.slice(0, 3).map(massPingHistoryRow).join("")
+      : empty("No mass pings have been recorded yet.");
+  }
+
+  if (els.raPingHistory) {
+    els.raPingHistory.innerHTML = history.length
+      ? history.map(massPingHistoryRow).join("")
+      : empty("No mass pings have been recorded yet.");
+  }
+
+  const accepted = history.filter((ping) => ping.acceptedCadetId);
+
+  if (els.raAcceptedList) {
+    els.raAcceptedList.innerHTML = accepted.length
+      ? accepted.map(acceptedRaRow).join("")
+      : empty("No cadets have accepted an RA yet.");
+  }
+
   if (els.raTotalPings) els.raTotalPings.textContent = String(history.length);
-  if (els.raTotalResponses) els.raTotalResponses.textContent = String(responses);
-  if (els.raTotalCompleted) els.raTotalCompleted.textContent = String(completed);
+  if (els.raTotalCompleted) els.raTotalCompleted.textContent = String(accepted.length);
 }
+
 function render() {
   updateSidebarCounts();
   renderStats();
@@ -4672,15 +4714,22 @@ document.addEventListener("click", (event) => {
   els.storageUrl
 ].forEach((input) => input?.addEventListener("input", updateSettingsSheetLinks));
 
+
+
+
+
 document.addEventListener("click", (event) => {
-  const create = event.target.closest('[data-action="create-mass-ping"]');
-  if (create) { createMassPing(); return; }
-  const toggle = event.target.closest("[data-toggle-mass-ping-ra]");
-  if (toggle) toggleMassPingRa(toggle.dataset.toggleMassPingRa, toggle.dataset.cadetId);
+  const createButton = event.target.closest('[data-action="create-mass-ping"]');
+  if (!createButton) return;
+  createMassPing();
 });
+
 document.addEventListener("change", (event) => {
-  const select = event.target.closest("[data-mass-ping-response-select]");
-  if (!select) return;
-  addMassPingResponse(select.dataset.massPingResponseSelect, select.value);
-  select.value = "";
+  const responseSelect = event.target.closest("[data-mass-ping-response-select]");
+  if (!responseSelect) return;
+
+  setMassPingAcceptedCadet(
+    responseSelect.dataset.massPingResponseSelect,
+    responseSelect.value
+  );
 });
