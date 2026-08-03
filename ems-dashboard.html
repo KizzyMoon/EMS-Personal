@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-14" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-15" />
   </head>
   <body>
     <main class="app">
@@ -122,7 +122,7 @@
       <section class="toolbar">
         <input data-search type="search" placeholder="Search names, callsigns, notes..." />
         <span class="sync-status-chip" data-overview-sync-status>Not synced yet</span>
-        <button data-action="import-google" type="button">Sync Sheet</button>
+        <button data-action="import-google" type="button">Sync All Sheets</button>
       </section>
 
       <section class="view overview-dashboard" data-view="overview">
@@ -553,7 +553,8 @@
             <h2>Settings</h2>
             <p class="muted">Manage your personal preferences, sheets and sync activity.</p>
           </div>
-</header>
+          <span class="settings-role-pill">EMS</span>
+        </header>
 
         <section class="settings-main-panel">
           <div class="settings-top-grid">
@@ -662,6 +663,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-14"></script>
+    <script src="ems-dashboard.js?v=20260803-15"></script>
   </body>
 </html>

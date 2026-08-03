@@ -1778,44 +1778,165 @@ async function refreshInterviews(options = {}) {
 
 async function importGoogleSheet(options = {}) {
   const silent = Boolean(options.silent);
-  const tokenOptions = { prompt: options.prompt ?? "" };
+  const tokenOptions = {
+    prompt: options.prompt ?? "",
+    force: Boolean(options.force)
+  };
+
+  const results = [];
+  const addResult = (sheet, success, details, error = null) => {
+    results.push({
+      sheet,
+      success,
+      details,
+      error: error ? (error.message || String(error)) : ""
+    });
+  };
+
   let cadetCount = 0;
   let rosterCount = 0;
-  const errors = [];
+
+  /*
+  ============================================================================
+  SYNC SHEET MUST REFRESH EVERY CONFIGURED SOURCE
+
+  1. Main cadet list
+  2. Every cadet's own personal sheet tab
+  3. EMS roster
+  4. Training attendance
+  5. Interview attendance
+  6. Personal storage data
+
+  Do not reduce this action to syncing only the currently visible page.
+  ============================================================================
+  */
+
   try {
     cadetCount = await importPrivateGoogleSheet(tokenOptions);
+    addResult(
+      "Cadets Sheet",
+      true,
+      `${cadetCount} cadet row(s), including live personal cadet tabs`
+    );
   } catch (privateError) {
     try {
       const url = googleCsvUrl(els.googleUrl.value);
       const response = await fetch(url);
       if (!response.ok) throw new Error(`Google returned ${response.status}`);
+
       const text = await response.text();
-      if (/html|doctype|sign in/i.test(text.slice(0, 300))) throw new Error("The sheet did not return CSV. It may need to be shared or published.");
+      if (/html|doctype|sign in/i.test(text.slice(0, 300))) {
+        throw new Error("The sheet did not return CSV. It may need to be shared or published.");
+      }
+
       cadetCount = importRows(parseCsv(text));
+      addResult(
+        "Cadets Sheet",
+        true,
+        `${cadetCount} cadet row(s) via CSV fallback; live personal tabs could not be refreshed`,
+        privateError
+      );
     } catch (publicError) {
-      errors.push(`Cadet sheet: ${privateError.message}; CSV fallback: ${publicError.message}`);
+      addResult(
+        "Cadets Sheet",
+        false,
+        "Cadet list and personal cadet tabs failed",
+        new Error(`${privateError.message}; CSV fallback: ${publicError.message}`)
+      );
     }
   }
+
   try {
     rosterCount = await importPrivateRosterSheet(tokenOptions);
-  } catch (rosterError) {
-    errors.push(`Roster sheet: ${rosterError.message}`);
+    addResult("Roster Sheet", true, `${rosterCount} roster row(s)`);
+  } catch (error) {
+    addResult("Roster Sheet", false, "Roster was not refreshed", error);
   }
+
+  try {
+    const trainingResult = await refreshTraining(tokenOptions);
+    if (trainingResult.error) {
+      addResult("Training Sheet", false, "Training was not refreshed", trainingResult.error);
+    } else {
+      addResult(
+        "Training Sheet",
+        true,
+        `${trainingResult.sessions.length} upcoming training session(s)`
+      );
+    }
+  } catch (error) {
+    addResult("Training Sheet", false, "Training was not refreshed", error);
+  }
+
+  try {
+    const interviewResult = await refreshInterviews(tokenOptions);
+    if (interviewResult.error) {
+      addResult("Interviews Sheet", false, "Interviews were not refreshed", interviewResult.error);
+    } else {
+      addResult(
+        "Interviews Sheet",
+        true,
+        `${interviewResult.sessions.length} upcoming interview session(s)`
+      );
+    }
+  } catch (error) {
+    addResult("Interviews Sheet", false, "Interviews were not refreshed", error);
+  }
+
   try {
     await loadPersonalCloudData(tokenOptions);
-  } catch (storageError) {
-    errors.push(`Personal storage sheet: ${storageError.message}`);
+    addResult("Personal Storage Sheet", true, "Personal settings and saved dashboard data loaded");
+  } catch (error) {
+    addResult("Personal Storage Sheet", false, "Personal data was not loaded", error);
   }
-  const trainingResult = await refreshTraining(tokenOptions);
-  if (trainingResult.error) errors.push(`Training sheet: ${trainingResult.error.message}`);
-  const interviewResult = await refreshInterviews(tokenOptions);
-  if (interviewResult.error) errors.push(`Interviews sheet: ${interviewResult.error.message}`);
+
+  const failures = results.filter((result) => !result.success);
+  const warnings = results.filter(
+    (result) => result.success && result.error
+  );
+
+  state.lastUpdated = new Date().toISOString();
+
+  if (typeof recordSyncAttempt === "function") {
+    const status = failures.length ? "warning" : "success";
+    const message = failures.length
+      ? `Completed with issues — ${failures.map((item) => item.sheet).join(", ")}`
+      : warnings.length
+        ? "Completed with warnings — all sources returned usable data"
+        : "Success — all configured sheets synced";
+
+    recordSyncAttempt(status, message);
+  } else {
+    saveState({ cloud: false });
+  }
+
   render();
-  if (silent) return { cadetCount, rosterCount, errors };
-  if (errors.length) {
-    alert(`Synced with issues.\n\nImported ${cadetCount} cadet row(s) and ${rosterCount} roster row(s).\n\n${errors.join("\n")}`);
+
+  const errors = failures.map(
+    (result) => `${result.sheet}: ${result.error || result.details}`
+  );
+
+  if (!silent && failures.length) {
+    const successful = results
+      .filter((result) => result.success)
+      .map((result) => `✓ ${result.sheet}: ${result.details}`)
+      .join("\n");
+
+    const failed = failures
+      .map((result) => `✕ ${result.sheet}: ${result.error || result.details}`)
+      .join("\n");
+
+    alert(
+      `Sync completed with issues.\n\n${successful || "No sheets synced successfully."}\n\n${failed}`
+    );
   }
-  return { cadetCount, rosterCount, errors };
+
+  return {
+    cadetCount,
+    rosterCount,
+    errors,
+    results
+  };
 }
 
 function filteredCadets() {
@@ -3006,7 +3127,11 @@ function ftoCoverageData() {
       callsign: member.callsign || "",
       totalRas,
       uniqueCadets: coveredCadets.size,
-      lastRa: latestDate
+      lastRa: latestDate,
+      missingCadets: state.cadets
+        .filter((cadet) => !coveredCadets.has(cadet.id || cadet.name || cadet.callsign))
+        .map((cadet) => cadet.name || cadet.callsign)
+        .filter(Boolean)
     };
   }).sort((a, b) =>
     b.totalRas - a.totalRas ||
@@ -3073,7 +3198,7 @@ function renderReviewPage() {
     ? `
       <div class="review-table review-fto-table">
         <div class="review-table-head">
-          <span>FTO</span><span>RAs</span><span>Cadets</span><span>Last RA</span>
+          <span>FTO</span><span>RAs</span><span>Cadets</span><span>Last RA</span><span>Not Yet Taken</span>
         </div>
         ${coverage.map((item) => `
           <div class="review-table-row">
@@ -3081,6 +3206,7 @@ function renderReviewPage() {
             <span>${item.totalRas}</span>
             <span>${item.uniqueCadets}</span>
             <span>${item.lastRa ? escapeHtml(formatDate(item.lastRa)) : "—"}</span>
+            <span>${item.missingCadets.length ? escapeHtml(item.missingCadets.join(", ")) : "All covered"}</span>
           </div>
         `).join("")}
       </div>
@@ -3172,6 +3298,7 @@ function renderSettingsSyncPanels() {
     ${syncStatusRow("Training Sheet", trainingStatus, liveTrainingSessions.length ? `${liveTrainingSessions.length} session(s)` : trainingLoadMessage, lastSync)}
     ${syncStatusRow("Interviews Sheet", interviewStatus, liveInterviewSessions.length ? `${liveInterviewSessions.length} session(s)` : interviewLoadMessage, lastSync)}
     ${syncStatusRow("Live Cadet Fetch", state.cadets.some((cadet) => cadet.sheetNotes?.length) ? "Success" : "Not synced", "Own cadet sheets", lastSync)}
+    ${syncStatusRow("Personal Storage Sheet", state.settings?.storageUrl ? "Success" : "Not synced", state.settings?.storageUrl ? "Configured" : "No URL configured", lastSync)}
   `;
 
   const history = Array.isArray(state.syncHistory) ? state.syncHistory : [];

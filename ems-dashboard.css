@@ -7030,15 +7030,3 @@ dialog.ra-focus-dossier > form > h2 {
     gap: 4px;
   }
 }
-
-
-/* Review FTO Coverage cleanup */
-.review-fto-table .review-table-head,
-.review-fto-table .review-table-row {
-  grid-template-columns: minmax(140px, 1.2fr) 0.5fr 0.65fr 0.9fr !important;
-}
-
-/* Settings header no longer has a role pill */
-.settings-role-pill {
-  display: none !important;
-}
