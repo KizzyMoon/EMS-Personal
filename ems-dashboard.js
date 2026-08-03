@@ -3295,6 +3295,71 @@ function parseTrainingNote(note = "", index = 0) {
   };
 }
 
+
+function cadetPhraseSent(cadet) {
+  const values = [
+    ...(Array.isArray(cadet.sheetNotes) ? cadet.sheetNotes : []),
+    cadet.notes || ""
+  ];
+
+  return values.some((value) => {
+    const text = typeof value === "string"
+      ? value
+      : `${value?.title || ""} ${value?.body || ""} ${value?.text || ""}`;
+
+    return /phrase\s*sent/i.test(String(text));
+  });
+}
+
+function cadetRedFocusCount(cadet) {
+  let count = 0;
+
+  for (const group of cadet.latestStruggles || []) {
+    const items = Array.isArray(group?.items) ? group.items : [group];
+
+    for (const item of items) {
+      const text = typeof item === "string"
+        ? item
+        : `${item?.colour || item?.color || item?.status || ""} ${item?.label || item?.name || item?.text || ""}`;
+
+      if (String(text).toLowerCase().includes("red")) count += 1;
+    }
+  }
+
+  return count;
+}
+
+function checklistRow(label, complete, value = "") {
+  return `
+    <div class="cadet-checklist-row ${complete ? "is-complete" : "is-incomplete"}">
+      <span class="cadet-check-box" aria-hidden="true">${complete ? "✓" : ""}</span>
+      <span class="cadet-check-label">${escapeHtml(label)}</span>
+      ${value
+        ? `<strong>${escapeHtml(value)}</strong>`
+        : `<span class="cadet-check-result">${complete ? "Complete" : "Outstanding"}</span>`}
+    </div>
+  `;
+}
+
+function cadetCompletionChecklist(cadet) {
+  const minimumRas = 4;
+  const minimumFtos = 3;
+  const raCount = Number(cadet.trainingRaCount || 0);
+  const uniqueFtos = Number(cadet.uniqueFtoRaCount || 0);
+  const redFocusCount = cadetRedFocusCount(cadet);
+
+  return `
+    <div class="cadet-checklist">
+      ${checklistRow("Day 1 Training", Boolean(cadet.day1))}
+      ${checklistRow("Day 2 Training", Boolean(cadet.day2))}
+      ${checklistRow("Phrase Sent", cadetPhraseSent(cadet))}
+      ${checklistRow(`Minimum RAs (${minimumRas})`, raCount >= minimumRas, `${raCount} / ${minimumRas}`)}
+      ${checklistRow(`Unique FTOs (${minimumFtos})`, uniqueFtos >= minimumFtos, `${uniqueFtos} / ${minimumFtos}`)}
+      ${checklistRow("Outstanding Red Focus Areas", redFocusCount === 0, String(redFocusCount))}
+    </div>
+  `;
+}
+
 function trainingNotesTimeline(notes = []) {
   if (!Array.isArray(notes) || !notes.length) {
     return `<div class="ra-dossier-empty">No training notes were found on this cadet's sheet.</div>`;
@@ -3344,15 +3409,22 @@ async function openCadetSheetNotes(cadet) {
         </div>
       </header>
 
-      <section class="ra-dossier-section">
-        <h3 class="ra-section-heading"><span>${raIcon("target")}</span>Current Focus Areas</h3>
+      <section class="ra-dossier-focus-checklist-grid">
+        <article class="ra-dossier-section">
+          <h3 class="ra-section-heading"><span>${raIcon("target")}</span>Current Focus Areas</h3>
 
-        <article class="ra-untrained-focus-card">
-          <span class="ra-untrained-focus-icon" aria-hidden="true">i</span>
-          <div>
-            <strong>Not Ready for RA</strong>
-            <p>Day 1 training has not been completed yet.</p>
-          </div>
+          <article class="ra-untrained-focus-card">
+            <span class="ra-untrained-focus-icon" aria-hidden="true">i</span>
+            <div>
+              <strong>Not Ready for RA</strong>
+              <p>Day 1 training has not been completed yet.</p>
+            </div>
+          </article>
+        </article>
+
+        <article class="ra-dossier-section">
+          <h3 class="ra-section-heading"><span>${raIcon("clipboard")}</span>Completion Checklist</h3>
+          ${cadetCompletionChecklist(cadet)}
         </article>
       </section>
 
@@ -3425,9 +3497,16 @@ async function openCadetSheetNotes(cadet) {
         </article>
       </section>
 
-    <section class="ra-dossier-section">
-      <h3 class="ra-section-heading"><span>${raIcon("target")}</span>Current Focus Areas</h3>
-      <div class="ra-focus-card-grid">${focusCards}</div>
+    <section class="ra-dossier-focus-checklist-grid">
+      <article class="ra-dossier-section">
+        <h3 class="ra-section-heading"><span>${raIcon("target")}</span>Current Focus Areas</h3>
+        <div class="ra-focus-card-grid">${focusCards}</div>
+      </article>
+
+      <article class="ra-dossier-section">
+        <h3 class="ra-section-heading"><span>${raIcon("clipboard")}</span>Completion Checklist</h3>
+        ${cadetCompletionChecklist(cadet)}
+      </article>
     </section>
 
     <section class="ra-dossier-section">

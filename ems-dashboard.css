@@ -6291,3 +6291,95 @@ dialog.ra-focus-dossier > form > h2 {
     grid-row: 1 / span 2;
   }
 }
+
+
+/* =========================================================
+   Cadet RA Focus — focus areas and completion checklist
+   ========================================================= */
+
+.ra-dossier-focus-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.ra-dossier-focus-checklist-grid > .ra-dossier-section {
+  min-width: 0;
+  height: 100%;
+  margin-top: 0 !important;
+}
+
+.ra-dossier-focus-checklist-grid .ra-focus-card-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.cadet-checklist {
+  display: grid;
+}
+
+.cadet-checklist-row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 37px;
+  border-bottom: 1px solid rgba(119, 142, 166, 0.15);
+  color: #cbd4df;
+  padding: 7px 2px;
+}
+
+.cadet-checklist-row:last-child {
+  border-bottom: 0;
+}
+
+.cadet-check-box {
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border: 1px solid rgba(145, 161, 180, 0.55);
+  border-radius: 4px;
+  background: rgba(145, 161, 180, 0.07);
+  color: #07110c;
+  font-size: 0.68rem;
+  font-weight: 1000;
+}
+
+.cadet-checklist-row.is-complete .cadet-check-box {
+  border-color: #56da8b;
+  background: #56da8b;
+  box-shadow: 0 0 8px rgba(86, 218, 139, 0.25);
+}
+
+.cadet-check-label {
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.cadet-checklist-row strong,
+.cadet-check-result {
+  font-size: 0.68rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.cadet-checklist-row.is-complete strong,
+.cadet-checklist-row.is-complete .cadet-check-result {
+  color: #56da8b;
+}
+
+.cadet-checklist-row.is-incomplete strong,
+.cadet-checklist-row.is-incomplete .cadet-check-result {
+  color: #ff8f2a;
+}
+
+.cadet-checklist-row:last-child.is-incomplete strong {
+  color: #ff4f6f;
+}
+
+@media (max-width: 720px) {
+  .ra-dossier-focus-checklist-grid {
+    grid-template-columns: 1fr;
+  }
+}
