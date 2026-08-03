@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-3" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-4" />
   </head>
   <body>
     <main class="app">
@@ -177,8 +177,9 @@
           <div class="overview-panel-title">
             <div>
               <h2>Cadets Needing Attention</h2>
-              <p class="muted">Cadets requiring follow-up based on training, limits, RA activity and recent performance.</p>
+              <p class="muted">Cadets that should be prioritised for follow-up.</p>
             </div>
+            <button data-tab="cadets" type="button">View all</button>
           </div>
 
           <div class="attention-table" data-attention-list></div>
@@ -542,6 +543,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-3"></script>
+    <script src="ems-dashboard.js?v=20260803-4"></script>
   </body>
 </html>

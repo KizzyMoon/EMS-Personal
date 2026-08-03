@@ -2361,33 +2361,41 @@ function cadetDaysActive(cadet) {
 }
 
 function attentionTableRow(item) {
-  const { cadet, reasons, priority } = item;
+  const { cadet, reasons, priority, daysToLimit } = item;
+  const primaryReasons = reasons.slice(0, 2);
+  const daysLabel = daysToLimit === null
+    ? "Limit not recorded"
+    : daysToLimit < 0
+      ? `${Math.abs(daysToLimit)}d over limit`
+      : `${daysToLimit}d left`;
 
   return `
     <button
-      class="attention-table-row"
+      class="attention-card-row ${priority.className}"
       type="button"
       data-open-cadet-focus="${cadet.id}"
       aria-label="Open ${escapeHtml(cadet.name || "cadet")} RA Focus"
     >
-      <span class="attention-cadet">
-        <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
-        <small>${escapeHtml(cadet.callsign || "No callsign")}</small>
+      <span class="attention-card-accent" aria-hidden="true"></span>
+
+      <span class="attention-card-main">
+        <span class="attention-card-title-line">
+          <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+          <small>${escapeHtml(cadet.callsign || "No callsign")}</small>
+        </span>
+
+        <span class="attention-card-reasons">
+          ${primaryReasons.map((reason) => `<small>• ${escapeHtml(reason)}</small>`).join("")}
+        </span>
       </span>
 
-      <span class="attention-reasons">
-        ${reasons.map((reason) => `<small>• ${escapeHtml(reason)}</small>`).join("")}
-      </span>
-
-      <span>
+      <span class="attention-card-side">
         <strong class="attention-priority ${priority.className}">${priority.label}</strong>
+        <small>${cadet.lastRaDate ? `Last RA ${escapeHtml(formatDate(cadet.lastRaDate))}` : "No RA recorded"}</small>
+        <small>${escapeHtml(daysLabel)}</small>
       </span>
 
-      <span class="attention-date">
-        ${cadet.lastRaDate ? escapeHtml(formatDate(cadet.lastRaDate)) : "No RA"}
-      </span>
-
-      <span class="attention-days">${escapeHtml(cadetDaysActive(cadet))}</span>
+      <span class="attention-card-arrow" aria-hidden="true">›</span>
     </button>
   `;
 }
@@ -2415,14 +2423,7 @@ function renderAttentionTable(cadets = []) {
   }
 
   els.attentionList.innerHTML = `
-    <div class="attention-table-head" aria-hidden="true">
-      <span>Cadet</span>
-      <span>Reason(s)</span>
-      <span>Priority</span>
-      <span>Last RA</span>
-      <span>Days as Cadet</span>
-    </div>
-    <div class="attention-table-body">
+    <div class="attention-card-list">
       ${items.map(attentionTableRow).join("")}
     </div>
   `;
