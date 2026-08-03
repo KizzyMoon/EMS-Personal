@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-37" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260803-39" />
   </head>
   <body>
     <main class="app">
@@ -140,8 +140,20 @@
 <article class="panel upcoming-training-panel overview-schedule-panel">
             <div class="overview-panel-title">
               <h2>Schedule</h2>
-              <button data-action="refresh-training" type="button">Refresh</button>
+              <div class="schedule-header-actions">
+                <button data-action="add-manual-event" type="button">Add Event</button>
+                <button data-action="refresh-training" type="button">Refresh</button>
+              </div>
             </div>
+
+            <section class="manual-schedule-section">
+              <div class="manual-schedule-heading">
+                <h3>Manual Events</h3>
+                <span class="muted" data-manual-event-count>0</span>
+              </div>
+              <div class="manual-schedule-list" data-manual-schedule-list></div>
+            </section>
+
             <div class="upcoming-training-grid" data-training-list></div>
             <section class="upcoming-interviews-section">
               <div class="upcoming-interviews-heading">
@@ -650,6 +662,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260803-37"></script>
+    <script src="ems-dashboard.js?v=20260803-39"></script>
   </body>
 </html>

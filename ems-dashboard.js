@@ -62,6 +62,8 @@ const els = {
   myEmployeeNumber: document.querySelector("[data-my-employee-number]"),
   trainingList: document.querySelector("[data-training-list]"),
   trainingStatus: document.querySelector("[data-training-status]"),
+  manualScheduleList: document.querySelector("[data-manual-schedule-list]"),
+  manualEventCount: document.querySelector("[data-manual-event-count]"),
   interviewUrl: document.querySelector("[data-interview-url]"),
   interviewList: document.querySelector("[data-interview-list]"),
   interviewStatus: document.querySelector("[data-interview-status]"),
@@ -142,11 +144,14 @@ function loadState() {
         : {},
       syncHistory: Array.isArray(saved.syncHistory) ? saved.syncHistory.slice(0, 20) : [],
       massPingHistory: Array.isArray(saved.massPingHistory) ? saved.massPingHistory : [],
+      manualScheduleEvents: Array.isArray(saved.manualScheduleEvents)
+        ? saved.manualScheduleEvents
+        : [],
       settings: normalizeSettings(saved.settings),
       lastUpdated: saved.lastUpdated || ""
     };
   } catch {
-    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), checklistOverrides: {}, syncHistory: [], massPingHistory: [], settings: normalizeSettings(), lastUpdated: "" };
+    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), checklistOverrides: {}, syncHistory: [], massPingHistory: [], manualScheduleEvents: [], settings: normalizeSettings(), lastUpdated: "" };
   }
 }
 
@@ -2609,6 +2614,215 @@ function renderAttentionTable(cadets = []) {
   `;
 }
 
+
+function manualSchedulePersonLabel(person) {
+  const identity = [person?.name, person?.callsign].filter(Boolean).join(" | ");
+  return identity || person?.employeeNumber || "Unknown";
+}
+
+function manualScheduleMemberOptions(members, placeholder, selectedId = "") {
+  return `
+    <option value="">${escapeHtml(placeholder)}</option>
+    ${members.map((member) => `
+      <option value="${escapeHtml(member.id)}" ${String(member.id) === String(selectedId) ? "selected" : ""}>
+        ${escapeHtml(manualSchedulePersonLabel(member))}
+      </option>
+    `).join("")}
+  `;
+}
+
+function manualScheduleSupervisorMembers() {
+  const supervisorRanks = new Set([
+    "Chief",
+    "Deputy Chief",
+    "Captain",
+    "Lieutenant",
+    "Sergeant"
+  ]);
+
+  const supervisors = state.members.filter((member) =>
+    supervisorRanks.has(String(member.rank || "").trim())
+  );
+
+  return supervisors.length ? supervisors : state.members;
+}
+
+function manualScheduleFtoMembers() {
+  const ftos = state.members.filter((member) =>
+    (member.tags || []).some((tag) =>
+      String(tag || "").toLowerCase().includes("fto")
+    ) ||
+    String(member.role || "").toLowerCase().includes("fto") ||
+    String(member.rank || "").toLowerCase().includes("fto")
+  );
+
+  return ftos.length ? ftos : state.members;
+}
+
+function openManualScheduleEventForm() {
+  els.dialog.classList.remove("ra-focus-dossier");
+  setDialogReadonly(false);
+  els.dialogTitle.textContent = "Add Schedule Event";
+
+  const today = new Date().toISOString().slice(0, 10);
+  const supervisors = manualScheduleSupervisorMembers();
+  const ftos = manualScheduleFtoMembers();
+
+  els.dialogBody.innerHTML = `
+    <div class="form-grid manual-event-form">
+      ${field("title", "Title", "Probie Test", "text", "required")}
+      ${field("date", "Date", today, "date", "required")}
+      ${field("time", "Time", "", "time", "required")}
+
+      <label>
+        Cadet being tested
+        <select name="cadetId" required>
+          ${manualScheduleMemberOptions(
+            state.cadets,
+            "Select cadet…"
+          )}
+        </select>
+      </label>
+
+      <label>
+        Supervisor
+        <select name="supervisorId" required>
+          ${manualScheduleMemberOptions(
+            supervisors,
+            "Select supervisor…"
+          )}
+        </select>
+      </label>
+
+      <fieldset class="manual-event-fto-fieldset full">
+        <legend>FTOs attending</legend>
+        <div class="manual-event-fto-options">
+          ${ftos.length
+            ? ftos.map((member) => `
+                <label class="manual-event-fto-option">
+                  <input
+                    type="checkbox"
+                    name="ftoIds"
+                    value="${escapeHtml(member.id)}"
+                  />
+                  <span>${escapeHtml(manualSchedulePersonLabel(member))}</span>
+                </label>
+              `).join("")
+            : `<p class="muted">No FTOs are available in the synced roster.</p>`
+          }
+        </div>
+      </fieldset>
+
+      <label class="full">
+        Notes
+        <textarea name="notes" placeholder="Optional details, location, requirements, etc."></textarea>
+      </label>
+    </div>
+  `;
+
+  els.dialog.dataset.mode = "manual-schedule-event";
+  els.dialog.dataset.id = "";
+  els.dialog.showModal();
+}
+
+function formatManualEventDateTime(event) {
+  const date = event.date ? formatDate(event.date) : "No date";
+  return event.time ? `${date} • ${event.time}` : date;
+}
+
+function manualScheduleCadet(event) {
+  return state.cadets.find(
+    (cadet) => String(cadet.id) === String(event.cadetId)
+  );
+}
+
+function manualScheduleMember(memberId) {
+  return state.members.find(
+    (member) => String(member.id) === String(memberId)
+  );
+}
+
+function renderManualScheduleEvents() {
+  if (!els.manualScheduleList) return;
+
+  const events = [...(state.manualScheduleEvents || [])]
+    .sort((a, b) => {
+      const aKey = `${a.date || "9999-12-31"}T${a.time || "23:59"}`;
+      const bKey = `${b.date || "9999-12-31"}T${b.time || "23:59"}`;
+      return aKey.localeCompare(bKey);
+    });
+
+  if (els.manualEventCount) {
+    els.manualEventCount.textContent = String(events.length);
+  }
+
+  els.manualScheduleList.innerHTML = events.length
+    ? events.map((event) => {
+        const cadet = manualScheduleCadet(event);
+        const supervisor = manualScheduleMember(event.supervisorId);
+        const ftos = (event.ftoIds || [])
+          .map(manualScheduleMember)
+          .filter(Boolean);
+
+        return `
+          <article class="manual-schedule-event">
+            <div class="manual-schedule-event-copy">
+              <div class="manual-schedule-event-title">
+                <strong>${escapeHtml(event.title || "Untitled Event")}</strong>
+                <span>${escapeHtml(formatManualEventDateTime(event))}</span>
+              </div>
+
+              <dl class="manual-schedule-attendees">
+                <div>
+                  <dt>Cadet</dt>
+                  <dd>${escapeHtml(
+                    cadet ? manualSchedulePersonLabel(cadet) : "Not selected"
+                  )}</dd>
+                </div>
+                <div>
+                  <dt>Supervisor</dt>
+                  <dd>${escapeHtml(
+                    supervisor
+                      ? manualSchedulePersonLabel(supervisor)
+                      : "Not selected"
+                  )}</dd>
+                </div>
+                <div>
+                  <dt>FTOs</dt>
+                  <dd>${escapeHtml(
+                    ftos.length
+                      ? ftos.map(manualSchedulePersonLabel).join(", ")
+                      : "None selected"
+                  )}</dd>
+                </div>
+              </dl>
+
+              ${event.notes
+                ? `<small>${escapeHtml(event.notes)}</small>`
+                : ""
+              }
+            </div>
+
+            <button
+              type="button"
+              data-delete-manual-event="${escapeHtml(event.id)}"
+              aria-label="Remove ${escapeHtml(event.title || "event")}"
+              title="Remove event"
+            >×</button>
+          </article>
+        `;
+      }).join("")
+    : empty("No manual events added yet.");
+}
+
+function deleteManualScheduleEvent(eventId) {
+  state.manualScheduleEvents = (state.manualScheduleEvents || []).filter(
+    (event) => String(event.id) !== String(eventId)
+  );
+  saveState();
+  renderManualScheduleEvents();
+}
+
 function renderOverview() {
   const cadets = filteredCadets();
   const needsRaItems = cadets.filter(needsRa);
@@ -3482,6 +3696,7 @@ function createMassPing() {
   });
   saveState();
   renderMassPingPanels();
+  renderManualScheduleEvents();
 }
 
 function setMassPingAcceptedCadet(pingId, cadetId) {
@@ -4326,6 +4541,36 @@ function saveDialog() {
     state.notes.push(note);
     if (cadet) cadet.notes = [cadet.notes, data.note].filter(Boolean).join("\n");
   }
+  if (els.dialog.dataset.mode === "manual-schedule-event") {
+    const ftoIds = [...els.dialogForm.querySelectorAll(
+      'input[name="ftoIds"]:checked'
+    )].map((input) => input.value);
+
+    const event = {
+      id: crypto.randomUUID(),
+      title: String(data.title || "").trim(),
+      date: String(data.date || "").trim(),
+      time: String(data.time || "").trim(),
+      cadetId: String(data.cadetId || "").trim(),
+      supervisorId: String(data.supervisorId || "").trim(),
+      ftoIds,
+      notes: String(data.notes || "").trim(),
+      createdAt: new Date().toISOString()
+    };
+
+    if (
+      event.title &&
+      event.date &&
+      event.time &&
+      event.cadetId &&
+      event.supervisorId
+    ) {
+      state.manualScheduleEvents = [
+        ...(state.manualScheduleEvents || []),
+        event
+      ];
+    }
+  }
   saveState();
   render();
 }
@@ -4513,6 +4758,11 @@ document.addEventListener("click", async (event) => {
       (entry) => String(entry.id) === String(birthdayButton.dataset.editBirthday)
     );
     editMemberBirthday(member);
+    return;
+  }
+
+  if (action === "add-manual-event") {
+    openManualScheduleEventForm();
     return;
   }
 
@@ -4732,4 +4982,18 @@ document.addEventListener("change", (event) => {
     responseSelect.dataset.massPingResponseSelect,
     responseSelect.value
   );
+});
+
+
+document.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest("[data-delete-manual-event]");
+  if (!deleteButton) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const eventId = deleteButton.dataset.deleteManualEvent;
+  if (!eventId) return;
+
+  deleteManualScheduleEvent(eventId);
 });

@@ -8077,3 +8077,236 @@ dialog.ra-focus-dossier > form > h2 {
     max-width: none !important;
   }
 }
+
+
+/* =========================================================
+   Manual Schedule Events
+   ========================================================= */
+
+.schedule-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.manual-schedule-section {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.manual-schedule-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.manual-schedule-heading h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.manual-schedule-heading span {
+  min-width: 25px;
+  border-radius: 999px;
+  background: rgba(234, 159, 184, 0.14);
+  color: #ea9fb8;
+  padding: 2px 7px;
+  font-size: 0.58rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.manual-schedule-list {
+  display: grid;
+  gap: 6px;
+}
+
+.manual-schedule-list .empty {
+  padding: 15px;
+  font-size: 0.68rem;
+}
+
+.manual-schedule-event {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid rgba(119, 142, 166, 0.16);
+  border-radius: 7px;
+  background: rgba(7, 14, 22, 0.48);
+  padding: 8px 9px;
+}
+
+.manual-schedule-event-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.manual-schedule-event-copy strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.67rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manual-schedule-event-copy span {
+  color: #ea9fb8;
+  font-size: 0.58rem;
+  font-weight: 800;
+}
+
+.manual-schedule-event-copy small {
+  color: #9ba9b9;
+  font-size: 0.55rem;
+  line-height: 1.25;
+}
+
+.manual-schedule-event > button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  min-height: 26px;
+  padding: 0;
+  border-radius: 6px;
+  color: #9ca8b8;
+}
+
+.manual-schedule-event > button:hover {
+  color: #ff5c76;
+  border-color: rgba(255, 92, 118, 0.4);
+}
+
+.manual-event-form textarea {
+  min-height: 90px;
+}
+
+@media (max-width: 600px) {
+  .schedule-header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+
+/* =========================================================
+   Manual Schedule attendee fields
+   ========================================================= */
+
+.manual-event-form select {
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #1a1d28;
+  color: var(--text);
+  padding: 8px 10px;
+}
+
+.manual-event-fto-fieldset {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 10px;
+}
+
+.manual-event-fto-fieldset legend {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 0 5px;
+}
+
+.manual-event-fto-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  max-height: 190px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.manual-event-fto-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  border: 1px solid rgba(119, 142, 166, 0.14);
+  border-radius: 6px;
+  background: rgba(7, 14, 22, 0.44);
+  padding: 7px 8px;
+  cursor: pointer;
+}
+
+.manual-event-fto-option input {
+  flex: 0 0 auto;
+  accent-color: #ea9fb8;
+}
+
+.manual-event-fto-option span {
+  overflow: hidden;
+  color: #dbe3ec;
+  font-size: 0.64rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manual-schedule-event {
+  align-items: start;
+}
+
+.manual-schedule-event-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.manual-schedule-event-title > span {
+  flex: 0 0 auto;
+  color: #ea9fb8;
+  font-size: 0.58rem;
+  font-weight: 850;
+}
+
+.manual-schedule-attendees {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+}
+
+.manual-schedule-attendees > div {
+  display: grid;
+  grid-template-columns: 65px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.manual-schedule-attendees dt {
+  color: #8f9dad;
+  font-size: 0.55rem;
+  font-weight: 850;
+}
+
+.manual-schedule-attendees dd {
+  margin: 0;
+  color: #dce4ed;
+  font-size: 0.58rem;
+  line-height: 1.25;
+}
+
+@media (max-width: 620px) {
+  .manual-event-fto-options {
+    grid-template-columns: 1fr;
+  }
+
+  .manual-schedule-event-title {
+    display: grid;
+    gap: 3px;
+  }
+}
