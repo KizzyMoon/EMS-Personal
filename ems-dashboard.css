@@ -6728,3 +6728,41 @@ dialog.ra-focus-dossier > form > h2 {
     min-width: 700px;
   }
 }
+
+
+/* Review Quick Overview refinements */
+.review-quick-overview {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.review-quick-overview .review-stat-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 1050px) {
+  .review-quick-overview .review-stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 650px) {
+  .review-quick-overview .review-stat-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* Final Review Quick Overview row */
+.review-quick-overview {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.review-quick-overview .review-stat-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}

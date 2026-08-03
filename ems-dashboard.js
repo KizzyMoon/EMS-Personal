@@ -2864,11 +2864,34 @@ function currentMonthRaCount(cadets, date = new Date()) {
   }, 0);
 }
 
+function memberHasQualification(member, wanted) {
+  const target = String(wanted || "").trim().toUpperCase();
+
+  const values = [
+    ...(Array.isArray(member.qualifications) ? member.qualifications : []),
+    ...(Array.isArray(member.qualificationTags) ? member.qualificationTags : []),
+    ...(Array.isArray(member.tags) ? member.tags : []),
+    member.qualifications,
+    member.qualification,
+    member.roles,
+    member.role,
+    member.fto,
+    member.isFto
+  ];
+
+  return values.some((value) => {
+    if (typeof value === "boolean") return target === "FTO" && value;
+    if (value === null || value === undefined) return false;
+
+    return String(value)
+      .split(/[,|;/]+/)
+      .map((part) => part.trim().toUpperCase())
+      .includes(target);
+  });
+}
+
 function activeFtoMembers() {
-  return state.members.filter((member) =>
-    Array.isArray(member.qualifications) &&
-    member.qualifications.some((qualification) => String(qualification).toUpperCase() === "FTO")
-  );
+  return state.members.filter((member) => memberHasQualification(member, "FTO"));
 }
 
 function trainingSessionsForMonth(date = new Date()) {
@@ -2899,46 +2922,97 @@ function removedCadetsInMonth(date = new Date()) {
   ).length;
 }
 
-function ftoCoverageData() {
-  const ftoMembers = activeFtoMembers();
+function reviewNoteText(note) {
+  if (typeof note === "string") return note;
 
-  return ftoMembers.map((member) => {
+  return [
+    note?.callsign,
+    note?.fto,
+    note?.offeredBy,
+    note?.title,
+    note?.body,
+    note?.text,
+    note?.note
+  ].filter(Boolean).join(" ");
+}
+
+function reviewNoteDate(note) {
+  if (typeof note === "string") return "";
+
+  return parseDate(
+    note?.date ||
+    note?.createdAt ||
+    note?.raDate ||
+    note?.timestamp ||
+    ""
+  );
+}
+
+function reviewNoteMatchesFto(note, callsign) {
+  const wanted = normalizeCallsign(callsign);
+  if (!wanted) return false;
+
+  if (typeof note === "object" && note) {
+    const direct = normalizeCallsign(
+      note.callsign ||
+      note.fto ||
+      note.offeredBy ||
+      ""
+    );
+
+    if (direct === wanted) return true;
+  }
+
+  const matches = reviewNoteText(note).match(/\b[A-Z]\d?[-–—]\d{1,3}\b/gi) || [];
+  return matches.some((match) => normalizeCallsign(match.replace(/[–—]/g, "-")) === wanted);
+}
+
+function reviewCadetRaEntries(cadet) {
+  return [
+    ...(Array.isArray(cadet.sheetNotes) ? cadet.sheetNotes : []),
+    ...(Array.isArray(cadet.raNotes) ? cadet.raNotes : []),
+    ...(Array.isArray(cadet.trainingNotes) ? cadet.trainingNotes : [])
+  ];
+}
+
+function ftoCoverageData() {
+  return activeFtoMembers().map((member) => {
     const callsign = normalizeCallsign(member.callsign || "");
     let totalRas = 0;
-    const cadets = new Set();
+    const coveredCadets = new Set();
     let latestDate = "";
 
     for (const cadet of state.cadets) {
-      const notes = Array.isArray(cadet.sheetNotes) ? cadet.sheetNotes : [];
-      let hasFto = false;
+      const matchingEntries = reviewCadetRaEntries(cadet)
+        .filter((entry) => reviewNoteMatchesFto(entry, callsign));
 
-      for (const note of notes) {
-        const text = typeof note === "string"
-          ? note
-          : `${note?.callsign || ""} ${note?.title || ""} ${note?.body || ""}`;
-        if (callsign && normalizeCallsign(text).includes(callsign)) {
-          hasFto = true;
-          totalRas += 1;
-          const noteDate = parseDate(note?.date || "");
-          if (noteDate && (!latestDate || noteDate > latestDate)) latestDate = noteDate;
-        }
+      if (!matchingEntries.length) continue;
+
+      coveredCadets.add(cadet.id || cadet.name || cadet.callsign);
+      totalRas += matchingEntries.length;
+
+      for (const entry of matchingEntries) {
+        const date = reviewNoteDate(entry);
+        if (date && (!latestDate || date > latestDate)) latestDate = date;
       }
-
-      if (hasFto) cadets.add(cadet.name || cadet.callsign);
     }
 
     return {
       name: member.name || member.callsign || "Unknown FTO",
       callsign: member.callsign || "",
       totalRas,
-      uniqueCadets: cadets.size,
+      uniqueCadets: coveredCadets.size,
       lastRa: latestDate,
       missingCadets: state.cadets
-        .filter((cadet) => !cadets.has(cadet.name || cadet.callsign))
-        .slice(0, 3)
+        .filter((cadet) => !coveredCadets.has(cadet.id || cadet.name || cadet.callsign))
         .map((cadet) => cadet.name || cadet.callsign)
+        .filter(Boolean)
     };
-  }).sort((a, b) => b.totalRas - a.totalRas || a.name.localeCompare(b.name));
+  }).sort((a, b) =>
+    b.totalRas - a.totalRas ||
+    b.uniqueCadets - a.uniqueCadets ||
+    a.name.localeCompare(b.name)
+  );
 }
 
 function renderReviewPage() {
@@ -2958,23 +3032,15 @@ function renderReviewPage() {
   const activeFtos = activeFtoMembers().length;
   const currentlyTraining = state.cadets.filter((cadet) => cadet.day1 && !cadet.day2).length;
   const day1Pending = state.cadets.filter((cadet) => !cadet.day1).length;
-  const raDueSoon = state.cadets.filter((cadet) => {
-    const days = daysUntil(cadet.day28Due);
-    return days !== null && days >= 0 && days <= 7;
-  }).length;
+  const day2Pending = state.cadets.filter((cadet) => cadet.day1 && !cadet.day2).length;
   const readyForRa = state.cadets.filter((cadet) => cadet.day1 && cadet.day2).length;
-  const overdueRa = state.cadets.filter((cadet) => {
-    const since = daysSince(cadet.lastRaDate);
-    return cadet.day1 && (cadet.lastRaDate ? since >= 14 : true);
-  }).length;
 
   els.reviewQuickStats.innerHTML = [
     reviewMetricCard("Total Cadets", state.cadets.length, "Active in programme"),
     reviewMetricCard("In Training", currentlyTraining, "Currently training"),
     reviewMetricCard("Day 1 Pending", day1Pending, "Awaiting Day 1"),
-    reviewMetricCard("RA Due Soon", raDueSoon, "Within 7 days"),
-    reviewMetricCard("Ready for RA", readyForRa, "Cleared to ride"),
-    reviewMetricCard("Overdue RA", overdueRa, "14+ days overdue", overdueRa ? "is-alert" : "")
+    reviewMetricCard("Day 2 Pending", day2Pending, "Awaiting Day 2"),
+    reviewMetricCard("Ready for RA", readyForRa, "Cleared to ride")
   ].join("");
 
   if (els.reviewMonthLabel) els.reviewMonthLabel.textContent = monthLabel(now);
