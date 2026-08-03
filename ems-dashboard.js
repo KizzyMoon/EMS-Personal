@@ -3354,8 +3354,6 @@ function cadetCompletionChecklist(cadet) {
       ${checklistRow("Day 2 Training", Boolean(cadet.day2))}
       ${checklistRow("Phrase Sent", cadetPhraseSent(cadet))}
       ${checklistRow(`Minimum RAs (${minimumRas})`, raCount >= minimumRas, `${raCount} / ${minimumRas}`)}
-      ${checklistRow(`Unique FTOs (${minimumFtos})`, uniqueFtos >= minimumFtos, `${uniqueFtos} / ${minimumFtos}`)}
-      ${checklistRow("Outstanding Red Focus Areas", redFocusCount === 0, String(redFocusCount))}
     </div>
   `;
 }
