@@ -173,6 +173,8 @@ function normalizeSettings(raw = {}) {
   return {
     myCallsign: normalizeCallsign(raw.myCallsign || DEFAULT_MY_CALLSIGN),
     googleEmail: String(raw.googleEmail || "").trim(),
+    googleUrl: String(raw.googleUrl || DEFAULT_SHEET_URL).trim(),
+    rosterUrl: String(raw.rosterUrl || DEFAULT_ROSTER_URL).trim(),
     storageUrl: String(raw.storageUrl || DEFAULT_STORAGE_URL).trim(),
     myEmployeeNumber: normalizeEmployeeNumber(raw.myEmployeeNumber || ""),
     trainingUrl: String(raw.trainingUrl || DEFAULT_TRAINING_URL).trim(),
@@ -788,6 +790,8 @@ function personalStorageRows() {
       ["Key", "Value"],
       ["myCallsign", state.settings?.myCallsign || DEFAULT_MY_CALLSIGN],
       ["googleEmail", state.settings?.googleEmail || ""],
+      ["googleUrl", state.settings?.googleUrl || DEFAULT_SHEET_URL],
+      ["rosterUrl", state.settings?.rosterUrl || DEFAULT_ROSTER_URL],
       ["storageUrl", state.settings?.storageUrl || DEFAULT_STORAGE_URL],
       ["myEmployeeNumber", state.settings?.myEmployeeNumber || ""],
       ["trainingUrl", state.settings?.trainingUrl || DEFAULT_TRAINING_URL],
@@ -805,6 +809,8 @@ function applyStorageSettings(values = []) {
     ...state.settings,
     myCallsign: settings.myCallsign || state.settings?.myCallsign,
     googleEmail: settings.googleEmail || state.settings?.googleEmail,
+    googleUrl: settings.googleUrl || state.settings?.googleUrl,
+    rosterUrl: settings.rosterUrl || state.settings?.rosterUrl,
     storageUrl: settings.storageUrl || state.settings?.storageUrl,
     myEmployeeNumber: settings.myEmployeeNumber || state.settings?.myEmployeeNumber,
     trainingUrl: settings.trainingUrl || state.settings?.trainingUrl,
@@ -1282,7 +1288,7 @@ function rowsToObjects(values = [], cellRows = []) {
 }
 
 async function importPrivateGoogleSheet(options = {}) {
-  const { id, gid } = sheetInfoFromUrl(els.googleUrl.value);
+  const { id, gid } = sheetInfoFromUrl(els.googleUrl?.value || state.settings?.googleUrl || DEFAULT_SHEET_URL);
   const metadata = await sheetMetadata(id, options);
   const title = findSheetTitle(metadata.sheets || [], gid);
   const range = encodeURIComponent(`'${title.replace(/'/g, "''")}'`);
@@ -1293,7 +1299,7 @@ async function importPrivateGoogleSheet(options = {}) {
 }
 
 async function importPrivateRosterSheet(options = {}) {
-  const { id, gid } = sheetInfoFromUrl(els.rosterUrl?.value || DEFAULT_ROSTER_URL);
+  const { id, gid } = sheetInfoFromUrl(els.rosterUrl?.value || state.settings?.rosterUrl || DEFAULT_ROSTER_URL);
   const title = await sheetTitleFromInfo(id, gid, options);
   const range = encodeURIComponent(`'${title.replace(/'/g, "''")}'`);
   const fields = encodeURIComponent("sheets(properties(sheetId,title),data(rowData(values(formattedValue,effectiveFormat(backgroundColor,backgroundColorStyle(rgbColor))))))");
@@ -2911,10 +2917,13 @@ function renderNotes() {
 function renderSettings() {
   if (els.myCallsign) els.myCallsign.value = state.settings?.myCallsign || DEFAULT_MY_CALLSIGN;
   if (els.googleEmail) els.googleEmail.value = state.settings?.googleEmail || "";
+  if (els.googleUrl) els.googleUrl.value = state.settings?.googleUrl || DEFAULT_SHEET_URL;
+  if (els.rosterUrl) els.rosterUrl.value = state.settings?.rosterUrl || DEFAULT_ROSTER_URL;
   if (els.storageUrl) els.storageUrl.value = state.settings?.storageUrl || DEFAULT_STORAGE_URL;
   if (els.myEmployeeNumber) els.myEmployeeNumber.value = state.settings?.myEmployeeNumber || "";
   if (els.trainingUrl) els.trainingUrl.value = state.settings?.trainingUrl || DEFAULT_TRAINING_URL;
   if (els.interviewUrl) els.interviewUrl.value = state.settings?.interviewUrl || DEFAULT_INTERVIEW_URL;
+  updateSettingsSheetLinks();
   if (els.settingsSummary) {
     const email = state.settings?.googleEmail ? ` Google will prefer ${state.settings.googleEmail}.` : " Add your Gmail here so Google can choose the right account.";
     const employee = state.settings?.myEmployeeNumber ? ` Employee #${state.settings.myEmployeeNumber} is used for training signups.` : " Add your employee number for training signup checks.";
@@ -4104,6 +4113,8 @@ function saveSettings() {
   state.settings = normalizeSettings({
     myCallsign: els.myCallsign?.value || DEFAULT_MY_CALLSIGN,
     googleEmail: els.googleEmail?.value || "",
+    googleUrl: els.googleUrl?.value || DEFAULT_SHEET_URL,
+    rosterUrl: els.rosterUrl?.value || DEFAULT_ROSTER_URL,
     storageUrl: els.storageUrl?.value || DEFAULT_STORAGE_URL,
     myEmployeeNumber: els.myEmployeeNumber?.value || "",
     trainingUrl: els.trainingUrl?.value || DEFAULT_TRAINING_URL,

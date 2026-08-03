@@ -7030,3 +7030,66 @@ dialog.ra-focus-dossier > form > h2 {
     gap: 4px;
   }
 }
+
+
+/* =========================================================
+   Final Cadets Needing Attention layout
+   Full-width outer panel with dynamic card grid
+   ========================================================= */
+
+.overview-attention-panel {
+  width: 100% !important;
+  max-width: none !important;
+  justify-self: stretch !important;
+  align-self: stretch !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.attention-card-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.attention-card-row {
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 108px !important;
+  grid-template-columns: 4px minmax(0, 1fr) 112px 16px !important;
+  align-items: start !important;
+}
+
+.attention-card-main,
+.attention-card-side {
+  min-width: 0 !important;
+}
+
+.attention-card-side {
+  align-self: stretch !important;
+  align-content: start !important;
+}
+
+.attention-card-side > small {
+  white-space: normal !important;
+}
+
+/* Two columns when the available width gets tighter */
+@media (max-width: 1180px) {
+  .attention-card-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* One column on mobile / narrow portrait screens */
+@media (max-width: 720px) {
+  .attention-card-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .attention-card-row {
+    grid-template-columns: 4px minmax(0, 1fr) 100px 16px !important;
+  }
+}
