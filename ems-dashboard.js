@@ -1588,53 +1588,78 @@ function scheduleEventPersonMarkup(person) {
   `;
 }
 
+
+function scheduleDateParts(value) {
+  if (!value) return { day: "—", month: "—" };
+
+  const date = new Date(`${value}T00:00`);
+  if (Number.isNaN(date.valueOf())) {
+    return { day: "—", month: "—" };
+  }
+
+  return {
+    day: date.toLocaleDateString("en-GB", { day: "2-digit" }),
+    month: date.toLocaleDateString("en-GB", { month: "short" }).toUpperCase()
+  };
+}
+
+function scheduleDateTileMarkup(value) {
+  const parts = scheduleDateParts(value);
+
+  return `
+    <div class="schedule-date-tile" aria-label="${escapeHtml(formatDate(value))}">
+      <strong>${escapeHtml(parts.day)}</strong>
+      <span>${escapeHtml(parts.month)}</span>
+    </div>
+  `;
+}
+
 function trainingCardMarkup(session) {
-  const hasEmployeeNumber = Boolean(normalizeEmployeeNumber(state.settings?.myEmployeeNumber));
+  const hasEmployeeNumber = Boolean(
+    normalizeEmployeeNumber(state.settings?.myEmployeeNumber)
+  );
   const signupClass = session.signedUp ? "is-signed-up" : "is-not-signed-up";
   const signupText = hasEmployeeNumber
     ? (session.signedUp ? "SIGNED UP" : "NOT SIGNED UP")
     : "SET EMPLOYEE #";
 
-  const relativeDate = trainingDateLabel(session.date);
-  const dateText = ["Today", "Tomorrow"].includes(relativeDate)
-    ? `${relativeDate}${session.time ? ` • ${session.time}` : ""}`
-    : `${formatDate(session.date)}${session.time ? ` • ${session.time}` : ""}`;
-
   return `
-    <article class="schedule-event-card schedule-event-training">
-      <header class="schedule-event-head">
-        <div class="schedule-event-title">
-          <h3>Training Day ${session.day}</h3>
-          <p>
-            <strong>${escapeHtml(dateText)}</strong>
-            <span>•</span>
-            <span>Hosted by: <b>${trainingHostMarkup(session.host)}</b></span>
-          </p>
+    <article class="schedule-event-card schedule-event-training schedule-date-card">
+      ${scheduleDateTileMarkup(session.date)}
+
+      <div class="schedule-date-card-content">
+        <header class="schedule-compact-head">
+          <div class="schedule-compact-title">
+            <h3>Day ${session.day}</h3>
+            <p>
+              <strong>${escapeHtml(session.time || "Time not set")}</strong>
+              <span>•</span>
+              <span>Hosted by <b>${trainingHostMarkup(session.host)}</b></span>
+            </p>
+          </div>
+
+          <span class="schedule-event-status training-signup-badge ${signupClass}">
+            ${signupText}
+          </span>
+        </header>
+
+        <div class="schedule-event-divider"></div>
+
+        <div class="schedule-compact-people">
+          <section>
+            <h4>Cadets</h4>
+            ${session.cadets.length
+              ? `<ul>${session.cadets.map(scheduleEventPersonMarkup).join("")}</ul>`
+              : `<p class="muted">No cadets signed up yet.</p>`}
+          </section>
+
+          <section>
+            <h4>FTO's</h4>
+            ${session.staff.length
+              ? `<ul>${session.staff.map(scheduleEventPersonMarkup).join("")}</ul>`
+              : `<p class="muted">No FTO's signed up yet.</p>`}
+          </section>
         </div>
-        <span class="schedule-event-status training-signup-badge ${signupClass}">${signupText}</span>
-      </header>
-
-      <div class="schedule-event-divider"></div>
-
-      <div class="schedule-event-counts">
-        <span><strong>${session.eligibleSignedUp} / ${session.eligibleTotal}</strong> Cadets</span>
-        <span><strong>${session.staff.length}</strong> FTO's</span>
-      </div>
-
-      <div class="schedule-event-columns">
-        <section>
-          <h4>Cadets</h4>
-          ${session.cadets.length
-            ? `<ul>${session.cadets.map(scheduleEventPersonMarkup).join("")}</ul>`
-            : `<p class="muted">No cadets signed up yet.</p>`}
-        </section>
-
-        <section>
-          <h4>FTO's</h4>
-          ${session.staff.length
-            ? `<ul>${session.staff.map(scheduleEventPersonMarkup).join("")}</ul>`
-            : `<p class="muted">No FTO's signed up yet.</p>`}
-        </section>
       </div>
     </article>
   `;
@@ -1784,45 +1809,41 @@ function interviewCardMarkup(session) {
     ? (session.signedUp ? "SIGNED UP" : "NOT SIGNED UP")
     : "SET EMPLOYEE #";
 
-  const relative = trainingDateLabel(session.date);
-  const dateText = ["Today", "Tomorrow"].includes(relative)
-    ? `${relative}${session.time ? ` • ${session.time}` : ""}`
-    : `${formatDate(session.date)}${session.time ? ` • ${session.time}` : ""}`;
-
-  const staff = session.attendees.map((person) => ({
+  const ftos = session.attendees.map((person) => ({
     ...person,
-    roleTag: person.roleTag || "STAFF"
+    roleTag: person.roleTag || "FTO"
   }));
 
   return `
-    <article class="schedule-event-card schedule-event-interview">
-      <header class="schedule-event-head">
-        <div class="schedule-event-title">
-          <h3>Interview Session ${session.session}</h3>
-          <p>
-            <strong>${escapeHtml(dateText)}</strong>
-            <span>•</span>
-            <span>${escapeHtml(session.region)}</span>
-            <span>•</span>
-            <span>Led by: <b>${escapeHtml(session.lead || "Not entered yet")}</b></span>
-          </p>
+    <article class="schedule-event-card schedule-event-interview schedule-date-card">
+      ${scheduleDateTileMarkup(session.date)}
+
+      <div class="schedule-date-card-content">
+        <header class="schedule-compact-head">
+          <div class="schedule-compact-title">
+            <h3>Session ${session.session} <span>${escapeHtml(session.region)}</span></h3>
+            <p>
+              <strong>${escapeHtml(session.time || "Time not set")}</strong>
+              <span>•</span>
+              <span>Led by <b>${escapeHtml(session.lead || "Not entered yet")}</b></span>
+            </p>
+          </div>
+
+          <span class="schedule-event-status training-signup-badge ${signupClass}">
+            ${signupText}
+          </span>
+        </header>
+
+        <div class="schedule-event-divider"></div>
+
+        <div class="schedule-compact-people schedule-compact-people-single">
+          <section>
+            <h4>FTO's</h4>
+            ${ftos.length
+              ? `<ul>${ftos.map(scheduleEventPersonMarkup).join("")}</ul>`
+              : `<p class="muted">No FTO's signed up yet.</p>`}
+          </section>
         </div>
-        <span class="schedule-event-status training-signup-badge ${signupClass}">${signupText}</span>
-      </header>
-
-      <div class="schedule-event-divider"></div>
-
-      <div class="schedule-event-counts">
-        <span><strong>${staff.length}</strong> FTO's</span>
-      </div>
-
-      <div class="schedule-event-columns schedule-event-columns-single">
-        <section>
-          <h4>FTO's</h4>
-          ${staff.length
-            ? `<ul>${staff.map(scheduleEventPersonMarkup).join("")}</ul>`
-            : `<p class="muted">No FTO's signed up yet.</p>`}
-        </section>
       </div>
     </article>
   `;
@@ -2936,70 +2957,75 @@ function renderManualScheduleEvents() {
     ? events.map((event) => {
         const cadet = manualScheduleCadet(event);
         const supervisor = manualScheduleMember(event.supervisorId);
-        const ftos = (event.ftoIds || []).map(manualScheduleMember).filter(Boolean);
-        const dateText = event.date
-          ? `${formatDate(event.date)}${event.time ? ` • ${event.time}` : ""}`
-          : "No date set";
+        const ftos = (event.ftoIds || [])
+          .map(manualScheduleMember)
+          .filter(Boolean);
 
-        const cadetPerson = cadet ? { ...cadet, roleTag: "CADET" } : null;
-        const staff = [
-          ...(supervisor ? [{ ...supervisor, roleTag: "SUPERVISOR" }] : []),
+        const cadetPerson = cadet
+          ? { ...cadet, roleTag: "CADET" }
+          : null;
+
+        const team = [
+          ...(supervisor
+            ? [{ ...supervisor, roleTag: "SUPERVISOR" }]
+            : []),
           ...ftos.map((member) => ({ ...member, roleTag: "FTO" }))
         ];
 
         return `
-          <article class="schedule-event-card schedule-event-manual">
-            <header class="schedule-event-head">
-              <div class="schedule-event-title">
-                <h3>${escapeHtml(event.title || "Untitled Event")}</h3>
-                <p>
-                  <strong>${escapeHtml(dateText)}</strong>
-                  <span>•</span>
-                  <span>Supervisor: <b>${escapeHtml(
-                    supervisor ? manualSchedulePersonLabel(supervisor) : "Not selected"
-                  )}</b></span>
-                </p>
+          <article class="schedule-event-card schedule-event-manual schedule-date-card">
+            ${scheduleDateTileMarkup(event.date)}
+
+            <div class="schedule-date-card-content">
+              <header class="schedule-compact-head">
+                <div class="schedule-compact-title">
+                  <h3>${escapeHtml(cadet?.name || "Cadet not selected")}</h3>
+                  <p>
+                    <strong>${escapeHtml(event.time || "Time not set")}</strong>
+                    <span>•</span>
+                    <span>Supervisor <b>${escapeHtml(
+                      supervisor
+                        ? manualSchedulePersonLabel(supervisor)
+                        : "Not selected"
+                    )}</b></span>
+                  </p>
+                </div>
+
+                <button
+                  class="schedule-event-remove"
+                  type="button"
+                  data-delete-manual-event="${escapeHtml(event.id)}"
+                  aria-label="Remove ${escapeHtml(event.title || "event")}"
+                  title="Remove event"
+                >×</button>
+              </header>
+
+              <div class="schedule-event-divider"></div>
+
+              <div class="schedule-compact-people">
+                <section>
+                  <h4>Cadet</h4>
+                  ${cadetPerson
+                    ? `<ul>${scheduleEventPersonMarkup(cadetPerson)}</ul>`
+                    : `<p class="muted">No cadet selected.</p>`}
+                </section>
+
+                <section>
+                  <h4>FTO's</h4>
+                  ${team.length
+                    ? `<ul>${team.map(scheduleEventPersonMarkup).join("")}</ul>`
+                    : `<p class="muted">No FTO's selected.</p>`}
+                </section>
               </div>
 
-              <button
-                class="schedule-event-remove"
-                type="button"
-                data-delete-manual-event="${escapeHtml(event.id)}"
-                aria-label="Remove ${escapeHtml(event.title || "event")}"
-                title="Remove event"
-              >×</button>
-            </header>
-
-            <div class="schedule-event-divider"></div>
-
-            <div class="schedule-event-counts">
-              <span><strong>${cadet ? 1 : 0}</strong> Cadet</span>
-              <span><strong>${staff.length}</strong> FTO's</span>
+              ${event.notes
+                ? `<p class="schedule-event-notes">${escapeHtml(event.notes)}</p>`
+                : ""}
             </div>
-
-            <div class="schedule-event-columns">
-              <section>
-                <h4>Cadet</h4>
-                ${cadetPerson
-                  ? `<ul>${scheduleEventPersonMarkup(cadetPerson)}</ul>`
-                  : `<p class="muted">No cadet selected.</p>`}
-              </section>
-
-              <section>
-                <h4>FTO's</h4>
-                ${staff.length
-                  ? `<ul>${staff.map(scheduleEventPersonMarkup).join("")}</ul>`
-                  : `<p class="muted">No FTO's selected.</p>`}
-              </section>
-            </div>
-
-            ${event.notes
-              ? `<p class="schedule-event-notes">${escapeHtml(event.notes)}</p>`
-              : ""}
           </article>
         `;
       }).join("")
-    : empty("No manual events added yet.");
+    : empty("No probationer tests added yet.");
 }
 
 function deleteManualScheduleEvent(eventId) {

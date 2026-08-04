@@ -9572,3 +9572,214 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Compact event cards with left-side date tiles
+   ========================================================= */
+
+.schedule-date-card {
+  display: grid !important;
+  grid-template-columns: 58px minmax(0, 1fr) !important;
+  gap: 11px !important;
+  align-items: stretch !important;
+  padding: 10px !important;
+}
+
+.schedule-date-tile {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  align-self: stretch;
+  min-height: 86px;
+  border: 1px solid rgba(248, 162, 162, 0.38);
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(248, 162, 162, 0.14),
+      rgba(248, 162, 162, 0.045)
+    );
+  color: #fff;
+  padding: 8px 5px;
+}
+
+.schedule-date-tile strong {
+  font-size: 1.34rem;
+  line-height: 1;
+}
+
+.schedule-date-tile span {
+  margin-top: 5px;
+  color: var(--accent);
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.schedule-event-training .schedule-date-tile {
+  border-color: rgba(130, 230, 179, 0.38);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(130, 230, 179, 0.13),
+      rgba(130, 230, 179, 0.04)
+    );
+}
+
+.schedule-event-training .schedule-date-tile span {
+  color: var(--green);
+}
+
+.schedule-event-interview .schedule-date-tile {
+  border-color: rgba(135, 174, 230, 0.4);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(135, 174, 230, 0.13),
+      rgba(135, 174, 230, 0.04)
+    );
+}
+
+.schedule-event-interview .schedule-date-tile span {
+  color: var(--blue);
+}
+
+.schedule-date-card-content {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.schedule-compact-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+.schedule-compact-title {
+  min-width: 0;
+}
+
+.schedule-compact-title h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
+  color: #fff;
+  font-size: 0.79rem;
+  line-height: 1.15;
+}
+
+.schedule-compact-title h3 span {
+  color: var(--muted);
+  font-size: 0.55rem;
+  font-weight: 800;
+}
+
+.schedule-compact-title p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: baseline;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.56rem;
+  line-height: 1.25;
+}
+
+.schedule-compact-title p strong {
+  color: var(--accent);
+}
+
+.schedule-event-training .schedule-compact-title p strong {
+  color: var(--green);
+}
+
+.schedule-event-interview .schedule-compact-title p strong {
+  color: var(--blue);
+}
+
+.schedule-compact-title p b {
+  color: #fff;
+}
+
+.schedule-date-card .schedule-event-divider {
+  margin: 0 !important;
+}
+
+.schedule-compact-people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.schedule-compact-people-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.schedule-compact-people section {
+  min-width: 0;
+}
+
+.schedule-compact-people h4 {
+  margin: 0 0 5px;
+  color: var(--accent);
+  font-size: 0.58rem;
+}
+
+.schedule-event-training .schedule-compact-people h4 {
+  color: var(--green);
+}
+
+.schedule-event-interview .schedule-compact-people h4 {
+  color: var(--blue);
+}
+
+.schedule-compact-people ul {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schedule-date-card .schedule-event-person {
+  padding: 4px 6px;
+  font-size: 0.54rem;
+}
+
+.schedule-date-card .schedule-event-role {
+  min-width: 30px;
+  padding: 2px 5px;
+  font-size: 0.45rem;
+}
+
+.schedule-date-card .schedule-event-status {
+  min-height: 22px;
+  padding: 3px 7px;
+  font-size: 0.48rem;
+}
+
+.schedule-date-card .schedule-event-remove {
+  width: 25px;
+  min-width: 25px;
+  min-height: 25px;
+}
+
+@media (max-width: 760px) {
+  .schedule-date-card {
+    grid-template-columns: 50px minmax(0, 1fr) !important;
+  }
+
+  .schedule-date-tile {
+    min-height: 76px;
+  }
+
+  .schedule-compact-people {
+    grid-template-columns: 1fr;
+  }
+}
