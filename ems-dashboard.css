@@ -9783,3 +9783,88 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Overview event panels
+   Keep the outer Training / Interviews / Probationer Tests
+   panel, but remove the smaller frame around each event.
+   ========================================================= */
+
+.overview-priority-card .schedule-event-card {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 8px 0 !important;
+}
+
+/* Separate multiple events with a simple line rather than another box. */
+.overview-priority-card .schedule-event-card + .schedule-event-card {
+  border-top: 1px solid rgba(119, 142, 166, 0.2) !important;
+  padding-top: 12px !important;
+  margin-top: 2px !important;
+}
+
+/* Use the full width that was previously lost to the inner frame. */
+.overview-priority-card .upcoming-training-grid,
+.overview-priority-card .upcoming-interviews-list,
+.overview-priority-card .manual-schedule-list {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.overview-priority-card .schedule-date-card {
+  width: 100% !important;
+}
+
+/* =========================================================
+   Cadet dossier scrolling and column height fix
+   ========================================================= */
+
+dialog.ra-focus-dossier {
+  max-height: calc(100vh - 32px) !important;
+  overflow: hidden !important;
+}
+
+/* Scroll the complete dossier instead of clipping the focus-area list. */
+dialog.ra-focus-dossier form {
+  max-height: calc(100vh - 32px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* Do not stretch the short checklist to the height of the focus-area list. */
+.ra-dossier-focus-checklist-grid {
+  align-items: start !important;
+}
+
+.ra-dossier-focus-checklist-grid > .ra-dossier-section {
+  align-self: start !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* Keep the footer controls reachable while the dossier scrolls. */
+dialog.ra-focus-dossier menu {
+  position: sticky !important;
+  bottom: -24px !important;
+  z-index: 3 !important;
+  margin-bottom: -24px !important;
+  border-top: 1px solid rgba(119, 142, 166, 0.18);
+  background: rgba(8, 18, 29, 0.97) !important;
+  padding: 10px 0 24px !important;
+}
+
+@media (max-width: 720px) {
+  dialog.ra-focus-dossier {
+    max-height: calc(100vh - 16px) !important;
+  }
+
+  dialog.ra-focus-dossier form {
+    max-height: calc(100vh - 16px) !important;
+    padding: 16px !important;
+  }
+}
