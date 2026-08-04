@@ -1451,8 +1451,8 @@ function parseUpcomingEuTraining(rows) {
     // trainingRawCell uses 1-based columns.
     // EU Day 1 occupies columns B-D.
     parseTrainingSession(rows, { day: 1, employeeColumn: 2, nameColumn: 3, timeColumn: 4 }),
-    // EU Day 2 occupies columns L-N.
-    parseTrainingSession(rows, { day: 2, employeeColumn: 12, nameColumn: 13, timeColumn: 14 })
+    // EU Day 2 occupies columns J-L, with spacer columns between blocks.
+    parseTrainingSession(rows, { day: 2, employeeColumn: 10, nameColumn: 11, timeColumn: 12 })
   ];
   const upcoming = sessions.filter((session) => isUpcomingTrainingDate(session.date));
   if (!upcoming.length) {
