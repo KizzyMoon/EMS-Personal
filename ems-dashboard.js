@@ -308,6 +308,7 @@ function normalizeCadet(raw = {}) {
     lastRaDate: parseDate(raw.lastRaDate || raw.lastRA || raw.raDate),
     raCompleted: Boolean(raw.raCompleted),
     myRaCompleted: Boolean(raw.myRaCompleted),
+    myRaDate: parseDate(raw.myRaDate),
     myRaVerified: Boolean(raw.myRaVerified) && raw.myRaVerificationVersion === RA_VERIFICATION_VERSION,
     myRaVerificationVersion: raw.myRaVerificationVersion || "",
     trainingAverage: Number.isNaN(trainingAverage) ? null : trainingAverage,
@@ -923,6 +924,7 @@ async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) 
   const titles = new Set(sheets.map((entry) => entry.properties?.title).filter(Boolean));
   state.cadets.forEach((cadet) => {
     cadet.myRaCompleted = false;
+    cadet.myRaDate = "";
     cadet.myRaVerified = false;
     cadet.myRaVerificationVersion = "";
   });
@@ -943,7 +945,9 @@ async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) 
     const cells = sheet?.data?.[0]?.rowData || [];
     cadet.myRaVerified = true;
     cadet.myRaVerificationVersion = RA_VERIFICATION_VERSION;
-    cadet.myRaCompleted = myCallsign ? cadetHasRaCallsign(cells, myCallsign) : false;
+    cadet.myRaDate = myCallsign ? raDateForCallsign(cells, myCallsign) : "";
+    cadet.myRaCompleted = Boolean(cadet.myRaDate)
+      || (myCallsign ? cadetHasRaCallsign(cells, myCallsign) : false);
     if (cadet.uniqueFtoRaSource !== "roster") cadet.uniqueFtoRaCount = uniqueFtoRaCount(cells);
     const score = cadetTrainingScore(sheet);
     cadet.trainingAverage = score.average;
@@ -1027,6 +1031,61 @@ function cadetHasRaCallsign(rows = [], myCallsign = "") {
   return values
     .slice(Math.max(labelIndex + 1, 0))
     .some((cell) => normalizeCallsign(cellText(cell)) === target);
+}
+
+
+function raDateForCallsign(rows = [], myCallsign = "") {
+  const target = normalizeCallsign(myCallsign);
+  if (!target) return "";
+
+  const callsignRowIndex = rows.findIndex((row, index) => {
+    const values = row.values || [];
+    const hasCallsignHeader = values.some(
+      (cell) => normalizeKey(cellText(cell)) === "callsignhere"
+    );
+    if (!hasCallsignHeader) return false;
+
+    const previousRow = rows[index - 1]?.values || [];
+    const nextRow = rows[index + 1]?.values || [];
+
+    return previousRow.some(
+      (cell) => normalizeKey(cellText(cell)) === "ehere"
+    ) && nextRow.some(
+      (cell) => normalizeKey(cellText(cell)) === "dategoeshere"
+    );
+  });
+
+  if (callsignRowIndex < 0) return "";
+
+  const callsignValues = rows[callsignRowIndex]?.values || [];
+  const dateValues = rows[callsignRowIndex + 1]?.values || [];
+
+  const callsignLabelIndex = callsignValues.findIndex(
+    (cell) => normalizeKey(cellText(cell)) === "callsignhere"
+  );
+  const dateLabelIndex = dateValues.findIndex(
+    (cell) => normalizeKey(cellText(cell)) === "dategoeshere"
+  );
+
+  if (callsignLabelIndex < 0 || dateLabelIndex < 0) return "";
+
+  const matchingDates = [];
+
+  for (
+    let columnIndex = callsignLabelIndex + 1;
+    columnIndex < callsignValues.length;
+    columnIndex += 1
+  ) {
+    if (normalizeCallsign(cellText(callsignValues[columnIndex])) !== target) {
+      continue;
+    }
+
+    // The callsign and date rows use matching sheet columns.
+    const date = parseDate(cellText(dateValues[columnIndex]));
+    if (date) matchingDates.push(date);
+  }
+
+  return matchingDates.sort().at(-1) || "";
 }
 
 function uniqueFtoRaCount(rows = []) {
@@ -3875,6 +3934,32 @@ function acceptedRaRow(ping) {
   `;
 }
 
+
+function personalSheetRaRow(entry) {
+  const cadet = entry.cadet;
+  return `
+    <div class="ras-simple-row accepted">
+      <span>
+        <strong>${escapeHtml(cadet.name || "Unnamed cadet")}</strong>
+        <small>${escapeHtml(cadet.callsign || "No callsign")}</small>
+      </span>
+      <span class="ras-ping-date">
+        <strong>${escapeHtml(formatDate(entry.date))}</strong>
+        <small>Personal cadet sheet</small>
+      </span>
+    </div>
+  `;
+}
+
+function automaticPersonalSheetRas() {
+  return state.cadets
+    .filter((cadet) => cadet.myRaVerified && cadet.myRaCompleted && cadet.myRaDate)
+    .map((cadet) => ({
+      cadet,
+      date: cadet.myRaDate
+    }));
+}
+
 function renderMassPingPanels() {
   const history = Array.isArray(state.massPingHistory) ? state.massPingHistory : [];
 
@@ -3891,15 +3976,29 @@ function renderMassPingPanels() {
   }
 
   const accepted = history.filter((ping) => ping.acceptedCadetId);
+  const automatic = automaticPersonalSheetRas();
+
+  const manualCadetIds = new Set(
+    accepted.map((ping) => String(ping.acceptedCadetId))
+  );
+
+  const automaticOnly = automatic.filter(
+    (entry) => !manualCadetIds.has(String(entry.cadet.id))
+  );
+
+  const combinedCount = accepted.length + automaticOnly.length;
 
   if (els.raAcceptedList) {
-    els.raAcceptedList.innerHTML = accepted.length
-      ? accepted.map(acceptedRaRow).join("")
-      : empty("No cadets have accepted an RA yet.");
+    els.raAcceptedList.innerHTML = combinedCount
+      ? [
+          ...accepted.map(acceptedRaRow),
+          ...automaticOnly.map(personalSheetRaRow)
+        ].join("")
+      : empty("No completed RAs were found yet.");
   }
 
   if (els.raTotalPings) els.raTotalPings.textContent = String(history.length);
-  if (els.raTotalCompleted) els.raTotalCompleted.textContent = String(accepted.length);
+  if (els.raTotalCompleted) els.raTotalCompleted.textContent = String(combinedCount);
 }
 
 
