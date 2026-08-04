@@ -9001,7 +9001,6 @@ dialog.ra-focus-dossier > form > h2 {
   }
 }
 
-
 /* =========================================================
    Unified Schedule Event Cards
    Training, Interviews and Manual Probie Tests
@@ -9279,5 +9278,55 @@ dialog.ra-focus-dossier > form > h2 {
 
   .schedule-event-columns {
     grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   Final requested schedule cleanup
+   ========================================================= */
+
+.schedule-event-head {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.schedule-event-icon,
+.schedule-event-manual-badge {
+  display: none !important;
+}
+
+.schedule-event-remove {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+}
+
+.schedule-event-columns section > ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schedule-event-list-box {
+  min-height: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.compact-cadet-limits.single-limit {
+  grid-template-columns: 1fr !important;
+}
+
+@media (max-width: 760px) {
+  .schedule-event-head {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+  }
+
+  .schedule-event-remove {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
   }
 }

@@ -1534,7 +1534,6 @@ function trainingCardMarkup(session) {
   return `
     <article class="schedule-event-card schedule-event-training">
       <header class="schedule-event-head">
-        ${scheduleEventIconMarkup("training")}
         <div class="schedule-event-title">
           <h3>Training Day ${session.day}</h3>
           <p>
@@ -1550,26 +1549,22 @@ function trainingCardMarkup(session) {
 
       <div class="schedule-event-counts">
         <span><strong>${session.eligibleSignedUp} / ${session.eligibleTotal}</strong> Cadets</span>
-        <span><strong>${session.staff.length}</strong> Staff</span>
+        <span><strong>${session.staff.length}</strong> FTO's</span>
       </div>
 
       <div class="schedule-event-columns">
         <section>
           <h4>Cadets</h4>
-          <div class="schedule-event-list-box">
-            ${session.cadets.length
-              ? `<ul>${session.cadets.map(scheduleEventPersonMarkup).join("")}</ul>`
-              : `<p class="muted">No cadets signed up yet.</p>`}
-          </div>
+          ${session.cadets.length
+            ? `<ul>${session.cadets.map(scheduleEventPersonMarkup).join("")}</ul>`
+            : `<p class="muted">No cadets signed up yet.</p>`}
         </section>
 
         <section>
-          <h4>Staff</h4>
-          <div class="schedule-event-list-box">
-            ${session.staff.length
-              ? `<ul>${session.staff.map(scheduleEventPersonMarkup).join("")}</ul>`
-              : `<p class="muted">No staff signed up yet.</p>`}
-          </div>
+          <h4>FTO's</h4>
+          ${session.staff.length
+            ? `<ul>${session.staff.map(scheduleEventPersonMarkup).join("")}</ul>`
+            : `<p class="muted">No FTO's signed up yet.</p>`}
         </section>
       </div>
     </article>
@@ -1733,7 +1728,6 @@ function interviewCardMarkup(session) {
   return `
     <article class="schedule-event-card schedule-event-interview">
       <header class="schedule-event-head">
-        ${scheduleEventIconMarkup("interview")}
         <div class="schedule-event-title">
           <h3>Interview Session ${session.session}</h3>
           <p>
@@ -1750,17 +1744,15 @@ function interviewCardMarkup(session) {
       <div class="schedule-event-divider"></div>
 
       <div class="schedule-event-counts">
-        <span><strong>${staff.length}</strong> Staff</span>
+        <span><strong>${staff.length}</strong> FTO's</span>
       </div>
 
       <div class="schedule-event-columns schedule-event-columns-single">
         <section>
-          <h4>Interview Team</h4>
-          <div class="schedule-event-list-box">
-            ${staff.length
-              ? `<ul>${staff.map(scheduleEventPersonMarkup).join("")}</ul>`
-              : `<p class="muted">No staff signed up yet.</p>`}
-          </div>
+          <h4>FTO's</h4>
+          ${staff.length
+            ? `<ul>${staff.map(scheduleEventPersonMarkup).join("")}</ul>`
+            : `<p class="muted">No FTO's signed up yet.</p>`}
         </section>
       </div>
     </article>
@@ -2277,8 +2269,10 @@ function cadetCard(cadet, options = {}) {
         <div class="compact-cadet-training-need">${escapeHtml(trainingNeed)}</div>
       ` : ""}
 
-      <div class="compact-cadet-limits">
-        <span>${escapeHtml(phaseLabel(day14, 14))}</span>
+      <div class="compact-cadet-limits ${day14 !== null && day14 <= 0 ? "single-limit" : ""}">
+        ${day14 !== null && day14 > 0
+          ? `<span>${escapeHtml(phaseLabel(day14, 14))}</span>`
+          : ""}
         <span>${escapeHtml(phaseLabel(day28, 28))}</span>
       </div>
 
@@ -2887,7 +2881,6 @@ function renderManualScheduleEvents() {
         return `
           <article class="schedule-event-card schedule-event-manual">
             <header class="schedule-event-head">
-              ${scheduleEventIconMarkup("manual")}
               <div class="schedule-event-title">
                 <h3>${escapeHtml(event.title || "Untitled Event")}</h3>
                 <p>
@@ -2898,8 +2891,6 @@ function renderManualScheduleEvents() {
                   )}</b></span>
                 </p>
               </div>
-
-              <span class="schedule-event-status schedule-event-manual-badge">MANUAL EVENT</span>
 
               <button
                 class="schedule-event-remove"
@@ -2914,26 +2905,22 @@ function renderManualScheduleEvents() {
 
             <div class="schedule-event-counts">
               <span><strong>${cadet ? 1 : 0}</strong> Cadet</span>
-              <span><strong>${staff.length}</strong> Staff</span>
+              <span><strong>${staff.length}</strong> FTO's</span>
             </div>
 
             <div class="schedule-event-columns">
               <section>
                 <h4>Cadet</h4>
-                <div class="schedule-event-list-box">
-                  ${cadetPerson
-                    ? `<ul>${scheduleEventPersonMarkup(cadetPerson)}</ul>`
-                    : `<p class="muted">No cadet selected.</p>`}
-                </div>
+                ${cadetPerson
+                  ? `<ul>${scheduleEventPersonMarkup(cadetPerson)}</ul>`
+                  : `<p class="muted">No cadet selected.</p>`}
               </section>
 
               <section>
-                <h4>Training Team</h4>
-                <div class="schedule-event-list-box">
-                  ${staff.length
-                    ? `<ul>${staff.map(scheduleEventPersonMarkup).join("")}</ul>`
-                    : `<p class="muted">No staff selected.</p>`}
-                </div>
+                <h4>FTO's</h4>
+                ${staff.length
+                  ? `<ul>${staff.map(scheduleEventPersonMarkup).join("")}</ul>`
+                  : `<p class="muted">No FTO's selected.</p>`}
               </section>
             </div>
 
