@@ -9868,3 +9868,45 @@ dialog.ra-focus-dossier menu {
     padding: 16px !important;
   }
 }
+
+
+/* =========================================================
+   Probationer Test compact attendee row
+   ========================================================= */
+
+.schedule-event-manual .schedule-manual-ftos {
+  min-width: 0;
+}
+
+.schedule-event-manual .schedule-manual-ftos h4 {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 0.58rem;
+}
+
+.schedule-event-manual .schedule-manual-ftos ul {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schedule-event-manual .schedule-manual-ftos .schedule-event-person {
+  flex: 1 1 135px;
+  width: auto !important;
+  min-width: 0;
+}
+
+/* Keep all attendees on one row when the panel has enough room. */
+@media (min-width: 1200px) {
+  .schedule-event-manual .schedule-manual-ftos ul {
+    flex-wrap: nowrap;
+  }
+
+  .schedule-event-manual .schedule-manual-ftos .schedule-event-person {
+    flex: 1 1 0;
+  }
+}

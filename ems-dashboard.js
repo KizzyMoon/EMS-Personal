@@ -1589,6 +1589,41 @@ function scheduleEventPersonMarkup(person) {
 }
 
 
+
+function scheduleTime12Hour(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "Time not set";
+
+  // Already written in 12-hour form: keep it, but tidy spacing/case.
+  const existing12Hour = raw.match(
+    /^(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b(.*)$/i
+  );
+
+  if (existing12Hour) {
+    const hour = Number(existing12Hour[1]);
+    const minutes = existing12Hour[2] || "";
+    const suffix = existing12Hour[4] || "";
+    const time = `${hour}${minutes ? `:${minutes}` : ""}${existing12Hour[3].toLowerCase()}`;
+    return `${time}${suffix ? ` ${suffix.trim()}` : ""}`;
+  }
+
+  // Convert 24-hour values, with an optional suffix such as BST.
+  const twentyFourHour = raw.match(
+    /^([01]?\d|2[0-3]):([0-5]\d)\b(.*)$/
+  );
+
+  if (!twentyFourHour) return raw;
+
+  const hours = Number(twentyFourHour[1]);
+  const minutes = twentyFourHour[2];
+  const suffix = twentyFourHour[3].trim();
+  const period = hours >= 12 ? "pm" : "am";
+  const displayHour = hours % 12 || 12;
+  const time = `${displayHour}:${minutes}${period}`;
+
+  return `${time}${suffix ? ` ${suffix}` : ""}`;
+}
+
 function scheduleDateParts(value) {
   if (!value) return { day: "—", month: "—" };
 
@@ -1632,7 +1667,7 @@ function trainingCardMarkup(session) {
           <div class="schedule-compact-title">
             <h3>Day ${session.day}</h3>
             <p>
-              <strong>${escapeHtml(session.time || "Time not set")}</strong>
+              <strong>${escapeHtml(scheduleTime12Hour(session.time))}</strong>
               <span>•</span>
               <span>Hosted by <b>${trainingHostMarkup(session.host)}</b></span>
             </p>
@@ -1823,7 +1858,7 @@ function interviewCardMarkup(session) {
           <div class="schedule-compact-title">
             <h3>Session ${session.session} <span>${escapeHtml(session.region)}</span></h3>
             <p>
-              <strong>${escapeHtml(session.time || "Time not set")}</strong>
+              <strong>${escapeHtml(scheduleTime12Hour(session.time))}</strong>
               <span>•</span>
               <span>Led by <b>${escapeHtml(session.lead || "Not entered yet")}</b></span>
             </p>
@@ -2924,7 +2959,7 @@ function openManualScheduleEventForm() {
 
 function formatManualEventDateTime(event) {
   const date = event.date ? formatDate(event.date) : "No date";
-  return event.time ? `${date} • ${event.time}` : date;
+  return event.time ? `${date} • ${scheduleTime12Hour(event.time)}` : date;
 }
 
 function manualScheduleCadet(event) {
@@ -2959,18 +2994,8 @@ function renderManualScheduleEvents() {
         const supervisor = manualScheduleMember(event.supervisorId);
         const ftos = (event.ftoIds || [])
           .map(manualScheduleMember)
-          .filter(Boolean);
-
-        const cadetPerson = cadet
-          ? { ...cadet, roleTag: "CADET" }
-          : null;
-
-        const team = [
-          ...(supervisor
-            ? [{ ...supervisor, roleTag: "SUPERVISOR" }]
-            : []),
-          ...ftos.map((member) => ({ ...member, roleTag: "FTO" }))
-        ];
+          .filter(Boolean)
+          .map((member) => ({ ...member, roleTag: "FTO" }));
 
         return `
           <article class="schedule-event-card schedule-event-manual schedule-date-card">
@@ -2981,7 +3006,7 @@ function renderManualScheduleEvents() {
                 <div class="schedule-compact-title">
                   <h3>${escapeHtml(cadet?.name || "Cadet not selected")}</h3>
                   <p>
-                    <strong>${escapeHtml(event.time || "Time not set")}</strong>
+                    <strong>${escapeHtml(scheduleTime12Hour(event.time))}</strong>
                     <span>•</span>
                     <span>Supervisor <b>${escapeHtml(
                       supervisor
@@ -3002,21 +3027,12 @@ function renderManualScheduleEvents() {
 
               <div class="schedule-event-divider"></div>
 
-              <div class="schedule-compact-people">
-                <section>
-                  <h4>Cadet</h4>
-                  ${cadetPerson
-                    ? `<ul>${scheduleEventPersonMarkup(cadetPerson)}</ul>`
-                    : `<p class="muted">No cadet selected.</p>`}
-                </section>
-
-                <section>
-                  <h4>FTO's</h4>
-                  ${team.length
-                    ? `<ul>${team.map(scheduleEventPersonMarkup).join("")}</ul>`
-                    : `<p class="muted">No FTO's selected.</p>`}
-                </section>
-              </div>
+              <section class="schedule-manual-ftos">
+                <h4>FTO's</h4>
+                ${ftos.length
+                  ? `<ul>${ftos.map(scheduleEventPersonMarkup).join("")}</ul>`
+                  : `<p class="muted">No FTO's selected.</p>`}
+              </section>
 
               ${event.notes
                 ? `<p class="schedule-event-notes">${escapeHtml(event.notes)}</p>`
