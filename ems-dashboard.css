@@ -8849,3 +8849,154 @@ dialog.ra-focus-dossier > form > h2 {
     max-width: 22px !important;
   }
 }
+
+
+/* =========================================================
+   Portrait navigation — fixed bottom HUD with equal icons
+   ========================================================= */
+
+@media (max-width: 1050px), (orientation: portrait) and (max-width: 1350px) {
+  body {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .topbar {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+  }
+
+  .topbar > nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
+    z-index: 2000 !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 76px !important;
+
+    border-top: 1px solid rgba(248, 162, 162, 0.28) !important;
+    border-bottom: 0 !important;
+    background: rgba(4, 8, 13, 0.985) !important;
+    backdrop-filter: blur(18px) !important;
+
+    padding:
+      0
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left) !important;
+
+    overflow: hidden !important;
+  }
+
+  .topbar > nav button {
+    position: relative !important;
+    display: grid !important;
+    grid-template-rows: 30px auto !important;
+    place-items: center !important;
+    align-content: center !important;
+    gap: 4px !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 76px !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+
+    padding: 8px 3px 7px !important;
+    overflow: hidden !important;
+  }
+
+  .topbar > nav button.active {
+    background: rgba(248, 162, 162, 0.08) !important;
+  }
+
+  .topbar > nav button.active::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 12% !important;
+    right: 12% !important;
+    bottom: 0 !important;
+    height: 3px !important;
+    border-radius: 999px 999px 0 0 !important;
+    background: var(--accent) !important;
+  }
+
+  .topbar > nav .nav-icon {
+    display: block !important;
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+    margin: 0 auto !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+
+  .topbar > nav button > span {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+
+    color: inherit !important;
+    font-size: 0.54rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .topbar > nav .sidebar-page-count {
+    position: absolute !important;
+    top: 5px !important;
+    right: 12% !important;
+    z-index: 2 !important;
+
+    display: inline-grid !important;
+    place-items: center !important;
+
+    min-width: 17px !important;
+    height: 17px !important;
+    border-radius: 999px !important;
+    padding: 1px 4px !important;
+
+    font-size: 0.48rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-quick-tab,
+  .mobile-settings-tab {
+    display: grid !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar > nav .nav-icon {
+    width: 23px !important;
+    height: 23px !important;
+    min-width: 23px !important;
+    min-height: 23px !important;
+    max-width: 23px !important;
+    max-height: 23px !important;
+  }
+
+  .topbar > nav button > span {
+    font-size: 0.46rem !important;
+  }
+}
