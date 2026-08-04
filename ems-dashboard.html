@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260804-all-requested-3" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260804-criminal-builder-1" />
   </head>
   <body>
     <main class="app">
@@ -438,7 +438,61 @@
             <strong>Format</strong><span>Reason to Death | TOD: XX:XX | Charges</span>
             <strong>Example</strong><span>DOS for Fatal GSW to the head | TOD: 5:42 AM | Bank Robbery | Attempted Mass Murder | Felony Evading Arrest | Reckless Driving</span>
           </div>
-        </article>
+        
+          <div class="criminal-morgue-builder-actions">
+            <button type="button" data-action="toggle-criminal-morgue-builder">
+              Build Criminal Morgue Entry
+            </button>
+          </div>
+
+          <section class="criminal-morgue-builder is-hidden" data-criminal-morgue-builder>
+            <div class="criminal-morgue-builder-grid">
+              <label>
+                Status
+                <select data-criminal-status>
+                  <option value="DOA">DOA</option>
+                  <option value="DOS">DOS</option>
+                </select>
+              </label>
+
+              <label>
+                Cause of death
+                <input data-criminal-cause type="text" value="Fatal GSW" />
+              </label>
+
+              <label>
+                Time of death
+                <input data-criminal-time type="text" inputmode="numeric" placeholder="17:42" maxlength="5" />
+              </label>
+            </div>
+
+            <div class="criminal-charge-section">
+              <div class="criminal-charge-heading">
+                <h3>Charges</h3>
+                <span>Select all that apply.</span>
+              </div>
+
+              <div class="criminal-charge-list" data-criminal-charge-list></div>
+
+              <div class="criminal-custom-charge-row">
+                <input
+                  data-criminal-custom-charge
+                  type="text"
+                  placeholder="Add another charge..."
+                />
+                <button type="button" data-action="add-criminal-charge">Add & Save</button>
+              </div>
+            </div>
+
+            <div class="criminal-morgue-output-block">
+              <label>
+                Formatted entry
+                <textarea data-criminal-output readonly></textarea>
+              </label>
+              <button type="button" data-action="copy-criminal-morgue-entry">Copy</button>
+            </div>
+          </section>
+</article>
 
         <div class="vehicle-ratio-grid">
           <article class="cheat-sheet-panel vehicle-panel seu-panel">
@@ -662,6 +716,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260804-all-requested-3"></script>
+    <script src="ems-dashboard.js?v=20260804-criminal-builder-1"></script>
   </body>
 </html>

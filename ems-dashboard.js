@@ -126,7 +126,14 @@ const els = {
   settingsSummary: document.querySelector("[data-settings-summary]"),
   settingsSyncTable: document.querySelector("[data-settings-sync-table]"),
   settingsSyncHistory: document.querySelector("[data-settings-sync-history]"),
-  googleEmail: document.querySelector("[data-google-email]")
+  googleEmail: document.querySelector("[data-google-email]"),
+  criminalMorgueBuilder: document.querySelector("[data-criminal-morgue-builder]"),
+  criminalStatus: document.querySelector("[data-criminal-status]"),
+  criminalCause: document.querySelector("[data-criminal-cause]"),
+  criminalTime: document.querySelector("[data-criminal-time]"),
+  criminalChargeList: document.querySelector("[data-criminal-charge-list]"),
+  criminalCustomCharge: document.querySelector("[data-criminal-custom-charge]"),
+  criminalOutput: document.querySelector("[data-criminal-output]")
 };
 
 function loadState() {
@@ -147,11 +154,14 @@ function loadState() {
       manualScheduleEvents: Array.isArray(saved.manualScheduleEvents)
         ? saved.manualScheduleEvents
         : [],
+      customCriminalCharges: Array.isArray(saved.customCriminalCharges)
+        ? saved.customCriminalCharges
+        : [],
       settings: normalizeSettings(saved.settings),
       lastUpdated: saved.lastUpdated || ""
     };
   } catch {
-    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), checklistOverrides: {}, syncHistory: [], massPingHistory: [], manualScheduleEvents: [], settings: normalizeSettings(), lastUpdated: "" };
+    return { cadets: [], members: [], notes: [], pingOffers: [], rosterChanges: [], rosterUpdate: normalizeRosterUpdate(), checklistOverrides: {}, syncHistory: [], massPingHistory: [], manualScheduleEvents: [], customCriminalCharges: [], settings: normalizeSettings(), lastUpdated: "" };
   }
 }
 
@@ -3892,6 +3902,142 @@ function renderMassPingPanels() {
   if (els.raTotalCompleted) els.raTotalCompleted.textContent = String(accepted.length);
 }
 
+
+const DEFAULT_CRIMINAL_CHARGES = [
+  "Commercial Break In",
+  "Store Robbery",
+  "Bank Robbery",
+  "Att. Mass Murder",
+  "FEA",
+  "GTA",
+  "Reckless Driving",
+  "Kidnapping",
+  "Criminal Possession of a Firearm"
+];
+
+function allCriminalCharges() {
+  const seen = new Set();
+  return [...DEFAULT_CRIMINAL_CHARGES, ...(state.customCriminalCharges || [])]
+    .map((charge) => String(charge || "").trim())
+    .filter((charge) => {
+      const key = charge.toLowerCase();
+      if (!charge || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function selectedCriminalCharges() {
+  return [...document.querySelectorAll("[data-criminal-charge-checkbox]:checked")]
+    .map((input) => input.value);
+}
+
+function normaliseCriminalTime(value) {
+  const raw = String(value || "").trim();
+  const match = raw.match(/^(\d{1,2})(?::?(\d{2}))?$/);
+  if (!match) return raw;
+
+  const hours = Number(match[1]);
+  const minutes = Number(match[2] || 0);
+  if (hours > 23 || minutes > 59) return raw;
+
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
+function buildCriminalMorgueText() {
+  const status = String(els.criminalStatus?.value || "DOA").trim();
+  const cause = String(els.criminalCause?.value || "Fatal GSW").trim();
+  const time = normaliseCriminalTime(els.criminalTime?.value || "");
+  const charges = selectedCriminalCharges();
+
+  const parts = [
+    `${status} due to ${cause || "Unknown Cause"}`
+  ];
+
+  if (time) parts.push(`TOD: ${time}`);
+  parts.push(...charges);
+
+  return parts.join(" | ");
+}
+
+function updateCriminalMorgueOutput() {
+  if (!els.criminalOutput) return;
+  els.criminalOutput.value = buildCriminalMorgueText();
+}
+
+function renderCriminalChargeList() {
+  if (!els.criminalChargeList) return;
+
+  const selected = new Set(selectedCriminalCharges());
+
+  els.criminalChargeList.innerHTML = allCriminalCharges()
+    .map((charge) => `
+      <label class="criminal-charge-option">
+        <input
+          type="checkbox"
+          value="${escapeHtml(charge)}"
+          data-criminal-charge-checkbox
+          ${selected.has(charge) ? "checked" : ""}
+        />
+        <span>${escapeHtml(charge)}</span>
+      </label>
+    `)
+    .join("");
+
+  updateCriminalMorgueOutput();
+}
+
+function addCustomCriminalCharge() {
+  const charge = String(els.criminalCustomCharge?.value || "").trim();
+  if (!charge) return;
+
+  const exists = allCriminalCharges()
+    .some((item) => item.toLowerCase() === charge.toLowerCase());
+
+  if (!exists) {
+    state.customCriminalCharges = [
+      ...(state.customCriminalCharges || []),
+      charge
+    ];
+    saveState();
+  }
+
+  if (els.criminalCustomCharge) {
+    els.criminalCustomCharge.value = "";
+  }
+
+  renderCriminalChargeList();
+
+  const checkbox = [...document.querySelectorAll("[data-criminal-charge-checkbox]")]
+    .find((input) => input.value.toLowerCase() === charge.toLowerCase());
+
+  if (checkbox) checkbox.checked = true;
+  updateCriminalMorgueOutput();
+}
+
+async function copyCriminalMorgueEntry() {
+  const text = buildCriminalMorgueText();
+
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    if (els.criminalOutput) {
+      els.criminalOutput.focus();
+      els.criminalOutput.select();
+      document.execCommand("copy");
+    }
+  }
+
+  const button = document.querySelector('[data-action="copy-criminal-morgue-entry"]');
+  if (button) {
+    const previous = button.textContent;
+    button.textContent = "Copied";
+    setTimeout(() => {
+      button.textContent = previous;
+    }, 1200);
+  }
+}
+
 function render() {
   updateSidebarCounts();
   renderStats();
@@ -3908,6 +4054,7 @@ function render() {
   renderSettings();
   renderTraining();
   renderInterviews();
+  renderCriminalChargeList();
 }
 
 function setActiveTab(tabName) {
@@ -4885,6 +5032,22 @@ document.addEventListener("click", async (event) => {
     return;
   }
 
+  if (action === "toggle-criminal-morgue-builder") {
+    els.criminalMorgueBuilder?.classList.toggle("is-hidden");
+    renderCriminalChargeList();
+    return;
+  }
+
+  if (action === "add-criminal-charge") {
+    addCustomCriminalCharge();
+    return;
+  }
+
+  if (action === "copy-criminal-morgue-entry") {
+    await copyCriminalMorgueEntry();
+    return;
+  }
+
   if (action === "refresh-training") {
     const trainingResult = await refreshTraining({ prompt: "" });
     const interviewResult = await refreshInterviews({ prompt: "" });
@@ -5128,4 +5291,31 @@ document.addEventListener("change", (event) => {
   const checkbox = event.target.closest("[data-fto-checkbox]");
   if (!checkbox) return;
   refreshManualFtoPicker();
+});
+
+
+document.addEventListener("input", (event) => {
+  if (
+    event.target.matches("[data-criminal-status]") ||
+    event.target.matches("[data-criminal-cause]") ||
+    event.target.matches("[data-criminal-time]")
+  ) {
+    updateCriminalMorgueOutput();
+  }
+});
+
+document.addEventListener("change", (event) => {
+  if (event.target.matches("[data-criminal-charge-checkbox]")) {
+    updateCriminalMorgueOutput();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (
+    event.key === "Enter" &&
+    event.target.matches("[data-criminal-custom-charge]")
+  ) {
+    event.preventDefault();
+    addCustomCriminalCharge();
+  }
 });
