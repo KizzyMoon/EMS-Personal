@@ -5640,7 +5640,7 @@ dialog.ra-focus-dossier .close {
     inset: auto 0 0 0 !important;
     z-index: 1500;
     display: grid !important;
-    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
     gap: 0 !important;
     width: 100% !important;
     min-height: 76px;
@@ -8489,33 +8489,363 @@ dialog.ra-focus-dossier > form > h2 {
 }
 
 
-
-
-
 /* =========================================================
-   Final portrait HUD safeguard
-   Seven navigation items remain on one fixed bottom row
+   Portrait monitor / mobile navigation HUD fix
    ========================================================= */
 
-@media (max-width: 1050px), (orientation: portrait) and (max-width: 1350px) {
-  .topbar > nav {
-    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
-    overflow: hidden !important;
+@media (max-width: 900px), (orientation: portrait) and (max-width: 1200px) {
+  .app {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
   }
 
-  .topbar > nav button {
-    min-width: 0 !important;
+  .topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+    background: rgba(7, 11, 16, 0.94) !important;
+    padding: 8px 10px !important;
+  }
+
+  .topbar .brand,
+  .sidebar-quick-links,
+  .sidebar-settings-button {
+    display: none !important;
+  }
+
+  .topbar nav {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(72px, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    padding: 0 !important;
+    scrollbar-width: thin;
+  }
+
+  .topbar nav button {
+    position: relative !important;
+    display: grid !important;
+    grid-template-rows: 22px auto !important;
+    justify-items: center !important;
+    align-content: center !important;
+    gap: 4px !important;
+    min-width: 72px !important;
+    min-height: 56px !important;
+    border: 1px solid transparent !important;
+    border-radius: 7px !important;
+    background: transparent !important;
+    color: #d6dce6 !important;
+    padding: 6px 5px !important;
+    text-align: center !important;
+  }
+
+  .topbar nav button.active {
+    border-color: rgba(234, 159, 184, 0.4) !important;
+    background: rgba(234, 159, 184, 0.12) !important;
+    color: #fff !important;
+  }
+
+  .topbar nav button .nav-icon,
+  .topbar nav button .sidebar-page-icon {
+    width: 22px !important;
+    height: 22px !important;
+    margin: 0 !important;
+    object-fit: contain !important;
+  }
+
+  .topbar nav button > span {
+    display: block !important;
+    color: inherit !important;
+    font-size: 0.56rem !important;
+    font-weight: 900 !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+  }
+
+  .topbar nav button .sidebar-page-count {
+    position: absolute !important;
+    top: 4px !important;
+    right: 7px !important;
+    min-width: 17px !important;
+    height: 17px !important;
+    padding: 2px 5px !important;
+    font-size: 0.48rem !important;
+  }
+
+  .mobile-quick-tab,
+  .mobile-settings-tab {
+    display: grid !important;
+  }
+
+  .toolbar,
+  .view,
+  .stats {
+    grid-column: 1 !important;
+  }
+
+  .toolbar {
+    grid-row: 2 !important;
+  }
+
+  .view {
+    grid-row: 3 !important;
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 620px) {
+  .topbar nav {
+    grid-template-columns: repeat(7, minmax(66px, 1fr)) !important;
+  }
+
+  .topbar nav button {
+    min-width: 66px !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL PORTRAIT MONITOR LAYOUT FIX
+   Full-width single-column page + fixed seven-button HUD
+   ========================================================= */
+
+@media (max-width: 1050px), (orientation: portrait) and (max-width: 1350px) {
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .app {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+  }
+
+  .topbar {
+    position: relative !important;
+    inset: auto !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 58px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+    padding: 8px 12px !important;
+  }
+
+  .topbar .brand {
+    display: flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .topbar > nav {
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    z-index: 1500 !important;
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 78px !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    border-top: 1px solid rgba(248, 162, 162, 0.28) !important;
+    background: linear-gradient(
+      180deg,
+      rgba(5, 9, 14, 0.98),
+      rgba(2, 5, 9, 0.995)
+    ) !important;
+    padding:
+      0
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left) !important;
+  }
+
+  .topbar > nav button {
+    display: grid !important;
+    grid-template-rows: 28px auto !important;
+    place-items: center !important;
+    align-content: center !important;
+    gap: 4px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 78px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 7px 2px !important;
+    overflow: hidden !important;
+  }
+
   .topbar > nav button > span {
-    font-size: 0.46rem !important;
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    font-size: 0.56rem !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
 
   .topbar > nav .nav-icon {
-    width: 21px !important;
-    height: 21px !important;
-    max-width: 21px !important;
+    display: block !important;
+    width: 25px !important;
+    height: 25px !important;
+    max-width: 25px !important;
+    margin: 0 auto !important;
+    object-fit: contain !important;
+  }
+
+  .topbar > nav .sidebar-page-count {
+    position: absolute !important;
+    top: 4px !important;
+    right: 7px !important;
+  }
+
+  .topbar > nav button {
+    position: relative !important;
+  }
+
+  .mobile-quick-tab,
+  .mobile-settings-tab {
+    display: grid !important;
+  }
+
+  .sidebar-quick-links,
+  .sidebar-settings-button {
+    display: none !important;
+  }
+
+  .toolbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 30 !important;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex-wrap: wrap !important;
+    padding: 10px 12px !important;
+  }
+
+  .toolbar input {
+    flex: 1 1 260px !important;
+    min-width: 0 !important;
+  }
+
+  .toolbar button {
+    flex: 0 0 auto !important;
+  }
+
+  .stats {
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .view {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 12px !important;
+  }
+
+  .overview-reference-layout,
+  .overview-dashboard,
+  .overview-reference-primary,
+  .dashboard-layout,
+  .cadets-page-layout,
+  .roster-page-layout,
+  .ras-two-column-layout {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .overview-reference-primary {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .needs-ra-panel,
+  .overview-schedule-panel,
+  .overview-limits-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .needs-ra-panel [data-needs-ra-list] {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .needs-ra-panel [data-needs-ra-list] > * {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+
+  .overview-limit-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .toolbar {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .toolbar input,
+  .toolbar button,
+  .toolbar .sync-status-chip {
+    width: 100% !important;
+  }
+
+  .needs-ra-panel [data-needs-ra-list],
+  .overview-limit-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .topbar > nav button > span {
+    font-size: 0.48rem !important;
+  }
+
+  .topbar > nav .nav-icon {
+    width: 22px !important;
+    height: 22px !important;
+    max-width: 22px !important;
   }
 }
