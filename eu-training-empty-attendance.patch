@@ -1,0 +1,28 @@
+--- a/ems-dashboard.js
++++ b/ems-dashboard.js
+@@ -1414,8 +1414,24 @@
+   return people;
+ }
+ 
++function findTrainingHeaderDate(rows, config) {
++  const startRow = 8;
++  const endRow = 12;
++  const startColumn = Math.max(1, config.employeeColumn);
++  const endColumn = Math.max(config.timeColumn, config.nameColumn);
++
++  for (let row = startRow; row <= endRow; row += 1) {
++    for (let column = startColumn; column <= endColumn; column += 1) {
++      const date = parseTrainingDate(trainingRawCell(rows, row, column));
++      if (date) return date;
++    }
++  }
++
++  return "";
++}
++
+ function parseTrainingSession(rows, config) {
+-  const date = parseTrainingDate(trainingRawCell(rows, 11, config.nameColumn));
++  const date = findTrainingHeaderDate(rows, config);
+   const cadets = trainingSignups(rows, config.employeeColumn, config.nameColumn, 13, 26, "cadet");
+   const staff = trainingSignups(rows, config.employeeColumn, config.nameColumn, 29, 55, "staff");
+   const myEmployeeNumber = normalizeEmployeeNumber(state.settings?.myEmployeeNumber);
