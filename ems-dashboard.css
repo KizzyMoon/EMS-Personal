@@ -10075,3 +10075,59 @@ dialog.ra-focus-dossier menu {
     grid-template-columns: 48px minmax(0, 1fr) !important;
   }
 }
+
+
+/* =========================================================
+   Match Training and Interviews to Probationer Tests
+   Full-width stacked attendee rows
+   ========================================================= */
+
+.schedule-event-training .schedule-compact-people,
+.schedule-event-interview .schedule-compact-people {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.schedule-event-training .schedule-compact-people section,
+.schedule-event-interview .schedule-compact-people section {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.schedule-event-training .schedule-compact-people ul,
+.schedule-event-interview .schedule-compact-people ul {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.schedule-event-training .schedule-event-person,
+.schedule-event-interview .schedule-event-person {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.schedule-event-training .schedule-person-identity strong,
+.schedule-event-interview .schedule-person-identity strong {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere !important;
+}
+
+.schedule-event-training .schedule-person-identity small,
+.schedule-event-interview .schedule-person-identity small {
+  white-space: normal !important;
+}
+
+@media (min-width: 1251px) {
+  .overview-training-card .schedule-compact-people,
+  .overview-interviews-card .schedule-compact-people,
+  .overview-training-card .schedule-compact-people ul,
+  .overview-interviews-card .schedule-compact-people ul {
+    grid-template-columns: 1fr !important;
+  }
+}
