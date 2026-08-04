@@ -9910,3 +9910,72 @@ dialog.ra-focus-dossier menu {
     flex: 1 1 0;
   }
 }
+
+
+/* =========================================================
+   Readable attendee names
+   Prevent Training / Interview / Probationer Test names
+   from being squeezed or truncated.
+   ========================================================= */
+
+.schedule-date-card .schedule-event-person {
+  min-width: 0 !important;
+  grid-template-columns: auto auto auto minmax(0, 1fr) !important;
+}
+
+.schedule-date-card .schedule-event-person-name {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  line-height: 1.15 !important;
+  word-break: normal !important;
+}
+
+/* Training and interview attendee lists use responsive columns. */
+.schedule-compact-people ul {
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)) !important;
+}
+
+.schedule-compact-people .schedule-event-person {
+  width: 100% !important;
+}
+
+/* Probationer Test FTOs wrap naturally instead of being forced into one row. */
+.schedule-event-manual .schedule-manual-ftos ul {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  gap: 5px !important;
+}
+
+.schedule-event-manual .schedule-manual-ftos .schedule-event-person {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Remove the earlier large-screen nowrap rule. */
+@media (min-width: 1200px) {
+  .schedule-event-manual .schedule-manual-ftos ul {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  }
+
+  .schedule-event-manual .schedule-manual-ftos .schedule-event-person {
+    flex: none !important;
+  }
+}
+
+/* At the current three-panel Overview width, use two readable columns. */
+@media (min-width: 1251px) {
+  .overview-training-card .schedule-compact-people ul,
+  .overview-probie-card .schedule-manual-ftos ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Very narrow screens stack every person as a full-width row. */
+@media (max-width: 620px) {
+  .schedule-compact-people ul,
+  .schedule-event-manual .schedule-manual-ftos ul {
+    grid-template-columns: 1fr !important;
+  }
+}
