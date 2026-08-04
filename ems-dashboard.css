@@ -1246,7 +1246,7 @@ menu {
   padding: 0;
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 720px) {
   body {
     padding-bottom: calc(74px + env(safe-area-inset-bottom));
   }
