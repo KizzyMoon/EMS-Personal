@@ -9979,3 +9979,99 @@ dialog.ra-focus-dossier menu {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* =========================================================
+   Non-overlapping schedule attendees
+   Full name on top, callsign underneath
+   ========================================================= */
+
+.schedule-date-card .schedule-person-stacked {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 6px 8px !important;
+}
+
+.schedule-date-card .schedule-person-stacked:not(:has(.schedule-event-role)) {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.schedule-person-identity {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.schedule-person-identity strong {
+  display: block;
+  min-width: 0;
+  overflow: visible;
+  color: #fff;
+  font-size: 0.57rem;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.schedule-person-identity small {
+  display: block;
+  color: var(--accent);
+  font-size: 0.49rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.schedule-event-training .schedule-person-identity small {
+  color: var(--green);
+}
+
+.schedule-event-interview .schedule-person-identity small {
+  color: var(--blue);
+}
+
+/* Attendees stack as full-width rows inside their own section. */
+.schedule-compact-people ul,
+.schedule-event-manual .schedule-manual-ftos ul {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 5px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.schedule-event-manual .schedule-manual-ftos .schedule-event-person {
+  width: 100% !important;
+  min-width: 0 !important;
+  flex: none !important;
+}
+
+/* Remove obsolete divider/callsign layout from the old renderer. */
+.schedule-date-card .schedule-event-person-call,
+.schedule-date-card .schedule-event-person-divider,
+.schedule-date-card .schedule-event-person-name {
+  display: none !important;
+}
+
+/* Keep Cadets and FTOs side-by-side when there is space. */
+.schedule-compact-people {
+  grid-template-columns: minmax(100px, 0.8fr) minmax(150px, 1.2fr) !important;
+  align-items: start !important;
+}
+
+@media (max-width: 1450px) {
+  .schedule-compact-people {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .schedule-date-card {
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+  }
+}

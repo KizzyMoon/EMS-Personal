@@ -1575,20 +1575,20 @@ function scheduleEventPersonMarkup(person) {
   const callsign = String(person?.callsign || "").trim();
   const name = String(person?.name || "").trim();
   const employee = String(person?.employeeNumber || "").trim();
+  const reference = callsign || employee || "No callsign";
 
   return `
-    <li class="schedule-event-person">
+    <li class="schedule-event-person schedule-person-stacked">
       ${role && role !== "CADET"
         ? `<span class="schedule-event-role schedule-event-role-${escapeHtml(roleClass)}">${escapeHtml(role === "SUPERVISOR" ? "SUP" : role)}</span>`
         : ""}
-      <span class="schedule-event-person-call">${escapeHtml(callsign || employee || "—")}</span>
-      <span class="schedule-event-person-divider">|</span>
-      <span class="schedule-event-person-name">${escapeHtml(name || "Unknown")}</span>
+      <span class="schedule-person-identity">
+        <strong>${escapeHtml(name || "Unknown")}</strong>
+        <small>${escapeHtml(reference)}</small>
+      </span>
     </li>
   `;
 }
-
-
 
 function scheduleTime12Hour(value) {
   const raw = String(value || "").trim();
