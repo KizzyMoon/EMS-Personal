@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260804-auto-ra-history-1" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260804-overview-priority-1" />
   </head>
   <body>
     <main class="app">
@@ -129,52 +129,59 @@
         <div class="overview-action-row">
           <button class="overview-heading-mass-ping" data-action="create-mass-ping" type="button">Mass Ping</button>
         </div>
-<section class="overview-reference-primary">
-          <article class="panel overview-list-panel needs-ra-panel">
-            <div class="overview-panel-title">
-              <h2>Needs RA From Me</h2>
-              <span data-count-needs-ra>0</span>
-            </div>
-            <div class="todo-list overview-reference-list" data-needs-ra-list></div>
-          </article>
-<article class="panel upcoming-training-panel overview-schedule-panel">
-            <div class="overview-panel-title">
-              <h2>Schedule</h2>
-              <div class="schedule-header-actions">
-                <button data-action="add-manual-event" type="button">Add Event</button>
-                <button data-action="refresh-training" type="button">Refresh</button>
-              </div>
-            </div>
 
-            <section class="manual-schedule-section">
-              <div class="manual-schedule-heading">
-                <h3>Manual Events</h3>
-                <span class="muted" data-manual-event-count>0</span>
-              </div>
-              <div class="manual-schedule-list" data-manual-schedule-list></div>
-            </section>
+        <section class="overview-priority-grid">
+          <article class="panel overview-priority-card overview-training-card">
+            <div class="overview-panel-title">
+              <h2>Training</h2>
+              <button data-action="refresh-training" type="button">Refresh</button>
+            </div>
 
             <div class="upcoming-training-grid" data-training-list></div>
-            <section class="upcoming-interviews-section">
-              <div class="upcoming-interviews-heading">
-                <h3>Upcoming Interviews</h3>
-                <span class="muted" data-interview-status>Refreshing…</span>
-              </div>
-              <div class="upcoming-interviews-list" data-interview-list></div>
-            </section>
+
             <footer class="schedule-refresh-footer">
               <span data-training-status>Refreshing live training information…</span>
             </footer>
           </article>
+
+          <article class="panel overview-priority-card overview-interviews-card">
+            <div class="overview-panel-title">
+              <h2>Interviews</h2>
+              <span class="muted" data-interview-status>Refreshing…</span>
+            </div>
+
+            <div class="upcoming-interviews-list" data-interview-list></div>
+          </article>
+
+          <article class="panel overview-priority-card overview-probie-card">
+            <div class="overview-panel-title">
+              <h2>Probationer Tests</h2>
+              <div class="schedule-header-actions">
+                <span class="muted" data-manual-event-count>0</span>
+                <button data-action="add-manual-event" type="button">Add Event</button>
+              </div>
+            </div>
+
+            <div class="manual-schedule-list" data-manual-schedule-list></div>
+          </article>
         </section>
-<article class="panel overview-limits-panel">
+
+        <article class="panel overview-list-panel needs-ra-panel">
+          <div class="overview-panel-title">
+            <h2>Cadets I Haven't Taken on RA</h2>
+            <span data-count-needs-ra>0</span>
+          </div>
+          <div class="todo-list overview-reference-list" data-needs-ra-list></div>
+        </article>
+
+        <article class="panel overview-limits-panel">
           <div class="overview-panel-title">
             <h2>Cadets Approaching Limit</h2>
             <button data-tab="cadets" type="button">View all</button>
           </div>
           <div class="overview-limit-grid" data-limit-list></div>
         </article>
-</section>
+      </section>
 
       <section class="view is-hidden cadets-page" data-view="cadets">
 <div class="cadets-page-layout">
@@ -716,6 +723,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260804-auto-ra-history-1"></script>
+    <script src="ems-dashboard.js?v=20260804-overview-priority-1"></script>
   </body>
 </html>

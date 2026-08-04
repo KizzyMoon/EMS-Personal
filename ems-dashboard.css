@@ -9501,3 +9501,74 @@ dialog.ra-focus-dossier > form > h2 {
 .cadet-profile-grid .compact-cadet-card {
   height: 100% !important;
 }
+
+
+/* =========================================================
+   Overview priority layout
+   Training, Interviews and Probationer Tests first
+   ========================================================= */
+
+.overview-reference-layout {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.overview-priority-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.overview-priority-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  min-height: 100%;
+}
+
+.overview-priority-card .overview-panel-title {
+  margin-bottom: 0;
+}
+
+.overview-priority-card .upcoming-training-grid,
+.overview-priority-card .upcoming-interviews-list,
+.overview-priority-card .manual-schedule-list {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.overview-priority-card .schedule-event-card {
+  min-width: 0;
+}
+
+.overview-priority-card .schedule-refresh-footer {
+  margin-top: auto;
+}
+
+.needs-ra-panel {
+  width: 100%;
+  min-width: 0;
+}
+
+.needs-ra-panel [data-needs-ra-list] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 1250px) {
+  .overview-priority-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .overview-priority-grid,
+  .needs-ra-panel [data-needs-ra-list] {
+    grid-template-columns: 1fr;
+  }
+}
