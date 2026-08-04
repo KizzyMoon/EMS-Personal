@@ -5640,7 +5640,7 @@ dialog.ra-focus-dossier .close {
     inset: auto 0 0 0 !important;
     z-index: 1500;
     display: grid !important;
-    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
     gap: 0 !important;
     width: 100% !important;
     min-height: 76px;
@@ -8489,124 +8489,33 @@ dialog.ra-focus-dossier > form > h2 {
 }
 
 
+
+
+
 /* =========================================================
-   Portrait monitor / mobile navigation HUD fix
+   Final portrait HUD safeguard
+   Seven navigation items remain on one fixed bottom row
    ========================================================= */
 
-@media (max-width: 900px), (orientation: portrait) and (max-width: 1200px) {
-  .app {
-    grid-template-columns: 1fr !important;
-    grid-template-rows: auto auto minmax(0, 1fr) !important;
+@media (max-width: 1050px), (orientation: portrait) and (max-width: 1350px) {
+  .topbar > nav {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    overflow: hidden !important;
   }
 
-  .topbar {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 20 !important;
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    border-right: 0 !important;
-    border-bottom: 1px solid var(--line) !important;
-    background: rgba(7, 11, 16, 0.94) !important;
-    padding: 8px 10px !important;
-  }
-
-  .topbar .brand,
-  .sidebar-quick-links,
-  .sidebar-settings-button {
-    display: none !important;
-  }
-
-  .topbar nav {
-    display: grid !important;
-    grid-template-columns: repeat(7, minmax(72px, 1fr)) !important;
-    gap: 6px !important;
-    width: 100% !important;
-    overflow-x: auto !important;
-    padding: 0 !important;
-    scrollbar-width: thin;
-  }
-
-  .topbar nav button {
-    position: relative !important;
-    display: grid !important;
-    grid-template-rows: 22px auto !important;
-    justify-items: center !important;
-    align-content: center !important;
-    gap: 4px !important;
-    min-width: 72px !important;
-    min-height: 56px !important;
-    border: 1px solid transparent !important;
-    border-radius: 7px !important;
-    background: transparent !important;
-    color: #d6dce6 !important;
-    padding: 6px 5px !important;
-    text-align: center !important;
-  }
-
-  .topbar nav button.active {
-    border-color: rgba(234, 159, 184, 0.4) !important;
-    background: rgba(234, 159, 184, 0.12) !important;
-    color: #fff !important;
-  }
-
-  .topbar nav button .nav-icon,
-  .topbar nav button .sidebar-page-icon {
-    width: 22px !important;
-    height: 22px !important;
-    margin: 0 !important;
-    object-fit: contain !important;
-  }
-
-  .topbar nav button > span {
-    display: block !important;
-    color: inherit !important;
-    font-size: 0.56rem !important;
-    font-weight: 900 !important;
-    line-height: 1.05 !important;
-    white-space: nowrap !important;
-  }
-
-  .topbar nav button .sidebar-page-count {
-    position: absolute !important;
-    top: 4px !important;
-    right: 7px !important;
-    min-width: 17px !important;
-    height: 17px !important;
-    padding: 2px 5px !important;
-    font-size: 0.48rem !important;
-  }
-
-  .mobile-quick-tab,
-  .mobile-settings-tab {
-    display: grid !important;
-  }
-
-  .toolbar,
-  .view,
-  .stats {
-    grid-column: 1 !important;
-  }
-
-  .toolbar {
-    grid-row: 2 !important;
-  }
-
-  .view {
-    grid-row: 3 !important;
+  .topbar > nav button {
+    min-width: 0 !important;
   }
 }
 
-@media (max-width: 620px) {
-  .topbar nav {
-    grid-template-columns: repeat(7, minmax(66px, 1fr)) !important;
+@media (max-width: 560px) {
+  .topbar > nav button > span {
+    font-size: 0.46rem !important;
   }
 
-  .topbar nav button {
-    min-width: 66px !important;
+  .topbar > nav .nav-icon {
+    width: 21px !important;
+    height: 21px !important;
+    max-width: 21px !important;
   }
 }
