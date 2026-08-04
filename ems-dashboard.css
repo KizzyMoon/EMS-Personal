@@ -9461,3 +9461,43 @@ dialog.ra-focus-dossier > form > h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Cadet card alignment
+   Keep limit badges directly above the RA divider
+   ========================================================= */
+
+.cadet-profile-grid .compact-cadet-card {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+
+.cadet-profile-grid .compact-cadet-card .compact-cadet-limits {
+  margin-top: auto !important;
+  margin-bottom: 10px !important;
+}
+
+.cadet-profile-grid .compact-cadet-card .compact-cadet-ra {
+  margin-top: 0 !important;
+}
+
+.cadet-profile-grid .compact-cadet-card .compact-cadet-divider,
+.cadet-profile-grid .compact-cadet-card .compact-cadet-ra-section {
+  margin-top: 0 !important;
+}
+
+/* Keep single remaining 28-day badge aligned with two-badge cards. */
+.cadet-profile-grid .compact-cadet-limits.single-limit {
+  grid-template-columns: 1fr !important;
+}
+
+/* Prevent cards with less content from collapsing shorter than neighbours. */
+.cadet-profile-grid {
+  align-items: stretch !important;
+}
+
+.cadet-profile-grid .compact-cadet-card {
+  height: 100% !important;
+}
