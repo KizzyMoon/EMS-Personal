@@ -10060,3 +10060,18 @@ dialog.ra-focus-dossier menu {
 .cadet-personal-sync-status.is-hidden {
   display: none;
 }
+
+
+/* ===== Signed Up badge centering fix ===== */
+.schedule-signup-badge,
+.training-signup-badge,
+.badge-signed-up{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:1 !important;
+    padding:0 10px !important;
+    min-height:28px !important;
+    height:28px !important;
+    box-sizing:border-box !important;
+}
