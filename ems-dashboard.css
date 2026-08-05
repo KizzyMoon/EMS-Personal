@@ -10036,3 +10036,27 @@ dialog.ra-focus-dossier menu {
 .overview-probie-card .manual-schedule-list > .empty {
   grid-column: 1 / -1 !important;
 }
+
+
+/* =========================================================
+   Progressive personal cadet-sheet sync
+   ========================================================= */
+
+.cadet-personal-sync-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 23px;
+  margin: 6px 0 0;
+  border: 1px solid rgba(135, 174, 230, 0.22);
+  border-radius: 999px;
+  background: rgba(135, 174, 230, 0.08);
+  color: var(--blue);
+  padding: 4px 9px;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.cadet-personal-sync-status.is-hidden {
+  display: none;
+}

@@ -50,6 +50,13 @@ let trainingLoadMessage = "Refreshing live training information…";
 let liveInterviewSessions = [];
 let interviewLoadState = "loading";
 let interviewLoadMessage = "Refreshing…";
+let cadetPersonalSyncRunId = 0;
+let cadetPersonalSyncProgress = {
+  active: false,
+  completed: 0,
+  total: 0,
+  failed: 0
+};
 
 const els = {
   lastUpdated: document.querySelector("[data-last-updated]"),
@@ -92,6 +99,7 @@ const els = {
   sidebarCadetCount: document.querySelector("[data-sidebar-cadet-count]"),
   sidebarRosterCount: document.querySelector("[data-sidebar-roster-count]"),
   cadetPageSummary: document.querySelector("[data-cadet-page-summary]"),
+  cadetPersonalSync: document.querySelector("[data-cadet-personal-sync]"),
   cadetOverviewStats: document.querySelector("[data-cadet-overview-stats]"),
   cadetLimitList: document.querySelector("[data-cadet-limit-list]"),
   directory: document.querySelector("[data-directory]"),
@@ -919,50 +927,144 @@ function notifyCloudError(error, title = "Google sync failed") {
   alert(`${title}.\n\n${message}`);
 }
 
-async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) {
-  const myCallsign = normalizeCallsign(state.settings?.myCallsign);
-  const titles = new Set(sheets.map((entry) => entry.properties?.title).filter(Boolean));
-  state.cadets.forEach((cadet) => {
-    cadet.myRaCompleted = false;
-    cadet.myRaDate = "";
-    cadet.myRaVerified = false;
-    cadet.myRaVerificationVersion = "";
-  });
-  const targets = state.cadets
-    .filter((cadet) => cadet.callsign && titles.has(cadet.callsign))
-    .map((cadet) => ({ cadet, range: sheetRange(cadet.callsign, "A1:Z260") }));
-  if (!targets.length) {
-    saveState();
-    render();
+function renderCadetPersonalSyncProgress() {
+  if (!els.cadetPersonalSync) return;
+
+  const progress = cadetPersonalSyncProgress;
+  els.cadetPersonalSync.classList.toggle("is-hidden", !progress.active && !progress.total);
+
+  if (!progress.total) {
+    els.cadetPersonalSync.textContent = "";
     return;
   }
-  const ranges = targets.map((target) => `ranges=${encodeURIComponent(target.range)}`).join("&");
-  const fields = encodeURIComponent("sheets(properties(title),data(rowData(values(formattedValue,effectiveValue,effectiveFormat(backgroundColor,backgroundColorStyle(rgbColor))))))");
-  const data = await fetchSheetJson(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}?includeGridData=true&${ranges}&fields=${fields}`, options);
-  const byTitle = new Map((data.sheets || []).map((sheet) => [sheet.properties?.title, sheet]));
-  targets.forEach(({ cadet }) => {
-    const sheet = byTitle.get(cadet.callsign);
-    const cells = sheet?.data?.[0]?.rowData || [];
-    cadet.myRaVerified = true;
-    cadet.myRaVerificationVersion = RA_VERIFICATION_VERSION;
-    cadet.myRaDate = myCallsign ? raDateForCallsign(cells, myCallsign) : "";
-    cadet.myRaCompleted = Boolean(cadet.myRaDate)
-      || (myCallsign ? cadetHasRaCallsign(cells, myCallsign) : false);
-    if (cadet.uniqueFtoRaSource !== "roster") cadet.uniqueFtoRaCount = uniqueFtoRaCount(cells);
-    const score = cadetTrainingScore(sheet);
-    cadet.trainingAverage = score.average;
-    cadet.trainingOverallAverage = score.overallAverage;
-    cadet.trainingScoreType = score.scoreType;
-    cadet.trainingTrend = score.trend;
-    cadet.trainingRaCount = score.raCount;
-    cadet.trainingAssessments = score.count;
-    cadet.latestStruggles = score.latestStruggles;
-    cadet.unassessedItems = score.unassessedItems;
-    cadet.sheetNotes = cadetSheetNotes(sheet);
-    cadet.lastRaDate = latestRaDateFromRows(cells) || cadet.lastRaDate;
-  });
-  saveState();
+
+  if (progress.active) {
+    els.cadetPersonalSync.textContent =
+      `Updating personal cadet sheets: ${progress.completed} / ${progress.total}`
+      + (progress.failed ? ` • ${progress.failed} failed` : "");
+    return;
+  }
+
+  els.cadetPersonalSync.textContent = progress.failed
+    ? `Personal sheets updated: ${progress.completed} / ${progress.total} • ${progress.failed} failed`
+    : `Personal sheets updated: ${progress.completed} / ${progress.total}`;
+
+  window.setTimeout(() => {
+    if (!cadetPersonalSyncProgress.active && els.cadetPersonalSync) {
+      els.cadetPersonalSync.classList.add("is-hidden");
+    }
+  }, 5000);
+}
+
+function applyPersonalCadetSheet(cadet, sheet, myCallsign) {
+  const cells = sheet?.data?.[0]?.rowData || [];
+
+  cadet.myRaVerified = true;
+  cadet.myRaVerificationVersion = RA_VERIFICATION_VERSION;
+  cadet.myRaDate = myCallsign ? raDateForCallsign(cells, myCallsign) : "";
+  cadet.myRaCompleted = Boolean(cadet.myRaDate)
+    || (myCallsign ? cadetHasRaCallsign(cells, myCallsign) : false);
+
+  if (cadet.uniqueFtoRaSource !== "roster") {
+    cadet.uniqueFtoRaCount = uniqueFtoRaCount(cells);
+  }
+
+  const score = cadetTrainingScore(sheet);
+  cadet.trainingAverage = score.average;
+  cadet.trainingOverallAverage = score.overallAverage;
+  cadet.trainingScoreType = score.scoreType;
+  cadet.trainingTrend = score.trend;
+  cadet.trainingRaCount = score.raCount;
+  cadet.trainingAssessments = score.count;
+  cadet.latestStruggles = score.latestStruggles;
+  cadet.unassessedItems = score.unassessedItems;
+  cadet.sheetNotes = cadetSheetNotes(sheet);
+  cadet.lastRaDate = latestRaDateFromRows(cells) || cadet.lastRaDate;
+}
+
+async function fetchPersonalCadetSheet(spreadsheetId, callsign, options = {}) {
+  const range = sheetRange(callsign, "A1:Z260");
+  const fields = encodeURIComponent(
+    "sheets(properties(title),data(rowData(values(formattedValue,effectiveValue,effectiveFormat(backgroundColor,backgroundColorStyle(rgbColor))))))"
+  );
+
+  const response = await fetchSheetJson(
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}`
+    + `?includeGridData=true&ranges=${encodeURIComponent(range)}&fields=${fields}`,
+    options
+  );
+
+  return response.sheets?.[0] || null;
+}
+
+async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) {
+  const runId = ++cadetPersonalSyncRunId;
+  const myCallsign = normalizeCallsign(state.settings?.myCallsign);
+  const titles = new Set(
+    sheets.map((entry) => entry.properties?.title).filter(Boolean)
+  );
+
+  const targets = state.cadets.filter(
+    (cadet) => cadet.callsign && titles.has(cadet.callsign)
+  );
+
+  cadetPersonalSyncProgress = {
+    active: Boolean(targets.length),
+    completed: 0,
+    total: targets.length,
+    failed: 0
+  };
+  renderCadetPersonalSyncProgress();
+
+  if (!targets.length) return;
+
+  let nextIndex = 0;
+
+  const worker = async () => {
+    while (nextIndex < targets.length && runId === cadetPersonalSyncRunId) {
+      const index = nextIndex;
+      nextIndex += 1;
+      const cadet = targets[index];
+
+      try {
+        const sheet = await fetchPersonalCadetSheet(
+          spreadsheetId,
+          cadet.callsign,
+          { ...options, prompt: "" }
+        );
+
+        if (runId !== cadetPersonalSyncRunId) return;
+        if (!sheet) throw new Error(`No personal tab found for ${cadet.callsign}`);
+
+        applyPersonalCadetSheet(cadet, sheet, myCallsign);
+      } catch (error) {
+        if (runId !== cadetPersonalSyncRunId) return;
+        cadetPersonalSyncProgress.failed += 1;
+        console.warn(`Could not refresh ${cadet.callsign}:`, error);
+      }
+
+      if (runId !== cadetPersonalSyncRunId) return;
+
+      cadetPersonalSyncProgress.completed += 1;
+      saveState({ cloud: false });
+      render();
+      renderCadetPersonalSyncProgress();
+    }
+  };
+
+  // Three simultaneous sheet reads keeps the UI moving without hammering
+  // the Google Sheets API with every cadet at once.
+  await Promise.all(Array.from(
+    { length: Math.min(3, targets.length) },
+    () => worker()
+  ));
+
+  if (runId !== cadetPersonalSyncRunId) return;
+
+  cadetPersonalSyncProgress.active = false;
+  saveState({ cloud: false });
   render();
+  renderCadetPersonalSyncProgress();
 }
 
 function rowsFromValues(values = []) {
@@ -1380,7 +1482,19 @@ async function importPrivateGoogleSheet(options = {}) {
   const range = encodeURIComponent(`'${title.replace(/'/g, "''")}'`);
   const values = await fetchSheetJson(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS`, options);
   const count = importRows(rowsFromValues(values.values || []));
-  await applyMyRaFromCadetTabs(id, metadata.sheets || [], options);
+
+  // The main list has rendered at this point. Do not hold the whole sync
+  // open while every personal cadet tab is read.
+  void applyMyRaFromCadetTabs(
+    id,
+    metadata.sheets || [],
+    { ...options, prompt: "" }
+  ).catch((error) => {
+    cadetPersonalSyncProgress.active = false;
+    console.error("Personal cadet sheet refresh failed:", error);
+    renderCadetPersonalSyncProgress();
+  });
+
   return count;
 }
 
@@ -2024,7 +2138,7 @@ async function importGoogleSheet(options = {}) {
     addResult(
       "Cadets Sheet",
       true,
-      `${cadetCount} cadet row(s), including live personal cadet tabs`
+      `${cadetCount} cadet row(s); personal tabs updating in background`
     );
   } catch (privateError) {
     try {
@@ -4211,6 +4325,7 @@ function render() {
   renderTraining();
   renderInterviews();
   renderCriminalChargeList();
+  renderCadetPersonalSyncProgress();
 }
 
 function setActiveTab(tabName) {
