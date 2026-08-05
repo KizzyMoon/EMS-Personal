@@ -9993,3 +9993,46 @@ dialog.ra-focus-dossier menu {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* =========================================================
+   Overview schedule loading and empty states
+   ========================================================= */
+
+.overview-priority-card .empty {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  min-height: 104px !important;
+  border: 1px dashed rgba(119, 142, 166, 0.2) !important;
+  border-radius: 7px !important;
+  background: rgba(8, 13, 22, 0.22) !important;
+  color: var(--muted) !important;
+  padding: 16px !important;
+  font-size: 0.76rem !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+}
+
+.overview-priority-card .overview-panel-title .muted,
+.overview-priority-card .schedule-refresh-footer,
+.overview-priority-card .schedule-refresh-footer span {
+  color: var(--muted) !important;
+  font-size: 0.62rem !important;
+  font-weight: 500 !important;
+  line-height: 1.25 !important;
+}
+
+.overview-training-card .upcoming-training-grid,
+.overview-interviews-card .upcoming-interviews-list,
+.overview-probie-card .manual-schedule-list {
+  min-height: 104px !important;
+}
+
+/* Keep the loading placeholder from becoming a narrow little box. */
+.overview-training-card .upcoming-training-grid > .empty,
+.overview-interviews-card .upcoming-interviews-list > .empty,
+.overview-probie-card .manual-schedule-list > .empty {
+  grid-column: 1 / -1 !important;
+}

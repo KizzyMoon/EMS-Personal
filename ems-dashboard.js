@@ -1989,6 +1989,21 @@ async function importGoogleSheet(options = {}) {
   let cadetCount = 0;
   let rosterCount = 0;
 
+  // Authenticate once, then begin the schedule requests immediately.
+  // Cadet personal tabs can take considerably longer, so Training and
+  // Interviews should not sit behind them in the sync queue.
+  await ensureGoogleAccessToken(tokenOptions);
+
+  const trainingRefreshPromise = refreshTraining({
+    ...tokenOptions,
+    prompt: ""
+  });
+
+  const interviewRefreshPromise = refreshInterviews({
+    ...tokenOptions,
+    prompt: ""
+  });
+
   /*
   ============================================================================
   SYNC SHEET MUST REFRESH EVERY CONFIGURED SOURCE
@@ -2047,7 +2062,7 @@ async function importGoogleSheet(options = {}) {
   }
 
   try {
-    const trainingResult = await refreshTraining(tokenOptions);
+    const trainingResult = await trainingRefreshPromise;
     if (trainingResult.error) {
       addResult("Training Sheet", false, "Training was not refreshed", trainingResult.error);
     } else {
@@ -2062,7 +2077,7 @@ async function importGoogleSheet(options = {}) {
   }
 
   try {
-    const interviewResult = await refreshInterviews(tokenOptions);
+    const interviewResult = await interviewRefreshPromise;
     if (interviewResult.error) {
       addResult("Interviews Sheet", false, "Interviews were not refreshed", interviewResult.error);
     } else {
