@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="ems-favicon.png?v=20260722-2" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260722-4" />
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
-    <link rel="stylesheet" href="ems-dashboard.css?v=20260805-overview-status-cleanup-1" />
+    <link rel="stylesheet" href="ems-dashboard.css?v=20260805-sync-restored-layout-1" />
   </head>
   <body>
     <main class="app">
@@ -137,11 +137,16 @@
             </div>
 
             <div class="upcoming-training-grid" data-training-list></div>
+
+            <footer class="schedule-refresh-footer">
+              <span data-training-status>Refreshing live training information…</span>
+            </footer>
           </article>
 
           <article class="panel overview-priority-card overview-interviews-card">
             <div class="overview-panel-title">
               <h2>Interviews</h2>
+              <span class="muted" data-interview-status>Refreshing…</span>
             </div>
 
             <div class="upcoming-interviews-list" data-interview-list></div>
@@ -717,6 +722,6 @@
     </dialog>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="ems-dashboard.js?v=20260805-overview-status-cleanup-1"></script>
+    <script src="ems-dashboard.js?v=20260805-sync-restored-layout-1"></script>
   </body>
 </html>

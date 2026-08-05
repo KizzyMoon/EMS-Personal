@@ -9913,129 +9913,22 @@ dialog.ra-focus-dossier menu {
 
 
 /* =========================================================
-   Readable attendee names
-   Prevent Training / Interview / Probationer Test names
-   from being squeezed or truncated.
+   Safe readable schedule layout
+   Keeps existing Training/Interview sync renderers intact.
    ========================================================= */
 
-.schedule-date-card .schedule-event-person {
-  min-width: 0 !important;
-  grid-template-columns: auto auto auto minmax(0, 1fr) !important;
-}
-
-.schedule-date-card .schedule-event-person-name {
-  overflow: visible !important;
-  text-overflow: clip !important;
-  white-space: normal !important;
-  line-height: 1.15 !important;
-  word-break: normal !important;
-}
-
-/* Training and interview attendee lists use responsive columns. */
-.schedule-compact-people ul {
-  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)) !important;
-}
-
-.schedule-compact-people .schedule-event-person {
-  width: 100% !important;
-}
-
-/* Probationer Test FTOs wrap naturally instead of being forced into one row. */
-.schedule-event-manual .schedule-manual-ftos ul {
+/* Stack Cadets and FTO sections vertically inside narrow overview panels. */
+.overview-training-card .schedule-compact-people,
+.overview-interviews-card .schedule-compact-people {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
-  gap: 5px !important;
-}
-
-.schedule-event-manual .schedule-manual-ftos .schedule-event-person {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
   width: 100% !important;
-  min-width: 0 !important;
 }
 
-/* Remove the earlier large-screen nowrap rule. */
-@media (min-width: 1200px) {
-  .schedule-event-manual .schedule-manual-ftos ul {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
-  }
-
-  .schedule-event-manual .schedule-manual-ftos .schedule-event-person {
-    flex: none !important;
-  }
-}
-
-/* At the current three-panel Overview width, use two readable columns. */
-@media (min-width: 1251px) {
-  .overview-training-card .schedule-compact-people ul,
-  .overview-probie-card .schedule-manual-ftos ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-}
-
-/* Very narrow screens stack every person as a full-width row. */
-@media (max-width: 620px) {
-  .schedule-compact-people ul,
-  .schedule-event-manual .schedule-manual-ftos ul {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-
-/* =========================================================
-   Non-overlapping schedule attendees
-   Full name on top, callsign underneath
-   ========================================================= */
-
-.schedule-date-card .schedule-person-stacked {
-  display: grid !important;
-  grid-template-columns: auto minmax(0, 1fr) !important;
-  align-items: center !important;
-  gap: 8px !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  padding: 6px 8px !important;
-}
-
-.schedule-date-card .schedule-person-stacked:not(:has(.schedule-event-role)) {
-  grid-template-columns: minmax(0, 1fr) !important;
-}
-
-.schedule-person-identity {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.schedule-person-identity strong {
-  display: block;
-  min-width: 0;
-  overflow: visible;
-  color: #fff;
-  font-size: 0.57rem;
-  line-height: 1.15;
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
-.schedule-person-identity small {
-  display: block;
-  color: var(--accent);
-  font-size: 0.49rem;
-  font-weight: 900;
-  line-height: 1.1;
-}
-
-.schedule-event-training .schedule-person-identity small {
-  color: var(--green);
-}
-
-.schedule-event-interview .schedule-person-identity small {
-  color: var(--blue);
-}
-
-/* Attendees stack as full-width rows inside their own section. */
-.schedule-compact-people ul,
-.schedule-event-manual .schedule-manual-ftos ul {
+/* One full-width attendee per row. */
+.overview-training-card .schedule-compact-people ul,
+.overview-interviews-card .schedule-compact-people ul {
   display: grid !important;
   grid-template-columns: 1fr !important;
   gap: 5px !important;
@@ -10045,124 +9938,58 @@ dialog.ra-focus-dossier menu {
   list-style: none !important;
 }
 
-.schedule-event-manual .schedule-manual-ftos .schedule-event-person {
-  width: 100% !important;
-  min-width: 0 !important;
-  flex: none !important;
-}
-
-/* Remove obsolete divider/callsign layout from the old renderer. */
-.schedule-date-card .schedule-event-person-call,
-.schedule-date-card .schedule-event-person-divider,
-.schedule-date-card .schedule-event-person-name {
-  display: none !important;
-}
-
-/* Keep Cadets and FTOs side-by-side when there is space. */
-.schedule-compact-people {
-  grid-template-columns: minmax(100px, 0.8fr) minmax(150px, 1.2fr) !important;
-  align-items: start !important;
-}
-
-@media (max-width: 1450px) {
-  .schedule-compact-people {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-@media (max-width: 620px) {
-  .schedule-date-card {
-    grid-template-columns: 48px minmax(0, 1fr) !important;
-  }
-}
-
-
-/* =========================================================
-   Match Training and Interviews to Probationer Tests
-   Full-width stacked attendee rows
-   ========================================================= */
-
-.schedule-event-training .schedule-compact-people,
-.schedule-event-interview .schedule-compact-people {
+.overview-training-card .schedule-event-person,
+.overview-interviews-card .schedule-event-person {
   display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 10px !important;
-  width: 100% !important;
-}
-
-.schedule-event-training .schedule-compact-people section,
-.schedule-event-interview .schedule-compact-people section {
+  grid-template-columns: auto auto auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 7px !important;
   width: 100% !important;
   min-width: 0 !important;
+  padding: 6px 8px !important;
 }
 
-.schedule-event-training .schedule-compact-people ul,
-.schedule-event-interview .schedule-compact-people ul {
+/* Allow the full name to wrap naturally rather than overlap or truncate. */
+.overview-training-card .schedule-event-person-name,
+.overview-interviews-card .schedule-event-person-name {
+  min-width: 0 !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.15 !important;
+}
+
+/* Keep role and callsign readable without crushing the name. */
+.overview-training-card .schedule-event-role,
+.overview-interviews-card .schedule-event-role,
+.overview-training-card .schedule-event-person-call,
+.overview-interviews-card .schedule-event-person-call,
+.overview-training-card .schedule-event-person-divider,
+.overview-interviews-card .schedule-event-person-divider {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+/* Probationer Tests already fit; retain full-width wrapping there too. */
+.overview-probie-card .schedule-manual-ftos ul {
   display: grid !important;
   grid-template-columns: 1fr !important;
   gap: 5px !important;
-  width: 100% !important;
 }
 
-.schedule-event-training .schedule-event-person,
-.schedule-event-interview .schedule-event-person {
+.overview-probie-card .schedule-event-person {
   width: 100% !important;
   min-width: 0 !important;
 }
 
-.schedule-event-training .schedule-person-identity strong,
-.schedule-event-interview .schedule-person-identity strong {
-  white-space: normal !important;
-  overflow: visible !important;
-  text-overflow: clip !important;
-  overflow-wrap: anywhere !important;
-}
-
-.schedule-event-training .schedule-person-identity small,
-.schedule-event-interview .schedule-person-identity small {
-  white-space: normal !important;
-}
-
-@media (min-width: 1251px) {
+/* Avoid old large-screen rules forcing narrow side-by-side entries. */
+@media (min-width: 1200px) {
   .overview-training-card .schedule-compact-people,
   .overview-interviews-card .schedule-compact-people,
   .overview-training-card .schedule-compact-people ul,
-  .overview-interviews-card .schedule-compact-people ul {
+  .overview-interviews-card .schedule-compact-people ul,
+  .overview-probie-card .schedule-manual-ftos ul {
     grid-template-columns: 1fr !important;
   }
-}
-
-
-/* =========================================================
-   Overview schedule status cleanup
-   ========================================================= */
-
-/* Training and Interview refresh/status copy is handled by Sync All Sheets. */
-.overview-training-card .schedule-refresh-footer,
-.overview-interviews-card [data-interview-status] {
-  display: none !important;
-}
-
-/* Keep all three overview empty states visually consistent. */
-.overview-priority-card .empty-state,
-.overview-priority-card .empty,
-.overview-priority-card [class*="empty"] {
-  min-height: 66px;
-}
-
-/* Specifically match the Probationer Tests empty message to Interviews. */
-.overview-probie-card .empty-state,
-.overview-probie-card .empty,
-.overview-probie-card [class*="empty"] {
-  display: grid;
-  place-items: center;
-  min-height: 66px;
-  border: 1px dashed rgba(119, 142, 166, 0.2);
-  border-radius: 7px;
-  color: var(--muted);
-  font-size: 0.82rem !important;
-  font-weight: 400 !important;
-  line-height: 1.35;
-  padding: 16px;
-  text-align: center;
 }
