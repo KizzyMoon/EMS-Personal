@@ -10131,3 +10131,38 @@ dialog.ra-focus-dossier menu {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* =========================================================
+   Overview schedule status cleanup
+   ========================================================= */
+
+/* Training and Interview refresh/status copy is handled by Sync All Sheets. */
+.overview-training-card .schedule-refresh-footer,
+.overview-interviews-card [data-interview-status] {
+  display: none !important;
+}
+
+/* Keep all three overview empty states visually consistent. */
+.overview-priority-card .empty-state,
+.overview-priority-card .empty,
+.overview-priority-card [class*="empty"] {
+  min-height: 66px;
+}
+
+/* Specifically match the Probationer Tests empty message to Interviews. */
+.overview-probie-card .empty-state,
+.overview-probie-card .empty,
+.overview-probie-card [class*="empty"] {
+  display: grid;
+  place-items: center;
+  min-height: 66px;
+  border: 1px dashed rgba(119, 142, 166, 0.2);
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 0.82rem !important;
+  font-weight: 400 !important;
+  line-height: 1.35;
+  padding: 16px;
+  text-align: center;
+}

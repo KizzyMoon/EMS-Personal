@@ -3041,7 +3041,7 @@ function renderManualScheduleEvents() {
           </article>
         `;
       }).join("")
-    : empty("No probationer tests added yet.");
+    : empty("There are no upcoming probationer tests.");
 }
 
 function deleteManualScheduleEvent(eventId) {
