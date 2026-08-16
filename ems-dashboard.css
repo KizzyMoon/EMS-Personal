@@ -10075,3 +10075,45 @@ dialog.ra-focus-dossier menu {
     height:28px !important;
     box-sizing:border-box !important;
 }
+
+/* ===== Compact schedule badge layout fix =====
+   Prevents NOT SIGNED UP / SIGNED UP pills from floating over the Training title. */
+.schedule-compact-head {
+  align-items: flex-start !important;
+}
+
+.schedule-date-card .training-signup-badge,
+.schedule-date-card .schedule-event-status.training-signup-badge {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  max-width: max-content !important;
+  white-space: nowrap !important;
+  margin-left: 8px !important;
+  padding: 4px 9px !important;
+  min-height: 24px !important;
+  height: auto !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: flex-start !important;
+}
+
+.schedule-date-card .schedule-compact-title {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 520px) {
+  .schedule-date-card .schedule-compact-head {
+    flex-wrap: wrap !important;
+  }
+
+  .schedule-date-card .training-signup-badge,
+  .schedule-date-card .schedule-event-status.training-signup-badge {
+    margin-left: 0 !important;
+  }
+}
