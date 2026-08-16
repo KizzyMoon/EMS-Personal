@@ -706,35 +706,75 @@ async function ensureGoogleAccessToken(options = {}) {
   });
 }
 
+function sheetsRetryDelay(attempt) {
+  return 650 * (attempt + 1) + Math.floor(Math.random() * 350);
+}
+
+function isRetryableSheetsStatus(status) {
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
 async function fetchSheetJson(url, options = {}) {
-  const token = await ensureGoogleAccessToken(options);
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  if (response.status === 401 || response.status === 403) {
-    googleAccessToken = "";
-    throw new Error("Google could not open one of the sheets. Make sure you signed in with the same Gmail that can open the sheet, then try Google Sign In again.");
+  const maxAttempts = options.maxAttempts || 4;
+  let lastStatus = 0;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const token = await ensureGoogleAccessToken(options);
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    lastStatus = response.status;
+
+    if (response.status === 401 || response.status === 403) {
+      googleAccessToken = "";
+      throw new Error("Google could not open one of the sheets. Make sure you signed in with the same Gmail that can open the sheet, then try Google Sign In again.");
+    }
+
+    if (response.ok) return response.json();
+
+    if (!isRetryableSheetsStatus(response.status) || attempt === maxAttempts - 1) {
+      throw new Error(`Google Sheets returned ${response.status}.`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, sheetsRetryDelay(attempt)));
   }
-  if (!response.ok) throw new Error(`Google Sheets returned ${response.status}.`);
-  return response.json();
+
+  throw new Error(`Google Sheets returned ${lastStatus || "an unknown error"}.`);
 }
 
 async function sendSheetJson(url, options = {}) {
-  const token = await ensureGoogleAccessToken(options);
-  const response = await fetch(url, {
-    method: options.method || "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined
-  });
-  if (response.status === 401 || response.status === 403) {
-    googleAccessToken = "";
-    throw new Error("Google could not save to your Personal Storage Sheet. Make sure you own or can edit that sheet, then try Google Sign In again.");
+  const maxAttempts = options.maxAttempts || 4;
+  let lastStatus = 0;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const token = await ensureGoogleAccessToken(options);
+    const response = await fetch(url, {
+      method: options.method || "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+
+    lastStatus = response.status;
+
+    if (response.status === 401 || response.status === 403) {
+      googleAccessToken = "";
+      throw new Error("Google could not save to your Personal Storage Sheet. Make sure you own or can edit that sheet, then try Google Sign In again.");
+    }
+
+    if (response.ok) return response.json();
+
+    if (!isRetryableSheetsStatus(response.status) || attempt === maxAttempts - 1) {
+      throw new Error(`Google Sheets returned ${response.status}.`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, sheetsRetryDelay(attempt)));
   }
-  if (!response.ok) throw new Error(`Google Sheets returned ${response.status}.`);
-  return response.json();
+
+  throw new Error(`Google Sheets returned ${lastStatus || "an unknown error"}.`);
 }
 
 async function sheetTitleFromInfo(id, gid, options = {}) {
@@ -1052,10 +1092,11 @@ async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) 
     }
   };
 
-  // Three simultaneous sheet reads keeps the UI moving without hammering
-  // the Google Sheets API with every cadet at once.
+  // Read personal cadet sheets one at a time. This is slower, but avoids
+  // Google Sheets 429 quota errors while the overview schedules and personal
+  // storage also sync.
   await Promise.all(Array.from(
-    { length: Math.min(3, targets.length) },
+    { length: Math.min(1, targets.length) },
     () => worker()
   ));
 
@@ -2159,20 +2200,9 @@ async function importGoogleSheet(options = {}) {
   let cadetCount = 0;
   let rosterCount = 0;
 
-  // Authenticate once, then begin the schedule requests immediately.
-  // Cadet personal tabs can take considerably longer, so Training and
-  // Interviews should not sit behind them in the sync queue.
+  // Authenticate once. The sheet reads below intentionally run mostly in
+  // sequence to avoid Google Sheets 429 quota errors on refresh.
   await ensureGoogleAccessToken(tokenOptions);
-
-  const trainingRefreshPromise = refreshTraining({
-    ...tokenOptions,
-    prompt: ""
-  });
-
-  const interviewRefreshPromise = refreshInterviews({
-    ...tokenOptions,
-    prompt: ""
-  });
 
   /*
   ============================================================================
@@ -2232,7 +2262,10 @@ async function importGoogleSheet(options = {}) {
   }
 
   try {
-    const trainingResult = await trainingRefreshPromise;
+    const trainingResult = await refreshTraining({
+      ...tokenOptions,
+      prompt: ""
+    });
     if (trainingResult.error) {
       addResult("Training Sheet", false, "Training was not refreshed", trainingResult.error);
     } else {
@@ -2247,7 +2280,10 @@ async function importGoogleSheet(options = {}) {
   }
 
   try {
-    const interviewResult = await interviewRefreshPromise;
+    const interviewResult = await refreshInterviews({
+      ...tokenOptions,
+      prompt: ""
+    });
     if (interviewResult.error) {
       addResult("Interviews Sheet", false, "Interviews were not refreshed", interviewResult.error);
     } else {
