@@ -1513,30 +1513,54 @@ function trainingRawCell(rows, rowNumber, columnNumber) {
   return String(rows?.[rowNumber - 1]?.[columnNumber - 1] ?? "").trim();
 }
 
-function parseTrainingDate(value) {
+function parseTrainingDate(value, preferredOrder = "auto") {
   const raw = String(value || "").trim();
   if (!raw) return "";
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
 
-  const ukDate = raw.match(/^(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{2,4})$/);
-  if (!ukDate) return "";
+  const sheetSerial = Number(raw);
+  if (/^\d+(?:\.\d+)?$/.test(raw) && sheetSerial > 20000) {
+    const date = new Date(Math.round((sheetSerial - 25569) * 86400000));
+    if (!Number.isNaN(date.valueOf())) return date.toISOString().slice(0, 10);
+  }
 
-  const day = Number(ukDate[1]);
-  const month = Number(ukDate[2]) - 1;
-  const year = Number(ukDate[3].length === 2 ? `20${ukDate[3]}` : ukDate[3]);
-  const date = new Date(year, month, day);
+  const match = raw.match(/^(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{2,4})$/);
+  if (!match) return "";
 
-  if (
-    Number.isNaN(date.valueOf())
-    || date.getFullYear() !== year
-    || date.getMonth() !== month
-    || date.getDate() !== day
-  ) return "";
+  const first = Number(match[1]);
+  const second = Number(match[2]);
+  const year = Number(match[3].length === 2 ? `20${match[3]}` : match[3]);
 
-  const monthText = String(month + 1).padStart(2, "0");
-  const dayText = String(day).padStart(2, "0");
-  return `${year}-${monthText}-${dayText}`;
+  const candidates = [];
+  if (preferredOrder === "mdy") {
+    candidates.push({ day: second, month: first });
+  } else if (preferredOrder === "dmy") {
+    candidates.push({ day: first, month: second });
+  } else if (first > 12 && second <= 12) {
+    candidates.push({ day: first, month: second });
+  } else if (second > 12 && first <= 12) {
+    candidates.push({ day: second, month: first });
+  } else {
+    // HighLife sheets are usually UK formatted, but this still falls back safely below.
+    candidates.push({ day: first, month: second }, { day: second, month: first });
+  }
+
+  for (const candidate of candidates) {
+    const date = new Date(year, candidate.month - 1, candidate.day);
+    if (
+      Number.isNaN(date.valueOf())
+      || date.getFullYear() !== year
+      || date.getMonth() !== candidate.month - 1
+      || date.getDate() !== candidate.day
+    ) continue;
+
+    const monthText = String(candidate.month).padStart(2, "0");
+    const dayText = String(candidate.day).padStart(2, "0");
+    return `${year}-${monthText}-${dayText}`;
+  }
+
+  return "";
 }
 
 function isUpcomingTrainingDate(dateText) {
@@ -1884,21 +1908,29 @@ async function refreshTraining(options = {}) {
 
 function parseInterviewSheetRange(title) {
   const raw = String(title || "").trim();
-  const match = raw.match(/(\d{2})(\d{2})(\d{4})\s*>>\s*(\d{2})(\d{2})(\d{4})/);
-  if (!match) return null;
-  const start = `${match[3]}-${match[2]}-${match[1]}`;
-  const end = `${match[6]}-${match[5]}-${match[4]}`;
-  return { start, end };
+  const compact = raw.match(/(\d{2})(\d{2})(\d{4})\s*>>\s*(\d{2})(\d{2})(\d{4})/);
+  if (compact) {
+    const start = parseTrainingDate(`${compact[1]}/${compact[2]}/${compact[3]}`, "dmy");
+    const end = parseTrainingDate(`${compact[4]}/${compact[5]}/${compact[6]}`, "dmy");
+    return start && end ? { start, end } : null;
+  }
+
+  const slashed = raw.match(/(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{4})\s*>>\s*(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{4})/);
+  if (!slashed) return null;
+
+  const start = parseTrainingDate(`${slashed[1]}/${slashed[2]}/${slashed[3]}`, "dmy");
+  const end = parseTrainingDate(`${slashed[4]}/${slashed[5]}/${slashed[6]}`, "dmy");
+  return start && end ? { start, end } : null;
 }
 
 function interviewTitleDetails(title, fallbackDate) {
   const raw = String(title || "").trim();
   const dateMatch = raw.match(/(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{4})/);
   const date = dateMatch
-    ? parseTrainingDate(`${dateMatch[1]}/${dateMatch[2]}/${dateMatch[3]}`)
+    ? parseTrainingDate(`${dateMatch[1]}/${dateMatch[2]}/${dateMatch[3]}`, "dmy")
     : fallbackDate;
 
-  let time = raw.replace(/^Interview Session \d+\s*-\s*/i, "").trim();
+  let time = raw.replace(/^(?:Interview|Private)\s+Session\s+\d+\s*-\s*/i, "").trim();
   if (dateMatch) {
     time = time.replace(dateMatch[0], "").replace(/^[\s|:-]+/, "").trim();
   }
@@ -1927,8 +1959,27 @@ function interviewPeople(rows, employeeColumn, nameColumn) {
   return people;
 }
 
+function interviewSessionConfigs(rows = []) {
+  const titleRow = rows[4] || [];
+  return titleRow
+    .map((value, index) => {
+      const title = String(value || "").trim();
+      if (!/^(?:Interview|Private)\s+Session\s+\d+\s*-/i.test(title)) return null;
+      const sessionMatch = title.match(/^(Interview|Private)\s+Session\s+(\d+)/i);
+      const employeeColumn = index + 1;
+      return {
+        title,
+        session: Number(sessionMatch?.[2] || 0),
+        type: String(sessionMatch?.[1] || "Interview"),
+        employeeColumn,
+        nameColumn: employeeColumn + 1
+      };
+    })
+    .filter(Boolean);
+}
+
 function parseInterviewSession(rows, config, sheetRange) {
-  const title = trainingRawCell(rows, 5, config.employeeColumn);
+  const title = config.title || trainingRawCell(rows, 5, config.employeeColumn);
   const details = interviewTitleDetails(title, sheetRange?.end || "");
   const attendees = interviewPeople(rows, config.employeeColumn, config.nameColumn);
   const myEmployee = normalizeEmployeeNumber(state.settings?.myEmployeeNumber);
@@ -1940,7 +1991,8 @@ function parseInterviewSession(rows, config, sheetRange) {
 
   return {
     session: config.session,
-    region: config.session === 1 ? "GMT / BST" : "NA",
+    type: config.type || "Interview",
+    region: config.session === 1 ? "GMT / BST" : config.session === 2 ? "NA" : "Private",
     date: details.date,
     time: details.time,
     lead: interviewLead(trainingRawCell(rows, 6, config.employeeColumn)),
@@ -2019,8 +2071,6 @@ function renderInterviews() {
 async function interviewSheetSessions(options = {}) {
   const { id } = sheetInfoFromUrl(state.settings?.interviewUrl || DEFAULT_INTERVIEW_URL);
   const metadata = await sheetMetadata(id, options);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   const candidates = (metadata.sheets || [])
     .map((sheet, index) => ({
@@ -2028,36 +2078,41 @@ async function interviewSheetSessions(options = {}) {
       range: parseInterviewSheetRange(sheet.properties?.title || ""),
       index
     }))
-    .filter((sheet) => sheet.range)
+    .filter((sheet) => sheet.range && normalizeKey(sheet.title) !== "attendancetemplate")
     .sort((a, b) => {
-      const endCompare = b.range.end.localeCompare(a.range.end);
-      if (endCompare) return endCompare;
       const startCompare = b.range.start.localeCompare(a.range.start);
       if (startCompare) return startCompare;
+      const endCompare = b.range.end.localeCompare(a.range.end);
+      if (endCompare) return endCompare;
       return a.index - b.index;
     });
 
   if (!candidates.length) return [];
 
-  // Each interview round gets a new dated tab. Always read the newest dated set first.
-  // The individual session dates inside that tab are then checked below.
-  const target = candidates[0];
-  const range = encodeURIComponent(sheetRange(target.title, "A1:J22"));
-  const response = await fetchSheetJson(
-    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE`,
-    options
-  );
-  const rows = response.values || [];
+  const allSessions = [];
 
-  const sessions = [
-    parseInterviewSession(rows, { session: 1, employeeColumn: 2, nameColumn: 3 }, target.range),
-    parseInterviewSession(rows, { session: 2, employeeColumn: 7, nameColumn: 8 }, target.range)
-  ].filter((session) => isUpcomingTrainingDate(session.date));
+  for (const target of candidates) {
+    const range = encodeURIComponent(sheetRange(target.title, "A1:AZ22"));
+    const response = await fetchSheetJson(
+      `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE`,
+      options
+    );
+    const rows = response.values || [];
+    const configs = interviewSessionConfigs(rows);
 
-  sessions.forEach((session) => {
-    session.sheetTitle = target.title;
+    const sessions = configs
+      .map((config) => parseInterviewSession(rows, config, target.range))
+      .filter((session) => isUpcomingTrainingDate(session.date))
+      .map((session) => ({ ...session, sheetTitle: target.title }));
+
+    allSessions.push(...sessions);
+  }
+
+  return allSessions.sort((a, b) => {
+    const dateCompare = String(a.date || "").localeCompare(String(b.date || ""));
+    if (dateCompare) return dateCompare;
+    return Number(a.session || 0) - Number(b.session || 0);
   });
-  return sessions;
 }
 
 async function refreshInterviews(options = {}) {
@@ -2068,9 +2123,10 @@ async function refreshInterviews(options = {}) {
   try {
     liveInterviewSessions = await interviewSheetSessions(options);
     interviewLoadState = "ready";
+    const uniqueInterviewSets = new Set(liveInterviewSessions.map((session) => session.sheetTitle).filter(Boolean));
     interviewLoadMessage = liveInterviewSessions.length
-      ? `Newest set: ${liveInterviewSessions[0].sheetTitle}`
-      : "Newest interview set has no upcoming sessions";
+      ? `Upcoming interviews from ${uniqueInterviewSets.size} set(s)`
+      : "No upcoming interview sessions found across dated tabs";
     renderInterviews();
     return { sessions: liveInterviewSessions, error: null };
   } catch (error) {
