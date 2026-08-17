@@ -10210,3 +10210,17 @@ dialog.ra-focus-dossier menu {
   content: none !important;
   display: none !important;
 }
+
+/* ===== Final Training card divider removal =====
+   The line above Day 2 was coming from the generic adjacent schedule-card rule:
+   .overview-priority-card .schedule-event-card + .schedule-event-card.
+   Override that exact pattern for Training only so multiple training cards sit
+   side-by-side without a separator line. */
+.overview-training-card .schedule-event-card + .schedule-event-card,
+.overview-training-card .schedule-date-card + .schedule-date-card,
+.overview-training-card .upcoming-training-grid > .schedule-event-card + .schedule-event-card,
+.overview-training-card .upcoming-training-grid > .schedule-date-card + .schedule-date-card {
+  border-top: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 8px !important;
+}
