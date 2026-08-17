@@ -10182,3 +10182,31 @@ dialog.ra-focus-dossier menu {
 .overview-training-card .schedule-date-card-content {
   height: 100% !important;
 }
+
+/* ===== Remove stray Training panel divider above Day 2 =====
+   The Training header divider was visually cutting over the Day 2 card on the
+   compact overview layout. Keep the panel clean and remove any top divider
+   from the training schedule area/cards. */
+.overview-training-card .overview-panel-title {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.overview-training-card .upcoming-training-grid,
+.overview-training-card .schedule-date-card,
+.overview-training-card .schedule-date-card-content,
+.overview-training-card .schedule-compact-head,
+.overview-training-card .schedule-compact-title,
+.overview-training-card .schedule-compact-people {
+  border-top: 0 !important;
+}
+
+.overview-training-card .upcoming-training-grid::before,
+.overview-training-card .upcoming-training-grid::after,
+.overview-training-card .schedule-date-card::before,
+.overview-training-card .schedule-date-card::after,
+.overview-training-card .schedule-date-card-content::before,
+.overview-training-card .schedule-date-card-content::after {
+  content: none !important;
+  display: none !important;
+}
