@@ -3360,10 +3360,10 @@ function cadetTrainingStatusCard(cadet, group) {
 
   return `
     <button
-      class="cadet-training-status-card"
+      class="cadet-training-status-card cadet-training-status-card-${escapeHtml(group)}"
       type="button"
-      data-open-cadet-focus="${escapeHtml(cadet.id)}"
-      aria-label="Open ${escapeHtml(cadet.name || "cadet")} details"
+      ${group === "day1" ? "" : `data-open-cadet-focus="${escapeHtml(cadet.id)}"`}
+      aria-label="${group === "day1" ? `Basic training status for ${escapeHtml(cadet.name || "cadet")}` : `Open ${escapeHtml(cadet.name || "cadet")} details`}"
     >
       <span class="cadet-training-card-top">
         <span class="cadet-training-card-main">
@@ -3422,13 +3422,14 @@ function renderCadets() {
   const inTrainingCount = allCadets.filter(
     (cadet) => Boolean(cadet.day1) !== Boolean(cadet.day2)
   ).length;
-  const needsTrainingCount = allCadets.filter(
-    (cadet) => !cadet.day1 && !cadet.day2
+  const awaitingDayOneOrTwoCount = allCadets.filter(
+    (cadet) => !cadet.day1 || !cadet.day2
   ).length;
+  const activeCompleteCadets = cadets.filter((cadet) => cadet.day1 && cadet.day2);
 
   if (els.cadetPageSummary) {
     els.cadetPageSummary.textContent =
-      `${allCadets.length} cadet${allCadets.length === 1 ? "" : "s"} across all statuses.`;
+      "Cadets who have completed Day 1 and Day 2 training.";
   }
 
   if (els.cadetOverviewStats) {
@@ -3436,7 +3437,7 @@ function renderCadets() {
       ["Total Cadets", allCadets.length, ""],
       ["Active", activeCount, "stat-good"],
       ["In Training", inTrainingCount, "stat-watch"],
-      ["Needs Training", needsTrainingCount, "stat-focus"]
+      ["Awaiting Day 1/2", awaitingDayOneOrTwoCount, "stat-focus"]
     ];
 
     els.cadetOverviewStats.innerHTML = stats.map(([label, value, className]) => `
@@ -3448,9 +3449,9 @@ function renderCadets() {
   }
 
   if (els.cadetGrid) {
-    els.cadetGrid.innerHTML = cadets.length
-      ? cadets.map(cadetCard).join("")
-      : empty("No cadets found. Import a sheet or add one manually.");
+    els.cadetGrid.innerHTML = activeCompleteCadets.length
+      ? activeCompleteCadets.map(cadetCard).join("")
+      : empty("No cadets have completed Day 1 and Day 2 training yet.");
   }
 
   if (els.cadetLimitList) {
