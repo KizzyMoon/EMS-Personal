@@ -113,6 +113,27 @@
   line-height: 1.25;
 }
 
+/* Cadets with no Day 1 training have not been assessed by an FTO yet.
+   Do not present them as struggling or needing focused help. */
+.cadet-training-status-card-day1,
+.cadet-training-status-card-day1:has(.status-focus),
+.cadet-training-status-card-day1:has(.status-watch),
+.cadet-training-status-card-day1:has(.status-good) {
+  border-left: 4px solid rgba(185, 197, 210, 0.55) !important;
+  box-shadow:
+    inset 4px 0 0 rgba(185, 197, 210, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 10px 28px rgba(0, 0, 0, 0.18) !important;
+}
+
+.cadet-training-status-card-day1 .cadet-training-card-main::after,
+.cadet-training-status-card-day1:has(.status-focus) .cadet-training-card-main::after,
+.cadet-training-status-card-day1:has(.status-watch) .cadet-training-card-main::after,
+.cadet-training-status-card-day1:has(.status-good) .cadet-training-card-main::after {
+  content: "Status: Not assessed yet" !important;
+  color: #b9c5d2 !important;
+}
+
 /* Keep the side legend dots visible in Cadet Overview. */
 .cadet-performance-legend .cadet-performance-dot {
   display: inline-block !important;
