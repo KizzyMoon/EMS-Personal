@@ -3,145 +3,73 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Highlife RP Vault</title>
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css" />
+    <meta http-equiv="refresh" content="0; url=ems-dashboard.html" />
+    <title>EMS Dashboard</title>
+    <link rel="icon" type="image/png" href="ems-favicon.png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        background: #070b10;
+        color: #f5f7fb;
+      }
+
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        place-items: center;
+        background:
+          radial-gradient(circle at 28% 18%, rgba(248, 162, 162, 0.12), transparent 34%),
+          #070b10;
+      }
+
+      main {
+        width: min(420px, calc(100% - 32px));
+        border: 1px solid rgba(248, 162, 162, 0.22);
+        border-radius: 14px;
+        background: rgba(12, 17, 24, 0.9);
+        padding: 28px;
+        text-align: center;
+      }
+
+      img {
+        width: 54px;
+        height: 54px;
+        object-fit: contain;
+      }
+
+      h1 {
+        margin: 14px 0 8px;
+        font-size: 1.25rem;
+      }
+
+      p {
+        margin: 0 0 18px;
+        color: #9ca8b8;
+      }
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        border: 1px solid rgba(248, 162, 162, 0.36);
+        border-radius: 8px;
+        background: rgba(248, 162, 162, 0.1);
+        color: #fff;
+        font-weight: 900;
+        padding: 0 14px;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
-    <aside class="sidebar">
-      <a class="brand" href="index.html" aria-label="Highlife RP Vault home">
-        <span>HL</span>
-        <strong>Highlife RP Vault</strong>
-      </a>
-      <nav aria-label="Main navigation">
-        <a href="ems-dashboard.html">EMS Dashboard</a>
-        <a href="character-maker.html">Character Maker</a>
-        <a href="plates.html">Custom Plates</a>
-        <a href="#characters">Saved Builds</a>
-        <a href="#paint">Paint Codes</a>
-        <a href="#cars">Vehicle List</a>
-        <a href="#notes">Notes</a>
-      </nav>
-    </aside>
-
-    <main id="top" class="app-shell">
-      <section class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">FiveM wipe prep and personal reference</p>
-          <h1>Highlife RP Vault</h1>
-          <p>
-            Keep your character creation settings, vehicle prices, paint codes,
-            and server notes in one private place.
-          </p>
-        </div>
-        <div class="status-grid" aria-label="Database counts">
-          <span><strong id="characterCount">0</strong> Character builds</span>
-          <span><strong id="paintCount">0</strong> Paint codes</span>
-          <span><strong id="carCount">0</strong> Vehicles</span>
-        </div>
-      </section>
-
-      <section id="characters" class="panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Wipe recovery cards</p>
-            <h2>Saved Character Gallery</h2>
-          </div>
-        </div>
-        <div id="characterGrid" class="character-list"></div>
-      </section>
-
-      <section id="paint" class="panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Custom colours</p>
-            <h2>Paint Codes</h2>
-          </div>
-          <button class="primary-button" data-open-dialog="paintDialog" type="button">Add paint</button>
-        </div>
-        <div id="paintGrid" class="paint-grid"></div>
-      </section>
-
-      <section id="cars" class="panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Dealership tracker</p>
-            <h2>Vehicle List</h2>
-          </div>
-          <button class="primary-button" data-open-dialog="carDialog" type="button">Add vehicle</button>
-        </div>
-        <div class="table-tools">
-          <label>Search<input id="carSearch" type="search" placeholder="Name, store, category..." /></label>
-          <label>Category<select id="categoryFilter"><option value="all">All categories</option></select></label>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Vehicle</th>
-                <th>Price</th>
-                <th>Store</th>
-                <th>Category</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody id="carTable"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="notes" class="panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Everything else</p>
-            <h2>Notes</h2>
-          </div>
-        </div>
-        <textarea id="notesBox" rows="9" aria-label="Highlife notes"></textarea>
-      </section>
+    <main>
+      <img src="ems-favicon.png" alt="" />
+      <h1>EMS Dashboard</h1>
+      <p>Redirecting to the Highlife RP EMS Dashboard.</p>
+      <a href="ems-dashboard.html">Open EMS Dashboard</a>
     </main>
-
-    <dialog id="paintDialog">
-      <form method="dialog" class="dialog-form" data-form="paints">
-        <h3>Add Paint Code</h3>
-        <label>Name<input name="name" required /></label>
-        <div class="three-col">
-          <label>Red<input name="r" type="number" min="0" max="255" required /></label>
-          <label>Green<input name="g" type="number" min="0" max="255" required /></label>
-          <label>Blue<input name="b" type="number" min="0" max="255" required /></label>
-        </div>
-        <label>Finish / notes<input name="notes" placeholder="Metallic, pearlescent, crew colour..." /></label>
-        <div class="dialog-actions">
-          <button value="cancel">Cancel</button>
-          <button class="primary-button" value="default">Save</button>
-        </div>
-      </form>
-    </dialog>
-
-    <dialog id="carDialog">
-      <form method="dialog" class="dialog-form" data-form="cars">
-        <h3>Add Vehicle</h3>
-        <label>Name<input name="name" required /></label>
-        <label>Price<input name="price" placeholder="$125,000" /></label>
-        <label>Store<input name="store" placeholder="PDM, Luxury Autos..." /></label>
-        <label>Category<input name="category" placeholder="Sports, Sedan, Motorbike..." /></label>
-        <label>Notes<textarea name="notes" rows="3"></textarea></label>
-        <div class="dialog-actions">
-          <button value="cancel">Cancel</button>
-          <button class="primary-button" value="default">Save</button>
-        </div>
-      </form>
-    </dialog>
-
-    <dialog id="characterDetailsDialog" class="character-dialog">
-      <div class="dialog-shell">
-        <div id="characterDetails"></div>
-        <div class="dialog-actions">
-          <button id="closeCharacterDetails" class="primary-button" type="button">Close</button>
-        </div>
-      </div>
-    </dialog>
-
-    <script src="script.js"></script>
   </body>
 </html>
