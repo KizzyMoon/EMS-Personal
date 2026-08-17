@@ -2109,9 +2109,17 @@ function renderInterviews() {
     : empty("There are no upcoming interview sessions on the sheet.");
 }
 
+function localDateText(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 async function interviewSheetSessions(options = {}) {
   const { id } = sheetInfoFromUrl(state.settings?.interviewUrl || DEFAULT_INTERVIEW_URL);
   const metadata = await sheetMetadata(id, options);
+  const todayText = localDateText();
 
   const candidates = (metadata.sheets || [])
     .map((sheet, index) => ({
@@ -2120,6 +2128,7 @@ async function interviewSheetSessions(options = {}) {
       index
     }))
     .filter((sheet) => sheet.range && normalizeKey(sheet.title) !== "attendancetemplate")
+    .filter((sheet) => String(sheet.range.end || "") >= todayText)
     .sort((a, b) => {
       const startCompare = b.range.start.localeCompare(a.range.start);
       if (startCompare) return startCompare;
@@ -2130,15 +2139,28 @@ async function interviewSheetSessions(options = {}) {
 
   if (!candidates.length) return [];
 
-  const allSessions = [];
+  // Read all upcoming dated interview tabs in one Sheets API call.
+  // This avoids hammering Google with one request per old archive tab,
+  // which was causing 429 rate-limit errors.
+  const selectedCandidates = candidates.slice(0, 8);
+  const query = new URLSearchParams({
+    majorDimension: "ROWS",
+    valueRenderOption: "FORMATTED_VALUE"
+  });
+  selectedCandidates.forEach((target) => {
+    query.append("ranges", sheetRange(target.title, "A1:AZ22"));
+  });
 
-  for (const target of candidates) {
-    const range = encodeURIComponent(sheetRange(target.title, "A1:AZ22"));
-    const response = await fetchSheetJson(
-      `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE`,
-      options
-    );
-    const rows = response.values || [];
+  const response = await fetchSheetJson(
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}/values:batchGet?${query.toString()}`,
+    { ...options, maxAttempts: 5 }
+  );
+
+  const allSessions = [];
+  (response.valueRanges || []).forEach((valueRange, index) => {
+    const target = selectedCandidates[index];
+    if (!target) return;
+    const rows = valueRange.values || [];
     const configs = interviewSessionConfigs(rows);
 
     const sessions = configs
@@ -2147,7 +2169,7 @@ async function interviewSheetSessions(options = {}) {
       .map((session) => ({ ...session, sheetTitle: target.title }));
 
     allSessions.push(...sessions);
-  }
+  });
 
   return allSessions.sort((a, b) => {
     const dateCompare = String(a.date || "").localeCompare(String(b.date || ""));
