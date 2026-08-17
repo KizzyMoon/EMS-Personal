@@ -10157,3 +10157,8 @@ dialog.ra-focus-dossier menu {
   margin-top: 0 !important;
   transform: none !important;
 }
+
+/* Remove the extra divider line inside compact Training cards */
+.overview-training-card .schedule-date-card .schedule-event-divider {
+  display: none !important;
+}
