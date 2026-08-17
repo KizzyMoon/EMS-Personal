@@ -10162,3 +10162,23 @@ dialog.ra-focus-dossier menu {
 .overview-training-card .schedule-date-card .schedule-event-divider {
   display: none !important;
 }
+
+/* ===== Training Day 1 / Day 2 equal-height layout fix =====
+   Keep both EU training cards in the same row using the same visual structure. */
+.overview-training-card .upcoming-training-grid {
+  align-items: stretch !important;
+}
+
+.overview-training-card .schedule-date-card {
+  align-self: stretch !important;
+  height: 100% !important;
+}
+
+.overview-training-card .schedule-date-tile {
+  align-self: stretch !important;
+  height: 100% !important;
+}
+
+.overview-training-card .schedule-date-card-content {
+  height: 100% !important;
+}
