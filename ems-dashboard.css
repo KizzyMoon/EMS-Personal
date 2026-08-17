@@ -10117,3 +10117,43 @@ dialog.ra-focus-dossier menu {
     margin-left: 0 !important;
   }
 }
+
+/* ===== Training signup badge row alignment fix =====
+   Keep Day 1 / Day 2 signup pills on the same top line inside the overview cards. */
+.overview-training-card .upcoming-training-grid {
+  align-items: start !important;
+}
+
+.overview-training-card .schedule-date-card {
+  align-self: start !important;
+}
+
+.overview-training-card .schedule-date-card-content {
+  align-content: start !important;
+  padding-top: 0 !important;
+}
+
+.overview-training-card .schedule-compact-head {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  min-height: 28px !important;
+  margin: 0 !important;
+}
+
+.overview-training-card .schedule-compact-title {
+  padding-top: 0 !important;
+}
+
+.overview-training-card .schedule-compact-title h3 {
+  margin-top: 0 !important;
+  line-height: 1.15 !important;
+}
+
+.overview-training-card .schedule-date-card .training-signup-badge,
+.overview-training-card .schedule-date-card .schedule-event-status.training-signup-badge {
+  align-self: start !important;
+  justify-self: end !important;
+  margin-top: 0 !important;
+  transform: none !important;
+}
