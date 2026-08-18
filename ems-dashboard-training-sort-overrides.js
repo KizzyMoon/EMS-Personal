@@ -1,30 +1,24 @@
 (() => {
+  if (window.__emsTrainingSortSafeReady) return;
+  window.__emsTrainingSortSafeReady = true;
+
   const MONTHS = {
-    jan: 0,
-    january: 0,
-    feb: 1,
-    february: 1,
-    mar: 2,
-    march: 2,
-    apr: 3,
-    april: 3,
+    jan: 0, january: 0,
+    feb: 1, february: 1,
+    mar: 2, march: 2,
+    apr: 3, april: 3,
     may: 4,
-    jun: 5,
-    june: 5,
-    jul: 6,
-    july: 6,
-    aug: 7,
-    august: 7,
-    sep: 8,
-    sept: 8,
-    september: 8,
-    oct: 9,
-    october: 9,
-    nov: 10,
-    november: 10,
-    dec: 11,
-    december: 11
+    jun: 5, june: 5,
+    jul: 6, july: 6,
+    aug: 7, august: 7,
+    sep: 8, sept: 8, september: 8,
+    oct: 9, october: 9,
+    nov: 10, november: 10,
+    dec: 11, december: 11
   };
+
+  let isSorting = false;
+  let sortTimer = null;
 
   function parseTrainingDate(card) {
     const tileText = card.querySelector(".schedule-date-tile")?.innerText || "";
@@ -34,14 +28,11 @@
     const month = monthMatch ? MONTHS[monthMatch[1].toLowerCase()] ?? 11 : 11;
 
     const now = new Date();
-    let year = now.getFullYear();
-    let date = new Date(year, month, day, 23, 59, 59, 999);
-
-    // If a training date appears to be from earlier in the year, treat it as next year.
-    // This keeps December/January edge cases ordered without changing sheet logic.
+    let date = new Date(now.getFullYear(), month, day, 23, 59, 59, 999);
     const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+
     if (date < yesterday) {
-      date = new Date(year + 1, month, day, 23, 59, 59, 999);
+      date = new Date(now.getFullYear() + 1, month, day, 23, 59, 59, 999);
     }
 
     const timeText = card.querySelector(".schedule-compact-title strong")?.innerText || "23:59";
@@ -58,7 +49,8 @@
     return date.getTime();
   }
 
-  function sortTrainingCards() {
+  function sortTrainingCardsNow() {
+    if (isSorting) return;
     const list = document.querySelector("[data-training-list]");
     if (!list) return;
 
@@ -69,36 +61,57 @@
       .map((card, index) => ({ card, index, sort: parseTrainingDate(card) }))
       .sort((a, b) => (a.sort - b.sort) || (a.index - b.index));
 
-    sorted.forEach(({ card }) => list.appendChild(card));
+    const alreadySorted = sorted.every((entry, index) => entry.card === cards[index]);
+    if (alreadySorted) return;
+
+    isSorting = true;
+    try {
+      const fragment = document.createDocumentFragment();
+      sorted.forEach(({ card }) => fragment.appendChild(card));
+      list.appendChild(fragment);
+    } finally {
+      window.setTimeout(() => {
+        isSorting = false;
+      }, 0);
+    }
+  }
+
+  function queueTrainingSort() {
+    if (sortTimer) window.clearTimeout(sortTimer);
+    sortTimer = window.setTimeout(() => {
+      sortTimer = null;
+      sortTrainingCardsNow();
+    }, 80);
   }
 
   function patchRenderTraining() {
-    if (window.__emsTrainingSortOverrideReady) return;
-    window.__emsTrainingSortOverrideReady = true;
-
-    if (typeof window.renderTraining === "function") {
+    if (typeof window.renderTraining === "function" && !window.renderTraining.__emsSortPatched) {
       const originalRenderTraining = window.renderTraining;
-      window.renderTraining = function renderTrainingSortedByDate(...args) {
+      const patched = function renderTrainingSortedByDate(...args) {
         const result = originalRenderTraining.apply(this, args);
-        sortTrainingCards();
+        queueTrainingSort();
         return result;
       };
+      patched.__emsSortPatched = true;
+      window.renderTraining = patched;
     }
 
     const observerTarget = document.querySelector("[data-training-list]");
-    if (observerTarget) {
-      const observer = new MutationObserver(() => sortTrainingCards());
-      observer.observe(observerTarget, { childList: true });
+    if (observerTarget && !observerTarget.__emsSortObserver) {
+      observerTarget.__emsSortObserver = new MutationObserver(() => {
+        if (!isSorting) queueTrainingSort();
+      });
+      observerTarget.__emsSortObserver.observe(observerTarget, { childList: true });
     }
 
-    sortTrainingCards();
+    queueTrainingSort();
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", patchRenderTraining);
+    document.addEventListener("DOMContentLoaded", patchRenderTraining, { once: true });
   } else {
     patchRenderTraining();
   }
 
-  window.addEventListener("load", sortTrainingCards);
+  window.addEventListener("load", queueTrainingSort, { once: true });
 })();
