@@ -180,3 +180,17 @@
   font-weight: 900;
   line-height: 1;
 }
+
+/* The old overview Mass Ping row is no longer used, so remove its leftover vertical gap. */
+.overview-action-row {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.overview-dashboard .overview-priority-grid {
+  margin-top: 0 !important;
+}
