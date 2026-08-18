@@ -194,3 +194,23 @@
 .overview-dashboard .overview-priority-grid {
   margin-top: 0 !important;
 }
+
+/* Keep training cards side-by-side on portrait monitors / medium widths.
+   Only stack them when the screen is genuinely phone-sized. */
+.overview-training-card .upcoming-training-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 1rem !important;
+}
+
+.overview-training-card .schedule-date-card,
+.overview-training-card .schedule-event-card {
+  min-width: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .overview-training-card .upcoming-training-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
