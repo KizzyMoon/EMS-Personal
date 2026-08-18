@@ -156,3 +156,27 @@
 .cadet-performance-legend .cadet-performance-dot {
   display: inline-block !important;
 }
+
+/* Probationer Tests: use a clean plus button and hide the duplicate count. */
+.overview-probie-card [data-manual-event-count] {
+  display: none !important;
+}
+
+.overview-probie-card [data-action="add-manual-event"] {
+  width: 34px !important;
+  min-width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 9px !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+}
+
+.overview-probie-card [data-action="add-manual-event"]::before {
+  content: "+";
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1;
+}
