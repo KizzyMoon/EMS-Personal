@@ -1,5 +1,6 @@
 const STORAGE_KEY = "highlife-ems-dashboard-v1";
 const ACTIVE_TAB_KEY = "highlife-ems-active-tab";
+const INTERVIEW_SUMMARY_KEY = "highlife-ems-interviews-v1";
 const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1g3XXntoqyA9XMgEcXwq89RyqBUymJCpVbG1vlE4BSPY/edit?gid=1321749468#gid=1321749468";
 const DEFAULT_ROSTER_URL = "https://docs.google.com/spreadsheets/d/1b9RV4HZh2Klex6jEq8YarlpzpDMt0F4ohV_GscHbSb8/edit?gid=647224122#gid=647224122";
 const DEFAULT_STORAGE_URL = "https://docs.google.com/spreadsheets/d/15bIY2191kS-cbt8F-qeltWOb0qkK4Anpko2pZaagAm8/edit?usp=sharing";
@@ -2185,6 +2186,7 @@ async function refreshInterviews(options = {}) {
 
   try {
     liveInterviewSessions = await interviewSheetSessions(options);
+    saveInterviewSummary(liveInterviewSessions);
     interviewLoadState = "ready";
     const uniqueInterviewSets = new Set(liveInterviewSessions.map((session) => session.sheetTitle).filter(Boolean));
     interviewLoadMessage = liveInterviewSessions.length
@@ -2194,10 +2196,30 @@ async function refreshInterviews(options = {}) {
     return { sessions: liveInterviewSessions, error: null };
   } catch (error) {
     liveInterviewSessions = [];
+    saveInterviewSummary([]);
     interviewLoadState = "error";
     interviewLoadMessage = `Could not refresh interviews: ${error.message}`;
     renderInterviews();
     return { sessions: [], error };
+  }
+}
+
+function saveInterviewSummary(sessions = []) {
+  try {
+    localStorage.setItem(INTERVIEW_SUMMARY_KEY, JSON.stringify({
+      savedAt: new Date().toISOString(),
+      sessions: sessions.map((session) => ({
+        date: session.date || "",
+        time: session.time || "",
+        type: session.type || "Interview",
+        session: session.session || "",
+        lead: session.lead || "",
+        attendeeCount: Array.isArray(session.attendees) ? session.attendees.length : 0,
+        sheetTitle: session.sheetTitle || ""
+      }))
+    }));
+  } catch {
+    // Home Base can still show roster/cadet updates if browser storage is unavailable.
   }
 }
 
