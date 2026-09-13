@@ -1,5 +1,5 @@
 (() => {
-  const LEGACY_SRC = "ems-dashboard-legacy.js?v=20260818-private-training-1";
+  const LEGACY_SRC = "ems-dashboard-legacy.js?v=20260913-interview-summary-1";
   const PRIVATE_TRAINING_KEY = "highlife-ems-private-training-v1";
 
   function loadLegacyDashboard() {
