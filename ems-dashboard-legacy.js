@@ -999,6 +999,12 @@ function renderCadetPersonalSyncProgress() {
 
 function applyPersonalCadetSheet(cadet, sheet, myCallsign) {
   const cells = sheet?.data?.[0]?.rowData || [];
+  const personalTraining = personalSheetTrainingStatus(sheet);
+
+  // A confirmed tick on either source is enough. A temporarily stale roster
+  // value must not erase training already recorded on the cadet's own tab.
+  cadet.day1 = Boolean(cadet.day1 || personalTraining.day1);
+  cadet.day2 = Boolean(cadet.day2 || personalTraining.day2);
 
   cadet.myRaVerified = true;
   cadet.myRaVerificationVersion = RA_VERIFICATION_VERSION;
@@ -1041,13 +1047,19 @@ async function fetchPersonalCadetSheet(spreadsheetId, callsign, options = {}) {
 async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) {
   const runId = ++cadetPersonalSyncRunId;
   const myCallsign = normalizeCallsign(state.settings?.myCallsign);
-  const titles = new Set(
-    sheets.map((entry) => entry.properties?.title).filter(Boolean)
+  const titles = new Map(
+    sheets
+      .map((entry) => entry.properties?.title)
+      .filter(Boolean)
+      .map((title) => [normalizeCallsign(title), title])
   );
 
-  const targets = state.cadets.filter(
-    (cadet) => cadet.callsign && titles.has(cadet.callsign)
-  );
+  const targets = state.cadets
+    .filter((cadet) => cadet.callsign && titles.has(normalizeCallsign(cadet.callsign)))
+    .map((cadet) => ({
+      cadet,
+      title: titles.get(normalizeCallsign(cadet.callsign))
+    }));
 
   cadetPersonalSyncProgress = {
     active: Boolean(targets.length),
@@ -1065,12 +1077,12 @@ async function applyMyRaFromCadetTabs(spreadsheetId, sheets = [], options = {}) 
     while (nextIndex < targets.length && runId === cadetPersonalSyncRunId) {
       const index = nextIndex;
       nextIndex += 1;
-      const cadet = targets[index];
+      const { cadet, title } = targets[index];
 
       try {
         const sheet = await fetchPersonalCadetSheet(
           spreadsheetId,
-          cadet.callsign,
+          title,
           { ...options, prompt: "" }
         );
 
@@ -1332,6 +1344,32 @@ function assessmentScoreFromCell(cell = {}, rowIndex = 0, columnIndex = 0) {
 function cellChecked(cell = {}) {
   if (cell.effectiveValue?.boolValue === true) return true;
   return boolValue(cellText(cell));
+}
+
+function personalSheetTrainingStatus(sheet = {}) {
+  const rows = sheet.data?.[0]?.rowData || [];
+  const status = { day1: false, day2: false };
+
+  rows.forEach((row) => {
+    const cells = row.values || [];
+    cells.forEach((cell, labelIndex) => {
+      const key = normalizeKey(cellText(cell));
+      const day = key.includes("day1training") || key.includes("day1trained")
+        ? "day1"
+        : key.includes("day2training") || key.includes("day2trained")
+          ? "day2"
+          : "";
+      if (!day) return;
+
+      const nearbyCells = cells.slice(
+        Math.max(0, labelIndex - 2),
+        Math.min(cells.length, labelIndex + 3)
+      );
+      if (nearbyCells.some(cellChecked)) status[day] = true;
+    });
+  });
+
+  return status;
 }
 
 function trainingLabelCandidates(cells = []) {
@@ -4752,7 +4790,7 @@ This behaviour is intentional and should not be "optimised away".
 */
 
 async function refreshCadetFocusFromOwnSheet(cadet) {
-  if (!cadet?.day1 || !cadet.callsign) return cadet;
+  if (!cadet?.callsign) return cadet;
 
   const { id } = sheetInfoFromUrl(els.googleUrl?.value || DEFAULT_SHEET_URL);
   const title = cadet.callsign;
@@ -4786,6 +4824,9 @@ async function refreshCadetFocusFromOwnSheet(cadet) {
   cadet.sheetNotes = cadetSheetNotes(sheet);
 
   const rows = sheet.data?.[0]?.rowData || [];
+  const personalTraining = personalSheetTrainingStatus(sheet);
+  cadet.day1 = Boolean(cadet.day1 || personalTraining.day1);
+  cadet.day2 = Boolean(cadet.day2 || personalTraining.day2);
   if (cadet.uniqueFtoRaSource !== "roster") {
     cadet.uniqueFtoRaCount = uniqueFtoRaCount(rows);
   }
