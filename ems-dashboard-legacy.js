@@ -3447,11 +3447,11 @@ function renderCadets() {
   const awaitingDayOneOrTwoCount = allCadets.filter(
     (cadet) => !cadet.day1 || !cadet.day2
   ).length;
-  const activeCompleteCadets = cadets.filter((cadet) => cadet.day1 && cadet.day2);
+  const activeCadets = cadets.filter((cadet) => cadet.day1);
 
   if (els.cadetPageSummary) {
     els.cadetPageSummary.textContent =
-      "Cadets who have completed Day 1 and Day 2 training.";
+      "Cadets who have completed Day 1 training.";
   }
 
   if (els.cadetOverviewStats) {
@@ -3471,9 +3471,9 @@ function renderCadets() {
   }
 
   if (els.cadetGrid) {
-    els.cadetGrid.innerHTML = activeCompleteCadets.length
-      ? activeCompleteCadets.map(cadetCard).join("")
-      : empty("No cadets have completed Day 1 and Day 2 training yet.");
+    els.cadetGrid.innerHTML = activeCadets.length
+      ? activeCadets.map(cadetCard).join("")
+      : empty("No cadets have completed Day 1 training yet.");
   }
 
   if (els.cadetLimitList) {
