@@ -9,6 +9,24 @@
   overflow: hidden !important;
 }
 
+.cadets-page .compact-cadet-profile-card,
+.cadets-page .compact-cadet-profile-card.training-good,
+.cadets-page .compact-cadet-profile-card.training-warn,
+.cadets-page .compact-cadet-profile-card.training-bad,
+.cadets-page .compact-cadet-profile-card.training-none {
+  background: linear-gradient(
+    145deg,
+    rgba(14, 20, 30, 0.96),
+    rgba(8, 13, 21, 0.98)
+  ) !important;
+  background-image: linear-gradient(
+    145deg,
+    rgba(14, 20, 30, 0.96),
+    rgba(8, 13, 21, 0.98)
+  ) !important;
+  filter: none !important;
+}
+
 .cadet-profile-card.training-good,
 .cadet-training-status-card.training-good,
 .cadet-training-status-card:has(.status-good) {
