@@ -7478,6 +7478,14 @@ dialog.ra-focus-dossier > form > h2 {
   margin: 0 !important;
 }
 
+.compact-cadet-heading-right .pill.zone {
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  text-shadow: none !important;
+}
+
 .compact-cadet-heading-right .cadet-performance-dot {
   flex: 0 0 auto;
 }
