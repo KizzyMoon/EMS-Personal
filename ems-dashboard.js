@@ -9,7 +9,7 @@
     });
   }
 
-  loadScript("ems-dashboard-core.js?v=20261124-day1-active-1")
+  loadScript("ems-dashboard-core.js?v=20261124-personal-training-1")
     .then(() => loadScript("ems-dashboard-ra-overrides.js?v=20260818-ra-ui-2"))
     .then(() => loadScript("ems-dashboard-ra-checklist-overrides.js?v=20260822-manual-checklist-1"))
     .then(() => loadScript("ems-dashboard-interview-overrides.js?v=20260827-interview-placeholders-1"))
