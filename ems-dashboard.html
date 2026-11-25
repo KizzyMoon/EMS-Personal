@@ -11,6 +11,7 @@
     <link rel="manifest" href="ems-dashboard.webmanifest?v=20260722-4" />
     <link rel="stylesheet" href="ems-dashboard.css?v=20261124-clean-timezone-tags-1" />
     <link rel="stylesheet" href="ems-cadet-status-overrides.css?v=20261124-flat-cadet-cards-1" />
+    <link rel="stylesheet" href="ems-tablet-shell.css?v=20261125-tablet-shell-1" />
   </head>
   <body>
     <main class="app">
@@ -47,7 +48,7 @@
           </button>
           <button class="mobile-quick-tab" data-tab="quick-links" type="button" aria-label="Quick Links">
             <img class="nav-icon" src="nav-quick-links.png?v=20260728-1" alt="" />
-            <span>Links</span>
+            <span>Quick Links</span>
           </button>
           <button class="mobile-settings-tab" data-tab="settings" type="button" aria-label="Settings">
             <img class="nav-icon" src="nav-settings.svg?v=20260728-1" alt="" />
@@ -55,7 +56,11 @@
           </button>
         </nav>
         <section class="sidebar-quick-links" aria-label="Quick links">
-<div class="quick-links-groups">
+          <div class="quick-drawer-head">
+            <h2>Quick Links</h2>
+            <button class="quick-drawer-close" type="button" aria-label="Close quick links">×</button>
+          </div>
+          <div class="quick-links-groups">
             <section class="quick-link-category" aria-label="Records links">
               <h3>Records</h3>
               <div class="quick-links-grid">
@@ -145,13 +150,10 @@
         <input data-search type="search" placeholder="Search names, callsigns, notes..." />
         <span class="sync-status-chip" data-overview-sync-status>Not synced yet</span>
         <button data-action="import-google" type="button">Sync All Sheets</button>
+        <button class="toolbar-mass-ping" data-action="create-mass-ping" type="button">Mass Ping</button>
       </section>
 
             <section class="view overview-dashboard overview-reference-layout" data-view="overview">
-        <div class="overview-action-row">
-          <button class="overview-heading-mass-ping" data-action="create-mass-ping" type="button">Mass Ping</button>
-        </div>
-
         <section class="overview-priority-grid">
           <article class="panel overview-priority-card overview-training-card">
             <div class="overview-panel-title">
@@ -767,5 +769,6 @@
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="ems-dashboard.js?v=20261124-personal-training-1"></script>
+    <script src="ems-tablet-shell.js?v=20261125-tablet-shell-1"></script>
   </body>
 </html>
